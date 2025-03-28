@@ -60,7 +60,7 @@ class BattleScene extends Phaser.Scene {
     else {
       console.log(`${attacker.name} attacks ${defender.name} with ${spell.name} for ${spell.damage} damage!`);
     }
-
+    
     this.displayStats();
 
     this.hitAnimation = {
@@ -72,16 +72,17 @@ class BattleScene extends Phaser.Scene {
 
       this.passTurn();
 
+      this.checkBattleOutcome();
 
       // ai attackerar spelaren varje gång det är deras turn
       if (this.currentTurn === 1) {
-        this.executeAttack(this.enemy, this.enemy.weapon.castable.stab, this.player);
+        // hårdkodat så att ai alltid väljer deras första spell
+        const firstSpell = Object.values(this.enemy.weapon.castable)[0];
+        this.executeAttack(this.enemy, firstSpell, this.player);
       }
 
       // tillåter inputs igen efter attacken
       this.inputLocked = false;
-
-      this.checkBattleOutcome();
     });
   }
 

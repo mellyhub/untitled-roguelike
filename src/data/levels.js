@@ -19,6 +19,7 @@ console.log(`Seed: ${seed}`);
 const levels = [
     {
         name: "Level 1",
+        isBeaten: false,
         enemies: [
             {
                 name: "Goblin",
@@ -29,6 +30,7 @@ const levels = [
     },
     {
         name: "Level 2",
+        isBeaten: false,
         enemies: [
             {
                 name: "Jens",
@@ -39,6 +41,7 @@ const levels = [
     },
     {
         name: "Level 3",
+        isBeaten: false,
         enemies: [
             {
                 name: "Megadraken",
