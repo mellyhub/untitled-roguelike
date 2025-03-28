@@ -3,8 +3,8 @@ import Phaser from 'phaser';
 import BattleScene from './scenes/BattleScene';
 import MapScene from './scenes/MapScene';
 
-const gameWidth = 800;
-const gameHeight = 600;
+const gameWidth = 1920;
+const gameHeight = 1080;
 
 const config = {
   type:Phaser.WEBGL,

@@ -9,6 +9,8 @@ class BattleScene extends Phaser.Scene {
   preload() {
     // Load assets (images, sounds, etc.)
     this.load.image('background', 'src/assets/images/bg.png');
+    this.load.image('player', 'src/assets/images/warrior-prototyp1.png');
+    this.load.image('battleUi', 'src/assets/images/fight-ui-prototyp1.png');
   }
 
   init(data) {
@@ -37,10 +39,10 @@ class BattleScene extends Phaser.Scene {
 
   displayStats() {
     // grafisk design är min passion
-    this.add.rectangle(150, 180, 180, 20, 0x2d3a80).setOrigin(0);
-    this.add.rectangle(500, 180, 180, 20, 0x2d3a80).setOrigin(0);
-    this.add.text(150, 180, `${this.player.name}: ${this.player.health} HP`, { fontSize: '20px' });
-    this.add.text(500, 180, `${this.enemy.name}: ${this.enemy.health} HP`, { fontSize: '20px' });
+    this.add.rectangle(400, 200, 500, 52, 0x2d3a80).setOrigin(0);
+    this.add.rectangle(1220, 200, 500, 52, 0x2d3a80).setOrigin(0);
+    this.add.text(400, 200, `${this.player.name}: ${this.player.health} HP`, { fontSize: '52px' });
+    this.add.text(1220, 200, `${this.enemy.name}: ${this.enemy.health} HP`, { fontSize: '52px' });
   }
 
   passTurn() {
@@ -78,13 +80,13 @@ class BattleScene extends Phaser.Scene {
 
   checkBattleOutcome() {
     if (this.enemy.health <= 0) {
-      this.add.text(400, 300, 'You win!', { fontSize: '32px', fill: '#fff' }).setOrigin(0.5);
+      this.add.text(960, 540, 'You win!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
       this.time.delayedCall(1000, () => {
         this.scene.switch('MapScene');
       });
     }
     else if (this.player.health <= 0) {
-      this.add.text(400, 300, 'You lose!', { fontSize: '32px', fill: '#fff' }).setOrigin(0.5);
+      this.add.text(960, 540, 'You lose!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
       this.scene.pause();
     }
   }
@@ -105,7 +107,9 @@ class BattleScene extends Phaser.Scene {
     this.cursors = this.input.keyboard.createCursorKeys(); // lägger till arrow keys
     this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER); // lägger till enter key
 
-    this.add.image(400, 300, 'background');
+    this.add.image(960, 540, 'background').setAlpha(0.1);
+    this.add.image(960, 540, 'battleUi');
+    this.add.image(480, 540, 'player').setScale(0.4);
     const menuWidth = 800;
     const menuHeight = 150;
     this.menuItems = [];
