@@ -1,5 +1,6 @@
 import levels from '../data/levels.js';
 import weapons from '../data/weapons.js';
+import classes from '../data/classes.js';
 
 class BattleScene extends Phaser.Scene {
   constructor() {
@@ -49,15 +50,15 @@ class BattleScene extends Phaser.Scene {
     this.currentTurn = (this.currentTurn + 1) % 2;
   }
 
-  executeAttack(attacker, defender) {
+  executeAttack(spell, defender) {
     // pausar alla meny inputs medan attacken sker
     this.menuItems.forEach(item => item.disableInteractive());
-    defender.health -= attacker.weapon.castable[0].damage;
+    defender.health -= spell.damage;
     if (defender.health <= 0) {
       console.log(`${defender.name} is defeated!`);
     }
     else {
-      console.log(`${attacker.name} attacks ${defender.name} with ${attacker.weapon.castable[0].name} for ${attacker.weapon.castable[0].damage} damage!`);
+      //console.log(`${attacker.name} attacks ${defender.name} with ${attacker.weapon.castable[0].name} for ${attacker.weapon.castable[0].damage} damage!`);
     }
 
     this.displayStats();
@@ -68,7 +69,7 @@ class BattleScene extends Phaser.Scene {
 
       // ai attackerar spelaren varje gång det är deras turn
       if (this.currentTurn === 1) {
-        this.executeAttack(this.enemy, this.player);
+        this.executeAttack(this.enemy.weapon.castable.stab, this.player);
       }
 
       // tillåter inputs igen efter attacken
@@ -96,9 +97,9 @@ class BattleScene extends Phaser.Scene {
     this.player = {
       name: "Player",
       health: 100,
-      weapon: weapons[0] // sätter spelarens vapen till dagger från weapons.js
+      weapon: weapons.dagger, // sätter spelarens vapen till dagger från weapons.js
+      class: classes.warrior // sätter spelarens klass till warrior
     }
-
     this.enemy = this.levelData.enemies[0]; // hämtar fiende från första banan levels.js
 
     this.turnOrder = [this.player, this.enemy];
@@ -138,7 +139,7 @@ class BattleScene extends Phaser.Scene {
     }
     if (Phaser.Input.Keyboard.JustDown(this.enterKey)) {
       if (this.currentSelection == 0) {
-        this.executeAttack(this.player, this.enemy);
+        this.executeAttack(this.player.weapon.castable.stab, this.enemy);
       }
       else if (this.currentSelection == 1) {
         console.log("Menu2 selected");

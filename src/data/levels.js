@@ -23,7 +23,7 @@ const levels = [
             {
                 name: "Goblin",
                 health: getRandomHealth(seed, 50, 100),
-                weapon: weapons[0], // hämtar Dagger från weapons.js
+                weapon: weapons.dagger, // hämtar Dagger från weapons.js
             },
         ]
     },
@@ -33,7 +33,7 @@ const levels = [
             {
                 name: "Jens",
                 health: getRandomHealth(seed, 120, 150),
-                weapon: weapons[0], // hämtar Dagger från weapons.js
+                weapon: weapons.dagger, // hämtar Dagger från weapons.js
             },
         ]
     },
@@ -43,7 +43,7 @@ const levels = [
             {
                 name: "Megadraken",
                 health: getRandomHealth(seed, 200, 200),
-                weapon: weapons[2], // hämtar Dragon från weapons.js
+                weapon: weapons.dragon, // hämtar Dragon från weapons.js
             },
         ]
     }

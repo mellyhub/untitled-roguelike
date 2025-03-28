@@ -3,46 +3,50 @@
 // valde att dela upp "castable" i en egen array för att kunna ha flera olika casts på samma vapen
 // staven har till exempel två olika casts, frostbolt och fireball
 
-const weapons = [
-    {
+const weapons = {
+    dagger: {
         name: "Dagger",
-        castable: [
-            {
+        castable:
+        {
+            stab: {
                 name: "Stab",
                 damage: 10
             }
-        ]
+        }
     },
-    {
+    staff: {
         name: "Staff",
-        castable: [
-            {
+        castable:
+        {
+            frostbolt: {
                 name: "Frostbolt",
                 damage: 10
             },
-            {
+            fireball: {
                 name: "Fireball",
-                damage: 15
+                damage: 20
             }
-        ]
+        }
     },
-    {
+    dragon: {
         name: "Dragon",
-        castable: [
-            {
+        castable:
+        {
+            fire_breath: {
                 name: "Fire Breath",
                 damage: 30
             },
-            {
+            tail_whip: {
                 name: "Tail Whip",
                 damage: 10
             },
-            {
+            bite: {
                 name: "Bite",
                 damage: 20
             }
-        ]
+        }
+
     }
-];
+};
 
 export default weapons;
