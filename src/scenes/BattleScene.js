@@ -19,7 +19,7 @@ class BattleScene extends Phaser.Scene {
   }
 
   addMenuItem(x, y, text) {
-    return this.add.text(x, y, text)
+    return this.add.text(x, y, text, { fontSize: '52px' })
   }
 
   handleSelection(direction) {
@@ -110,17 +110,17 @@ class BattleScene extends Phaser.Scene {
     this.add.image(960, 540, 'background').setAlpha(0.1);
     this.add.image(960, 540, 'battleUi');
     this.add.image(480, 540, 'player').setScale(0.4);
-    const menuWidth = 800;
+    const menuWidth = 650;
     const menuHeight = 150;
     this.menuItems = [];
     this.currentSelection = 0;
-    const container = this.add.container(0, 450, [
-      this.add.rectangle(0, 0, menuWidth, menuHeight, 0x4e818e).setOrigin(0),
+    const container = this.add.container(200, 800, [
+      //this.add.rectangle(0, 0, menuWidth, menuHeight, 0x4e818e).setOrigin(0),
       // hårdkodade menu items för tillfället
-      this.menuItems[0] = this.addMenuItem(60, 20, 'Slåss'),
-      this.menuItems[1] = this.addMenuItem(60, 40, 'Menu2'),
-      this.menuItems[2] = this.addMenuItem(60, 60, 'Menu3'),
-      this.menuItems[3] = this.addMenuItem(60, 80, 'Menu4'),
+      this.menuItems[0] = this.addMenuItem(0, 0, 'Slåss'),
+      this.menuItems[1] = this.addMenuItem(0, 50, 'Menu2'),
+      this.menuItems[2] = this.addMenuItem(0, 100, 'Menu3'),
+      this.menuItems[3] = this.addMenuItem(0, 150, 'Menu4'),
     ]);
     // markerar menuItem[0] som default
     this.handleSelection();
