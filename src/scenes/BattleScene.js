@@ -1,4 +1,3 @@
-import levels from '../data/levels.js';
 import weapons from '../data/weapons.js';
 import classes from '../data/classes.js';
 
@@ -50,30 +49,37 @@ class BattleScene extends Phaser.Scene {
     this.currentTurn = (this.currentTurn + 1) % 2;
   }
 
-  executeAttack(spell, defender) {
-    // pausar alla meny inputs medan attacken sker
-    this.menuItems.forEach(item => item.disableInteractive());
+  executeAttack(attacker, spell, defender) {
+    // pausar alla inputs medan attacken sker
+    this.inputLocked = true;
+
     defender.health -= spell.damage;
     if (defender.health <= 0) {
       console.log(`${defender.name} is defeated!`);
     }
     else {
-      //console.log(`${attacker.name} attacks ${defender.name} with ${attacker.weapon.castable[0].name} for ${attacker.weapon.castable[0].damage} damage!`);
+      console.log(`${attacker.name} attacks ${defender.name} with ${spell.name} for ${spell.damage} damage!`);
     }
 
     this.displayStats();
 
-    // paausar scenen i en sekund för att spelaren ska se attacken
+    this.hitAnimation = {
+      text: this.add.text(700, 100, "Animation in progress", { fontSize: '52px' }),
+    }
+
     this.time.delayedCall(1000, () => {
+      this.hitAnimation.text.destroy();
+
       this.passTurn();
+
 
       // ai attackerar spelaren varje gång det är deras turn
       if (this.currentTurn === 1) {
-        this.executeAttack(this.enemy.weapon.castable.stab, this.player);
+        this.executeAttack(this.enemy, this.enemy.weapon.castable.stab, this.player);
       }
 
       // tillåter inputs igen efter attacken
-      this.menuItems.forEach(item => item.setInteractive());
+      this.inputLocked = false;
 
       this.checkBattleOutcome();
     });
@@ -100,7 +106,8 @@ class BattleScene extends Phaser.Scene {
       weapon: weapons.dagger, // sätter spelarens vapen till dagger från weapons.js
       class: classes.warrior // sätter spelarens klass till warrior
     }
-    this.enemy = this.levelData.enemies[0]; // hämtar fiende från första banan levels.js
+
+    this.enemy = this.levelData.enemies[0]; // hämtar den första fienden från vald level
 
     this.turnOrder = [this.player, this.enemy];
     this.currentTurn = 0;
@@ -111,12 +118,11 @@ class BattleScene extends Phaser.Scene {
     this.add.image(960, 540, 'background').setAlpha(0.1);
     this.add.image(960, 540, 'battleUi');
     this.add.image(480, 540, 'player').setScale(0.4);
-    const menuWidth = 650;
-    const menuHeight = 150;
+    this.hitAnimation;
+
     this.menuItems = [];
     this.currentSelection = 0;
     const container = this.add.container(200, 800, [
-      //this.add.rectangle(0, 0, menuWidth, menuHeight, 0x4e818e).setOrigin(0),
       // hårdkodade menu items för tillfället
       this.menuItems[0] = this.addMenuItem(0, 0, 'Slåss'),
       this.menuItems[1] = this.addMenuItem(0, 50, 'Menu2'),
@@ -129,6 +135,10 @@ class BattleScene extends Phaser.Scene {
   }
 
   update() {
+    if (this.inputLocked) {
+      return; // ignorera inputs ifall inputLocked == true
+    }
+
     if (Phaser.Input.Keyboard.JustDown(this.cursors.down)) {
       // går ner i listan
       this.handleSelection("down");
@@ -139,7 +149,7 @@ class BattleScene extends Phaser.Scene {
     }
     if (Phaser.Input.Keyboard.JustDown(this.enterKey)) {
       if (this.currentSelection == 0) {
-        this.executeAttack(this.player.weapon.castable.stab, this.enemy);
+        this.executeAttack(this.player, this.player.weapon.castable.stab, this.enemy);
       }
       else if (this.currentSelection == 1) {
         console.log("Menu2 selected");

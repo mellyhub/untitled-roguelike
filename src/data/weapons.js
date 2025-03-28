@@ -1,7 +1,4 @@
-// hårdkodade vapen för tillfället, här kan vi implementera slumpmässighet i framtiden
-
-// valde att dela upp "castable" i en egen array för att kunna ha flera olika casts på samma vapen
-// staven har till exempel två olika casts, frostbolt och fireball
+// hårdkodade vapen
 
 const weapons = {
     dagger: {
@@ -45,8 +42,7 @@ const weapons = {
                 damage: 20
             }
         }
-
-    }
+    },
 };
 
 export default weapons;
