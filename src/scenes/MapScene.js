@@ -24,6 +24,11 @@ class MapScene extends Phaser.Scene {
             render: this.add.rectangle(600, 420, 50, 50, 0x000000, 0.7),
             text: this.add.text(600, 420, "2", { fontSize: '20px' })
         });
+        this.levelNodes.push({
+            level: levels[2],
+            render: this.add.rectangle(770, 420, 50, 50, 0x000000, 0.7),
+            text: this.add.text(770, 420, "3", { fontSize: '20px' })
+        });
 
         // highlightar node[0] som default
         this.currentNodeIndex = 0;

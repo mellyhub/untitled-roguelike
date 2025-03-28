@@ -25,6 +25,23 @@ const weapons = [
                 damage: 15
             }
         ]
+    },
+    {
+        name: "Dragon",
+        castable: [
+            {
+                name: "Fire Breath",
+                damage: 30
+            },
+            {
+                name: "Tail Whip",
+                damage: 10
+            },
+            {
+                name: "Bite",
+                damage: 20
+            }
+        ]
     }
 ];
 
