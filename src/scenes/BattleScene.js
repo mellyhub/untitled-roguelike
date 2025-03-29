@@ -1,5 +1,6 @@
 import weapons from '../data/weapons.js';
 import classes from '../data/classes.js';
+import player from '../data/player.js';
 
 class BattleScene extends Phaser.Scene {
   constructor() {
@@ -101,12 +102,7 @@ class BattleScene extends Phaser.Scene {
 
   create() {
     // skapar spelaren
-    this.player = {
-      name: "Player",
-      health: 100,
-      weapon: weapons.dagger, // sätter spelarens vapen till dagger från weapons.js
-      class: classes.warrior // sätter spelarens klass till warrior
-    }
+    this.player = player; //hämtar spelaren från player.js
 
     this.enemy = this.levelData.enemies[0]; // hämtar den första fienden från vald level
 
@@ -150,7 +146,7 @@ class BattleScene extends Phaser.Scene {
     }
     if (Phaser.Input.Keyboard.JustDown(this.enterKey)) {
       if (this.currentSelection == 0) {
-        this.executeAttack(this.player, this.player.weapon.castable.stab, this.enemy);
+        this.executeAttack(this.player, this.player.weapon.castable.heavy_swing, this.enemy);
       }
       else if (this.currentSelection == 1) {
         console.log("Menu2 selected");

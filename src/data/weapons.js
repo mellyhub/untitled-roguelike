@@ -26,6 +26,18 @@ const weapons = {
             bite: spells.bite
         }
     },
+    big_axe: {
+        name: "Big Axe",
+        stats: {
+            strength: 2,
+            agility: 5,
+            intelligence: 0,
+        },
+        castable:
+        {
+            heavy_swing: spells.heavy_swing
+        }   
+    }
 };
 
 export default weapons;

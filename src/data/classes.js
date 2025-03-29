@@ -4,6 +4,11 @@ const classes = {
     warrior: {
         name: "Warrior",
         description: "En mäktig krigare med stor svärd",
+        stats: {
+            strength: 10,
+            agility: 5,
+            intelligence: 2
+        },  
         resource: {
             rage: 0
         }

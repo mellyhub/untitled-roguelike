@@ -1,3 +1,5 @@
+import player from "./player.js";
+
 const spells = {
     stab: {
         name: "Stab",
@@ -22,7 +24,11 @@ const spells = {
     bite: {
         name: "Bite",
         damage: 20
-    }
+    },
+    heavy_swing: {
+        name: "Heavy Swing",
+        damage: 3 * player.stats.strength
+    },
 };
 
 export default spells;
