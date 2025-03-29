@@ -45,7 +45,7 @@ const levels = [
         enemies: [
             {
                 name: "Megadraken",
-                health: getRandomHealth(seed, 200, 200),
+                health: 200,
                 weapon: weapons.dragon, // hämtar Dragon från weapons.js
             },
         ]
