@@ -1,46 +1,29 @@
 // hårdkodade vapen
+import spells from '../data/spells.js';
 
 const weapons = {
     dagger: {
         name: "Dagger",
         castable:
         {
-            stab: {
-                name: "Stab",
-                damage: 10
-            }
+            stab: spells.stab
         }
     },
     staff: {
         name: "Staff",
         castable:
         {
-            frostbolt: {
-                name: "Frostbolt",
-                damage: 10
-            },
-            fireball: {
-                name: "Fireball",
-                damage: 20
-            }
+            frostbolt: spells.frostbolt,
+            fireball: spells.fireball
         }
     },
     dragon: {
         name: "Dragon",
         castable:
         {
-            fire_breath: {
-                name: "Fire Breath",
-                damage: 30
-            },
-            tail_whip: {
-                name: "Tail Whip",
-                damage: 10
-            },
-            bite: {
-                name: "Bite",
-                damage: 20
-            }
+            fire_breath: spells.fire_breath,
+            tail_whip: spells.tail_whip,
+            bite: spells.bite
         }
     },
 };
