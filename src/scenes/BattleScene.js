@@ -22,21 +22,6 @@ class BattleScene extends Phaser.Scene {
     return this.add.text(x, y, text, { fontSize: '52px' })
   }
 
-  handleSelection(direction) {
-    if (direction == "down") {
-      this.currentSelection = (this.currentSelection + 1) % this.menuItems.length;
-    }
-    else if (direction == "up") {
-      this.currentSelection = (this.currentSelection - 1 + this.menuItems.length) % this.menuItems.length;
-    }
-
-    // resetar färg på alla menu items
-    this.menuItems.forEach(item => item.setColor('#ffffff'));
-
-    // markerar vald menu item
-    this.menuItems[this.currentSelection].setColor('#ff0000');
-  }
-
   displayStats() {
     // grafisk design är min passion
     this.add.rectangle(400, 200, 500, 52, 0x2d3a80).setOrigin(0);
@@ -60,7 +45,7 @@ class BattleScene extends Phaser.Scene {
     else {
       console.log(`${attacker.name} attacks ${defender.name} with ${spell.name} for ${spell.damage} damage!`);
     }
-    
+
     this.displayStats();
 
     this.hitAnimation = {
@@ -121,47 +106,102 @@ class BattleScene extends Phaser.Scene {
     this.add.image(480, 540, 'player').setScale(0.4);
     this.hitAnimation;
 
-    this.menuItems = [];
-    this.currentSelection = 0;
-    const container = this.add.container(200, 800, [
-      // hårdkodade menu items för tillfället
-      this.menuItems[0] = this.addMenuItem(0, 0, 'Slåss'),
-      this.menuItems[1] = this.addMenuItem(0, 50, 'Menu2'),
-      this.menuItems[2] = this.addMenuItem(0, 100, 'Menu3'),
-      this.menuItems[3] = this.addMenuItem(0, 150, 'Menu4'),
-    ]);
-    // markerar menuItem[0] som default
-    this.handleSelection();
+    // menyn representeras av en 2d array
+    this.mainMenu = [
+      { x: 0, y: 0, text: 'Slåss' },
+      { x: 200, y: 0, text: 'Bag' },
+      { x: 0, y: 50, text: 'Menu3' },
+      { x: 200, y: 50, text: 'Menu4' }
+    ];
+
+    this.bagMenu = [
+      { x: 0, y: 0, text: 'Potion' },
+      { x: 200, y: 0, text: 'Elixir' },
+      { x: 0, y: 50, text: 'Bomb' },
+      { x: 200, y: 50, text: 'Back' }
+    ];
+
+    this.currentMenu = this.mainMenu; // startar på main menyn
+    this.currentSelection = 0; // default
+    this.renderMenu(this.currentMenu);
     this.displayStats();
+  }
+
+  renderMenu(menu) {
+    if (this.menuItems) {
+      this.menuItems.forEach(item => item.destroy());
+    }
+
+    this.menuItems = menu.map((menuItem, index) => {
+      const text = this.add.text(menuItem.x, menuItem.y, menuItem.text, { fontSize: '52px' });
+      if (index === this.currentSelection) {
+        text.setColor('#ff0000');
+      }
+      return text;
+    });
+  }
+
+  handleSelection(direction) {
+    // resetar färg på alla menuItems
+    this.menuItems.forEach(item => item.setColor('#ffffff'));
+
+    // updaterar vald index beroende på input
+    if (direction === "down") {
+      this.currentSelection = (this.currentSelection + 1) % this.currentMenu.length;
+    } else if (direction === "up") {
+      this.currentSelection = (this.currentSelection - 1 + this.currentMenu.length) % this.currentMenu.length;
+    } else if (direction === "right") {
+      this.currentSelection = (this.currentSelection + 1) % this.currentMenu.length;
+    } else if (direction === "left") {
+      this.currentSelection = (this.currentSelection - 1 + this.currentMenu.length) % this.currentMenu.length;
+    }
+
+    // highligtar vald menuItem
+    this.menuItems[this.currentSelection].setColor('#ff0000');
+  }
+
+  switchToBagMenu() {
+    this.currentMenu = this.bagMenu;
+    this.currentSelection = 0;
+    this.renderMenu(this.currentMenu); // rendrar nya menyn
+  }
+
+  switchToMainMenu() {
+    this.currentMenu = this.mainMenu;
+    this.currentSelection = 0;
+    this.renderMenu(this.currentMenu); // rendrar nya menyn
   }
 
   update() {
     if (this.inputLocked) {
-      return; // ignorera inputs ifall inputLocked == true
+      return; // ignorerar inputs (funkar lowkey inte lol)
     }
 
     if (Phaser.Input.Keyboard.JustDown(this.cursors.down)) {
-      // går ner i listan
       this.handleSelection("down");
     }
     if (Phaser.Input.Keyboard.JustDown(this.cursors.up)) {
-      // går upp i listan
       this.handleSelection("up");
     }
+    if (Phaser.Input.Keyboard.JustDown(this.cursors.right)) {
+      this.handleSelection("right");
+    }
+    if (Phaser.Input.Keyboard.JustDown(this.cursors.left)) {
+      this.handleSelection("left");
+    }
     if (Phaser.Input.Keyboard.JustDown(this.enterKey)) {
-      if (this.currentSelection == 0) {
+      const selectedItem = this.currentMenu[this.currentSelection];
+      if (selectedItem.text === 'Slåss') {
         this.executeAttack(this.player, this.player.weapon.castable.stab, this.enemy);
-      }
-      else if (this.currentSelection == 1) {
-        console.log("Menu2 selected");
-      }
-      else if (this.currentSelection == 2) {
-        console.log("Menu3 selected");
-      }
-      else if (this.currentSelection == 3) {
-        console.log("Menu4 selected");
+      } else if (selectedItem.text === 'Bag') {
+        this.switchToBagMenu();
+      } else if (selectedItem.text === 'Back') {
+        this.switchToMainMenu();
+      } else {
+        console.log(`${selectedItem.text} selected`);
       }
     }
+
     // "M" byter mellan kartan och BattleScene
     this.input.keyboard.on('keydown-M', () => {
       this.scene.switch('MapScene');
