@@ -6,12 +6,7 @@ const player = {
 		health: 100,
 		weapon: weapons.big_axe, // sätter spelarens vapen till dagger från weapons.js
 		class: classes.warrior, // sätter spelarens klass till warrior
-		stats: {
-			...classes.warrior.stats, // Spread operator to copy warrior stats
-			strength: 0,
-			agility: 0,
-			intelligence: 0,
-		},
+		stats: classes.warrior.stats,
 		talentPoints: 0,
 		level: 1,
 		

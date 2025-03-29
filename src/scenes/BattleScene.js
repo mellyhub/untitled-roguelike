@@ -39,7 +39,9 @@ class BattleScene extends Phaser.Scene {
     // pausar alla inputs medan attacken sker
     this.inputLocked = true;
 
-    defender.health -= spell.damage;
+    console.log(player.stats);
+    defender.health -= spell.damage(player.stats);
+
     if (defender.health <= 0) {
       console.log(`${defender.name} is defeated!`);
     }
@@ -188,7 +190,7 @@ class BattleScene extends Phaser.Scene {
     if (Phaser.Input.Keyboard.JustDown(this.enterKey)) {
       const selectedItem = this.currentMenu[this.currentSelection];
       if (selectedItem.text === 'Slåss') {
-        this.executeAttack(this.player, this.player.weapon.castable.stab, this.enemy);
+        this.executeAttack(this.player, this.player.weapon.castable.heavy_swing, this.enemy);
       } else if (selectedItem.text === 'Bag') {
         this.switchToBagMenu();
       } else if (selectedItem.text === 'Back') {

@@ -35,7 +35,7 @@ const weapons = {
         },
         castable:
         {
-            heavy_swing: spells.heavy_swing
+            heavy_swing: spells.heavy_swing,
         }   
     }
 };

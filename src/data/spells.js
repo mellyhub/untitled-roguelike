@@ -1,9 +1,9 @@
-import player from "./player.js";
-
 const spells = {
     stab: {
         name: "Stab",
-        damage: 10
+        damage: (playerStats) => {
+            return playerStats.agility * 5;
+        }
     },
     frostbolt: {
         name: "Frostbolt",
@@ -27,7 +27,9 @@ const spells = {
     },
     heavy_swing: {
         name: "Heavy Swing",
-        damage: 3 * player.stats.strength
+        damage: (playerStats) => {
+            return playerStats.strength * 5;
+        }
     },
 };
 
