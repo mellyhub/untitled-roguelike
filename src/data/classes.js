@@ -16,6 +16,11 @@ const classes = {
     mage: {
         name: "Mage",
         description: "En mäktig magiker med stor stav",
+        stats: {
+            strength: 2,
+            agility: 3,
+            intelligence: 12
+        },
         resource: {
             mana: 100
         }

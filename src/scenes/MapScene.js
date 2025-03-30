@@ -10,9 +10,12 @@ class MapScene extends Phaser.Scene {
         this.load.image('map', 'src/assets/images/map.png');
     }
 
-    create() {
+    create(data) {
+        this.selectedClass = data.selectedClass; // tar emot den valda klassen från MainMenu scenen
+        console.log(`Selected class in MapScene: ${this.selectedClass.name}`);
         this.add.image(0, 0, 'map').setOrigin(0).setScale(1.25);
 
+        // levelNodes kanske bör ligga i en separat fil?
         this.levelNodes = [
             {
                 level: levels[0],
@@ -133,7 +136,7 @@ class MapScene extends Phaser.Scene {
     startLevel(index) {
         // startar battlescene för vald index
         console.log(`Starting level ${index + 1}`);
-        this.scene.start('BattleScene', { level: this.levelNodes[index].level });
+        this.scene.start('BattleScene', { level: this.levelNodes[index].level, selectedClass: this.selectedClass });
 
         // markerar banan som completed efter att den startas
         // lite fult skrivet kanske?

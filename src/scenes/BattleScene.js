@@ -1,6 +1,4 @@
-import weapons from '../data/weapons.js';
-import classes from '../data/classes.js';
-import player from '../data/player.js';
+import player, { initializePlayer } from '../data/player.js';
 
 class BattleScene extends Phaser.Scene {
   constructor() {
@@ -16,6 +14,9 @@ class BattleScene extends Phaser.Scene {
 
   init(data) {
     this.levelData = data.level;
+    this.selectedClass = data.selectedClass; // hämtar vald class
+
+    initializePlayer(this.selectedClass);
   }
 
   addMenuItem(x, y, text) {
@@ -26,6 +27,8 @@ class BattleScene extends Phaser.Scene {
     // grafisk design är min passion
     this.add.rectangle(400, 200, 500, 52, 0x2d3a80).setOrigin(0);
     this.add.rectangle(1220, 200, 500, 52, 0x2d3a80).setOrigin(0);
+    this.add.text(400, 100, `Class: ${this.player.class.name}`, { fontSize: '52px' });
+    this.add.text(400, 150, `Level: ${this.player.level}`, { fontSize: '52px' });
     this.add.text(400, 200, `${this.player.name}: ${this.player.health} HP`, { fontSize: '52px' });
     this.add.text(1220, 200, `${this.enemy.name}: ${this.enemy.health} HP`, { fontSize: '52px' });
   }
@@ -48,14 +51,11 @@ class BattleScene extends Phaser.Scene {
       this.inputLocked = false;
       return; // avsluta funktionen
   }
-    //else {
-    //  console.log(`${attacker.name} attacks ${target.name} with ${spell.name} for ${spell.damage} damage!`);
-    //}
 
     this.displayStats();
 
     this.hitAnimation = {
-      text: this.add.text(700, 100, "Animation in progress", { fontSize: '52px' }),
+      text: this.add.text(700, 500, "Animation in progress", { fontSize: '52px' }),
     }
 
     this.time.delayedCall(1000, () => {
@@ -75,9 +75,9 @@ class BattleScene extends Phaser.Scene {
 
   checkBattleOutcome() {
     if (this.enemy.health <= 0) {
-      this.add.text(960, 540, 'You win!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
+      this.add.text(960, 640, 'You win!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
 
-      player.level = (player.level || 1) + 1; // Default to level 1 if not already set
+      player.level = (player.level || 1) + 1; // copilot type shit
       console.log(`Player leveled up! Current level: ${player.level}`);
 
       this.levelData.completed = true;
@@ -95,6 +95,9 @@ class BattleScene extends Phaser.Scene {
   create() {
     // skapar spelaren
     this.player = player; //hämtar spelaren från player.js
+
+    console.log(`Player initialized with class: ${this.player.class.name}`);
+    console.log(`Player stats:`, this.player.stats);
 
     this.enemy = this.levelData.enemies[0]; // hämtar den första fienden från vald level
 
@@ -151,11 +154,14 @@ class BattleScene extends Phaser.Scene {
     // updaterar vald index beroende på input
     if (direction === "down") {
       this.currentSelection = (this.currentSelection + 1) % this.currentMenu.length;
-    } else if (direction === "up") {
+    }
+    else if (direction === "up") {
       this.currentSelection = (this.currentSelection - 1 + this.currentMenu.length) % this.currentMenu.length;
-    } else if (direction === "right") {
+    }
+    else if (direction === "right") {
       this.currentSelection = (this.currentSelection + 1) % this.currentMenu.length;
-    } else if (direction === "left") {
+    }
+    else if (direction === "left") {
       this.currentSelection = (this.currentSelection - 1 + this.currentMenu.length) % this.currentMenu.length;
     }
 
