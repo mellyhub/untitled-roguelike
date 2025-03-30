@@ -50,7 +50,7 @@ class BattleScene extends Phaser.Scene {
       this.checkBattleOutcome(); // går nog att skriva det här på ett bättre sätt
       this.inputLocked = false;
       return; // avsluta funktionen
-  }
+    }
 
     this.displayStats();
 
@@ -115,20 +115,20 @@ class BattleScene extends Phaser.Scene {
     // menyn representeras av en 2d array
     this.mainMenu = [
       { x: 0, y: 0, text: 'Slåss' },
-      { x: 200, y: 0, text: 'Bag' },
-      { x: 0, y: 50, text: 'Menu3' },
-      { x: 200, y: 50, text: 'Menu4' }
+      { x: 1, y: 0, text: 'Bag' },
+      { x: 0, y: 1, text: 'Menu3' },
+      { x: 1, y: 1, text: 'Menu4' },
     ];
 
     this.bagMenu = [
       { x: 0, y: 0, text: 'Potion' },
-      { x: 200, y: 0, text: 'Elixir' },
-      { x: 0, y: 50, text: 'Bomb' },
-      { x: 200, y: 50, text: 'Back' }
+      { x: 1, y: 0, text: 'Elixir' },
+      { x: 0, y: 1, text: 'Bomb' },
+      { x: 1, y: 1, text: 'Back' }
     ];
 
     this.currentMenu = this.mainMenu; // startar på main menyn
-    this.currentSelection = 0; // default
+    this.currentSelection = { x: 0, y: 0 }; // default
     this.renderMenu(this.currentMenu);
     this.displayStats();
   }
@@ -138,46 +138,71 @@ class BattleScene extends Phaser.Scene {
       this.menuItems.forEach(item => item.destroy());
     }
 
-    this.menuItems = menu.map((menuItem, index) => {
-      const text = this.add.text(menuItem.x, menuItem.y, menuItem.text, { fontSize: '52px' });
-      if (index === this.currentSelection) {
+    this.menuItems = menu.map(menuItem => {
+      const xPosition = 300 + menuItem.x * 200; // horisontell spacing
+      const yPosition = 850 + menuItem.y * 100; // vertikal spacing
+      const text = this.add.text(xPosition, yPosition, menuItem.text, { fontSize: '48px', fill: '#fff' }).setOrigin(0.5);
+
+      // highlightar valt item
+      if (menuItem.x == this.currentSelection.x && menuItem.y == this.currentSelection.y) {
         text.setColor('#ff0000');
       }
+
       return text;
     });
   }
 
-  handleSelection(direction) {
-    // resetar färg på alla menuItems
-    this.menuItems.forEach(item => item.setColor('#ffffff'));
+  changeSelection(deltaX, deltaY) {
+    // uppdaterar val
+    const newX = this.currentSelection.x + deltaX;
+    const newY = this.currentSelection.y + deltaY;
 
-    // updaterar vald index beroende på input
-    if (direction === "down") {
-      this.currentSelection = (this.currentSelection + 1) % this.currentMenu.length;
+    // förhindrar out of bounds
+    const isValidSelection = this.currentMenu.some(item => item.x == newX && item.y == newY);
+    if (isValidSelection) {
+      this.currentSelection = { x: newX, y: newY };
+      this.renderMenu(this.currentMenu); // rendrar menyn på nytt
     }
-    else if (direction === "up") {
-      this.currentSelection = (this.currentSelection - 1 + this.currentMenu.length) % this.currentMenu.length;
-    }
-    else if (direction === "right") {
-      this.currentSelection = (this.currentSelection + 1) % this.currentMenu.length;
-    }
-    else if (direction === "left") {
-      this.currentSelection = (this.currentSelection - 1 + this.currentMenu.length) % this.currentMenu.length;
-    }
+  }
 
-    // highligtar vald menuItem
-    this.menuItems[this.currentSelection].setColor('#ff0000');
+  selectMenuItem() {
+    // hittar valt item
+    const selectedItem = this.currentMenu.find(
+      item => item.x == this.currentSelection.x && item.y == this.currentSelection.y
+    );
+
+    console.log(selectedItem);
+
+    if (selectedItem) {
+      console.log(`Selected menu item: ${selectedItem.text}`);
+      // Handle menu item actions here
+      if (selectedItem.text == 'Slåss') {
+        console.log('Attack selected!');
+        this.executeAttack(this.player, this.player.weapon.castable.heavy_swing, this.enemy);
+      }
+      else if (selectedItem.text == 'Bag') {
+        console.log('Bag selected!');
+        this.switchToBagMenu();
+      }
+      else if (selectedItem.text == 'Back') {
+        console.log('Back selected!');
+        this.switchToMainMenu();
+      }
+      else {
+        console.log(`${selectedItem.text} selected`);
+      }
+    }
   }
 
   switchToBagMenu() {
     this.currentMenu = this.bagMenu;
-    this.currentSelection = 0;
+    this.currentSelection = { x: 0, y: 0 };
     this.renderMenu(this.currentMenu); // rendrar nya menyn
   }
 
   switchToMainMenu() {
     this.currentMenu = this.mainMenu;
-    this.currentSelection = 0;
+    this.currentSelection = { x: 0, y: 0 };
     this.renderMenu(this.currentMenu); // rendrar nya menyn
   }
 
@@ -186,29 +211,21 @@ class BattleScene extends Phaser.Scene {
       return; // ignorerar inputs (funkar lowkey inte lol)
     }
 
-    if (Phaser.Input.Keyboard.JustDown(this.cursors.down)) {
-      this.handleSelection("down");
-    }
     if (Phaser.Input.Keyboard.JustDown(this.cursors.up)) {
-      this.handleSelection("up");
+      this.changeSelection(0, -1); // Move up
     }
-    if (Phaser.Input.Keyboard.JustDown(this.cursors.right)) {
-      this.handleSelection("right");
+    else if (Phaser.Input.Keyboard.JustDown(this.cursors.down)) {
+      this.changeSelection(0, 1); // Move down
     }
-    if (Phaser.Input.Keyboard.JustDown(this.cursors.left)) {
-      this.handleSelection("left");
+    else if (Phaser.Input.Keyboard.JustDown(this.cursors.left)) {
+      this.changeSelection(-1, 0); // Move left
     }
+    else if (Phaser.Input.Keyboard.JustDown(this.cursors.right)) {
+      this.changeSelection(1, 0); // Move right
+    }
+
     if (Phaser.Input.Keyboard.JustDown(this.enterKey)) {
-      const selectedItem = this.currentMenu[this.currentSelection];
-      if (selectedItem.text === 'Slåss') {
-        this.executeAttack(this.player, this.player.weapon.castable.heavy_swing, this.enemy);
-      } else if (selectedItem.text === 'Bag') {
-        this.switchToBagMenu();
-      } else if (selectedItem.text === 'Back') {
-        this.switchToMainMenu();
-      } else {
-        console.log(`${selectedItem.text} selected`);
-      }
+      this.selectMenuItem();
     }
 
     // "M" byter mellan kartan och BattleScene
