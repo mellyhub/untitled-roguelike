@@ -15,7 +15,6 @@ class BattleScene extends Phaser.Scene {
   }
 
   init(data) {
-    console.log(data);
     this.levelData = data.level;
   }
 
@@ -35,19 +34,23 @@ class BattleScene extends Phaser.Scene {
     this.currentTurn = (this.currentTurn + 1) % 2;
   }
 
-  executeAttack(attacker, spell, defender) {
+  executeAttack(attacker, spell, target) {
     // pausar alla inputs medan attacken sker
     this.inputLocked = true;
 
-    console.log(player.stats);
-    defender.health -= spell.damage(player.stats);
+    // damage calc
+    target.health -= spell.damage(player.stats);
 
-    if (defender.health <= 0) {
-      console.log(`${defender.name} is defeated!`);
-    }
-    else {
-      console.log(`${attacker.name} attacks ${defender.name} with ${spell.name} for ${spell.damage} damage!`);
-    }
+    if (target.health <= 0) {
+      console.log(`${target.name} is defeated!`);
+      this.displayStats();
+      this.checkBattleOutcome(); // går nog att skriva det här på ett bättre sätt
+      this.inputLocked = false;
+      return; // avsluta funktionen
+  }
+    //else {
+    //  console.log(`${attacker.name} attacks ${target.name} with ${spell.name} for ${spell.damage} damage!`);
+    //}
 
     this.displayStats();
 
@@ -60,15 +63,11 @@ class BattleScene extends Phaser.Scene {
 
       this.passTurn();
 
-      this.checkBattleOutcome();
-
       // ai attackerar spelaren varje gång det är deras turn
-      if (this.currentTurn === 1) {
-        // hårdkodat så att ai alltid väljer deras första spell
+      if (this.currentTurn == 1 && !this.battleEnded) {
         const firstSpell = Object.values(this.enemy.weapon.castable)[0];
         this.executeAttack(this.enemy, firstSpell, this.player);
       }
-
       // tillåter inputs igen efter attacken
       this.inputLocked = false;
     });
@@ -77,6 +76,12 @@ class BattleScene extends Phaser.Scene {
   checkBattleOutcome() {
     if (this.enemy.health <= 0) {
       this.add.text(960, 540, 'You win!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
+
+      player.level = (player.level || 1) + 1; // Default to level 1 if not already set
+      console.log(`Player leveled up! Current level: ${player.level}`);
+
+      this.levelData.completed = true;
+
       this.time.delayedCall(1000, () => {
         this.scene.switch('MapScene');
       });
