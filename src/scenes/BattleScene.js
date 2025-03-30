@@ -182,16 +182,22 @@ class BattleScene extends Phaser.Scene {
       }
       else if (selectedItem.text == 'Bag') {
         console.log('Bag selected!');
-        this.switchToBagMenu();
+        this.switchMenu(this.bagMenu);
       }
       else if (selectedItem.text == 'Back') {
         console.log('Back selected!');
-        this.switchToMainMenu();
+        this.switchMenu(this.mainMenu);
       }
       else {
         console.log(`${selectedItem.text} selected`);
       }
     }
+  }
+
+  switchMenu(menu) {
+    this.currentMenu = menu;
+    this.currentSelection = { x: 0, y: 0 };
+    this.renderMenu(menu); // rendrar nya menyn
   }
 
   switchToBagMenu() {

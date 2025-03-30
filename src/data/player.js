@@ -7,7 +7,7 @@ const player = {
 	weapon: weapons.big_axe, // spelaren börjar alltid med big_axe
 	class: null,
 	stats: null,
-	talentPoints: 0,
+	talentPoints: 50,
 	level: 1,
 };
 
