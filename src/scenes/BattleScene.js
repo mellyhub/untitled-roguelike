@@ -5,11 +5,15 @@ class BattleScene extends Phaser.Scene {
     super('BattleScene');
   }
 
+  // Array of rendered elements (healthbar, text, etc..), used for removing elements before rerendering
+  renderedElements = [];
+
   preload() {
     // Load assets (images, sounds, etc.)
     this.load.image('background', 'src/assets/images/bg.png');
     this.load.image('player', 'src/assets/images/warrior-prototyp1.png');
     this.load.image('battleUi', 'src/assets/images/fight-ui-prototyp1.png');
+    this.load.image('goblin', 'src/assets/images/goblin-prototyp1.png');
   }
 
   init(data) {
@@ -23,73 +27,111 @@ class BattleScene extends Phaser.Scene {
     return this.add.text(x, y, text, { fontSize: '52px' })
   }
 
+  calculateHealthBarSize(unitHealth) {
+    const MIN_WIDTH = 0;
+    const MAX_WIDTH = 500;
+    const MAX_HEALTH = 1000;
+  
+    const clampedHealth = Phaser.Math.Clamp(unitHealth, 0, MAX_HEALTH);
+    let width = Phaser.Math.Linear(MIN_WIDTH, MAX_WIDTH, clampedHealth / MAX_HEALTH);
+  
+    return { width, height: 50 };
+  }
+
+  displayHealthBarBorder(x, y, width, height) {
+    const borderSize = 4;
+    this.add.rectangle(
+      x - borderSize / 2, 
+      y - borderSize / 2, 
+      width + borderSize, 
+      height + borderSize, 
+      Phaser.Display.Color.GetColor32(0, 0, 0, 255)
+    ).setOrigin(0);
+  }
+
   displayStats() {
-    // grafisk design är min passion
-    this.add.rectangle(400, 200, 500, 52, 0x2d3a80).setOrigin(0);
-    this.add.rectangle(1220, 200, 500, 52, 0x2d3a80).setOrigin(0);
-    this.add.text(400, 100, `Class: ${this.player.class.name}`, { fontSize: '52px' });
-    this.add.text(400, 150, `Level: ${this.player.level}`, { fontSize: '52px' });
-    this.add.text(400, 200, `${this.player.name}: ${this.player.health} HP`, { fontSize: '52px' });
-    this.add.text(1220, 200, `${this.enemy.name}: ${this.enemy.health} HP`, { fontSize: '52px' });
+    const COLOR_CODES = {
+      GREEN: Phaser.Display.Color.GetColor32(0, 255, 0, 255),
+      RED: Phaser.Display.Color.GetColor32(255, 0, 0, 255),
+      WHITE: Phaser.Display.Color.GetColor32(255, 255, 255, 255),
+      BLACK: Phaser.Display.Color.GetColor32(0, 0, 0, 255)
+    }
+
+    // Remove previous renders so it doesn't overlap
+    this.renderedElements.forEach(render => render.destroy());
+
+    const borderSize = 4;
+
+    // Player health bar
+    const playerHealthBarSize = this.calculateHealthBarSize(this.player.health);
+    this.displayHealthBarBorder(400, 200, 500, 50);
+    this.renderedElements.push(this.add.rectangle(400, 200, playerHealthBarSize.width, playerHealthBarSize.height, COLOR_CODES.GREEN).setOrigin(0));
+    this.renderedElements.push(this.add.text(400, 100, `Class: ${this.player.class.name}`, { fontSize: '52px' }));
+    this.renderedElements.push(this.add.text(400, 150, `Level: ${this.player.level}`, { fontSize: '52px' }));
+    this.renderedElements.push(this.add.text(400, 200, `${this.player.name}: ${Math.max(0, this.player.health)} HP`, { fontSize: '52px' }));
+
+    // Enemy health bar
+    const enemyHealthBarSize = this.calculateHealthBarSize(this.enemy.health);
+    this.displayHealthBarBorder(1220, 200, 500, 50);
+    this.renderedElements.push(this.add.rectangle(1220, 200, enemyHealthBarSize.width, enemyHealthBarSize.height, COLOR_CODES.RED).setOrigin(0));
+    this.renderedElements.push(this.add.text(1220, 200, `${this.enemy.name}: ${Math.max(0, this.enemy.health)} HP`, { fontSize: '52px' }));
   }
 
   passTurn() {
     this.currentTurn = (this.currentTurn + 1) % 2;
   }
 
-  executeAttack(attacker, spell, target) {
-    // pausar alla inputs medan attacken sker
+  async executeTurn() {
     this.inputLocked = true;
 
-    // damage calc
-    target.health -= spell.damage(player.stats);
+    await this.executeAttack(this.player, this.player.weapon.castable.heavy_swing, this.enemy);
 
-    if (target.health <= 0) {
-      console.log(`${target.name} is defeated!`);
-      this.displayStats();
-      this.checkBattleOutcome(); // går nog att skriva det här på ett bättre sätt
-      this.inputLocked = false;
-      return; // avsluta funktionen
+    if (this.enemy.health > 0) {
+      const firstSpell = Object.values(this.enemy.weapon.castable)[0];
+      await this.executeAttack(this.enemy, firstSpell, this.player);
     }
 
-    this.displayStats();
+    this.checkRoundOutcome();
+  }
 
-    this.hitAnimation = {
-      text: this.add.text(700, 500, "Animation in progress", { fontSize: '52px' }),
-    }
+  executeAttack(attacker, spell, target) {
+    return new Promise((resolve) => {
 
-    this.time.delayedCall(1000, () => {
-      this.hitAnimation.text.destroy();
+      const animationText = this.add.text(700, 500, `${attacker.name} attacks...`, { fontSize: '52px', fill: '#fff'});
 
-      this.passTurn();
-
-      // ai attackerar spelaren varje gång det är deras turn
-      if (this.currentTurn == 1 && !this.battleEnded) {
-        const firstSpell = Object.values(this.enemy.weapon.castable)[0];
-        this.executeAttack(this.enemy, firstSpell, this.player);
-      }
-      // tillåter inputs igen efter attacken
-      this.inputLocked = false;
+      this.time.delayedCall(1000, () => {
+        animationText.destroy();
+        target.health -= spell.damage(attacker.stats);
+        //console.log(`${attacker.name} attacks ${target.name} with ${spell.name} for ${spell.damage(attacker.stats)} damage.`);
+        this.displayStats();
+        resolve();
+      });
+      
     });
   }
 
-  checkBattleOutcome() {
+  async switchScene() {
+    await new Promise(resolve => this.time.delayedCall(3000, resolve));
+    this.scene.switch('MapScene');
+    this.inputLocked = false;
+  }
+
+  async checkRoundOutcome() {
     if (this.enemy.health <= 0) {
       this.add.text(960, 640, 'You win!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
-
-      player.level = (player.level || 1) + 1; // copilot type shit
-      console.log(`Player leveled up! Current level: ${player.level}`);
-
+      player.level++;
       this.levelData.completed = true;
 
-      this.time.delayedCall(1000, () => {
-        this.scene.switch('MapScene');
-      });
+      await this.switchScene();
+
+      return;
     }
-    else if (this.player.health <= 0) {
+
+    if (this.player.health <= 0) {
       this.add.text(960, 540, 'You lose!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
       this.scene.pause();
     }
+    this.inputLocked = false;
   }
 
   create() {
@@ -110,6 +152,7 @@ class BattleScene extends Phaser.Scene {
     this.add.image(960, 540, 'background').setAlpha(0.1);
     this.add.image(960, 540, 'battleUi');
     this.add.image(480, 540, 'player').setScale(0.4);
+    this.add.image(1440, 540, 'goblin');
     this.hitAnimation;
 
     // menyn representeras av en 2d array
@@ -171,14 +214,14 @@ class BattleScene extends Phaser.Scene {
       item => item.x == this.currentSelection.x && item.y == this.currentSelection.y
     );
 
-    console.log(selectedItem);
+    //console.log(selectedItem);
 
     if (selectedItem) {
-      console.log(`Selected menu item: ${selectedItem.text}`);
+      //console.log(`Selected menu item: ${selectedItem.text}`);
       // Handle menu item actions here
       if (selectedItem.text == 'Slåss') {
         console.log('Attack selected!');
-        this.executeAttack(this.player, this.player.weapon.castable.heavy_swing, this.enemy);
+        this.executeTurn();  
       }
       else if (selectedItem.text == 'Bag') {
         console.log('Bag selected!');
