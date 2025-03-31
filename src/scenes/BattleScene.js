@@ -29,92 +29,44 @@ class BattleScene extends Phaser.Scene {
     this.add.rectangle(1220, 200, 500, 52, 0x2d3a80).setOrigin(0);
     this.add.text(400, 100, `Class: ${this.player.class.name}`, { fontSize: '52px' });
     this.add.text(400, 150, `Level: ${this.player.level}`, { fontSize: '52px' });
-    this.add.text(400, 200, `${this.player.name}: ${this.player.health} HP`, { fontSize: '52px' });
-    this.add.text(1220, 200, `${this.enemy.name}: ${this.enemy.health} HP`, { fontSize: '52px' });
+    this.add.text(400, 200, `${this.player.name}: ${Math.max(0, this.player.health)} HP`, { fontSize: '52px' });
+    this.add.text(1220, 200, `${this.enemy.name}: ${Math.max(0, this.enemy.health)} HP`, { fontSize: '52px' });
   }
 
   passTurn() {
     this.currentTurn = (this.currentTurn + 1) % 2;
   }
 
-  executeTurn(currentTurn) {
-      this.inputLocked = true;
-
-      if (this.battleEnded) {
-        console.log("The battle has already ended. No further actions are allowed.");
-        return;
-      }
-      if (this.enemy.health <= 0) {
-        this.battleEnded = true;
-        this.inputLocked = false;
-        return;
-      }
-
-      if (currentTurn == 0) {
-        this.executeAttack(this.player, this.player.weapon.castable.heavy_swing, this.enemy);
-        this.passTurn();
-      }
-      else if (currentTurn == 1) {
+  executeTurn() {
+      // The player attacks
+      this.executeAttack(this.player, this.player.weapon.castable.heavy_swing, this.enemy);
+      // The enemy attacks, if not defeated
+      if (this.enemy.health > 0) {
         const firstSpell = Object.values(this.enemy.weapon.castable)[0];
         this.executeAttack(this.enemy, firstSpell, this.player);
-        this.passTurn();
       }
-
-      this.displayStats();
-      this.checkBattleOutcome();
-      
-
-      this.inputLocked = false;
-
-
     }
 
   executeAttack(attacker, spell, target) {
-    target.health -= spell.damage(attacker.stats);
+    this.inputLocked = true; // Locks inputs during animation
 
-    //this.displayStats();
-
-    this.hitAnimation = {
-        text: this.add.text(700, 500, "Animation in progress", { fontSize: '52px' }),
-    };
-
+    const animationText = this.add.text(700, 500, "Animation in progress...", { fontSize: '52px', fill: '#fff'}); // Animation text
+    // Delay to simulate animation
     this.time.delayedCall(1000, () => {
-        this.hitAnimation.text.destroy();
-
-        //this.passTurn();
-
-        // AI attacks the player if it's their turn
-        /*if (this.currentTurn == 1 && !this.battleEnded) {
-            const firstSpell = Object.values(this.enemy.weapon.castable)[0];
-            this.executeAttack(this.enemy, firstSpell, this.player);
-        }*/
-
-        // Allow inputs again after the attack
-        //this.inputLocked = false;
-        //resolve("Attacked finished");
+      animationText.destroy(); // Removes the animation text
+      // Calculates and logs damage
+      target.health -= spell.damage(attacker.stats);
+      console.log(`${attacker.name} attacks ${target.name} with ${spell.name} for ${spell.damage(attacker.stats)} damage.`); 
+      // Displays stats and checks if battle is over
+      this.displayStats();
+      this.checkBattleOutcome();
+      
+      this.inputLocked = false; // Ulocks inputs after animation
     });
   }
 
-    /*
-  if (target.health <= 0) {
-      console.log(`${target.name} is defeated!`);
-      this.battleEnded = true; // Mark the battle as ended
-      this.checkBattleOutcome(); // Handle the battle outcome
-      this.inputLocked = false;
-      resolve("Jens was defeated");
-      return; // Exit the function
-  }
-  
-
-  if (target.health <= 0) {
-    this.battleEnded = true;
-    this.inputLocked = false;
-    resolve("Jens was defeated");
-    return;
-  }
-  */
-
   checkBattleOutcome() {
+    this.inputLocked = true; // Locks inputs during check
     if (this.enemy.health <= 0) {
       this.add.text(960, 640, 'You win!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
 
@@ -125,6 +77,8 @@ class BattleScene extends Phaser.Scene {
 
       this.time.delayedCall(1000, () => {
         this.scene.switch('MapScene');
+
+        this.inputLocked = false; // Ulocks inputs after switching to MapScene
       });
     }
     else if (this.player.health <= 0) {
@@ -219,7 +173,7 @@ class BattleScene extends Phaser.Scene {
       // Handle menu item actions here
       if (selectedItem.text == 'Slåss') {
         console.log('Attack selected!');
-        this.executeTurn(this.currentTurn);  
+        this.executeTurn();  
       }
       else if (selectedItem.text == 'Bag') {
         console.log('Bag selected!');
