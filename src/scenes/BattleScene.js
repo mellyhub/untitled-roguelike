@@ -7,6 +7,8 @@ class BattleScene extends Phaser.Scene {
 
   // Array of rendered elements (healthbar, text, etc..), used for removing elements before rerendering
   renderedElements = [];
+  playerStartHP = 0;
+  enemyStartHP = 0;
 
   preload() {
     // Load assets (images, sounds, etc.)
@@ -27,14 +29,11 @@ class BattleScene extends Phaser.Scene {
     return this.add.text(x, y, text, { fontSize: '52px' })
   }
 
-  calculateHealthBarSize(unitHealth) {
-    const MIN_WIDTH = 0;
+  calculateHealthBarSize(maxUnitHealth, currentUnitHealth) {
     const MAX_WIDTH = 500;
-    const MAX_HEALTH = 1000;
-  
-    const clampedHealth = Phaser.Math.Clamp(unitHealth, 0, MAX_HEALTH);
-    let width = Phaser.Math.Linear(MIN_WIDTH, MAX_WIDTH, clampedHealth / MAX_HEALTH);
-  
+    const clampedHealth = Phaser.Math.Clamp(currentUnitHealth, 0, maxUnitHealth);
+    let width = (clampedHealth / maxUnitHealth) * MAX_WIDTH;
+
     return { width, height: 50 };
   }
 
@@ -63,7 +62,7 @@ class BattleScene extends Phaser.Scene {
     const borderSize = 4;
 
     // Player health bar
-    const playerHealthBarSize = this.calculateHealthBarSize(this.player.health);
+    const playerHealthBarSize = this.calculateHealthBarSize(this.playerStartHP, this.player.health);
     this.displayHealthBarBorder(400, 200, 500, 50);
     this.renderedElements.push(this.add.rectangle(400, 200, playerHealthBarSize.width, playerHealthBarSize.height, COLOR_CODES.GREEN).setOrigin(0));
     this.renderedElements.push(this.add.text(400, 100, `Class: ${this.player.class.name}`, { fontSize: '52px' }));
@@ -71,7 +70,7 @@ class BattleScene extends Phaser.Scene {
     this.renderedElements.push(this.add.text(400, 200, `${this.player.name}: ${Math.max(0, this.player.health)} HP`, { fontSize: '52px' }));
 
     // Enemy health bar
-    const enemyHealthBarSize = this.calculateHealthBarSize(this.enemy.health);
+    const enemyHealthBarSize = this.calculateHealthBarSize(this.enemyStartHP, this.enemy.health);
     this.displayHealthBarBorder(1220, 200, 500, 50);
     this.renderedElements.push(this.add.rectangle(1220, 200, enemyHealthBarSize.width, enemyHealthBarSize.height, COLOR_CODES.RED).setOrigin(0));
     this.renderedElements.push(this.add.text(1220, 200, `${this.enemy.name}: ${Math.max(0, this.enemy.health)} HP`, { fontSize: '52px' }));
@@ -137,11 +136,13 @@ class BattleScene extends Phaser.Scene {
   create() {
     // skapar spelaren
     this.player = player; //hämtar spelaren från player.js
+    this.playerStartHP = player.health;
 
     console.log(`Player initialized with class: ${this.player.class.name}`);
     console.log(`Player stats:`, this.player.stats);
 
     this.enemy = this.levelData.enemies[0]; // hämtar den första fienden från vald level
+    this.enemyStartHP = this.enemy.health;
 
     this.turnOrder = [this.player, this.enemy];
     this.currentTurn = 0;
