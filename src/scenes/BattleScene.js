@@ -37,48 +37,89 @@ class BattleScene extends Phaser.Scene {
     this.currentTurn = (this.currentTurn + 1) % 2;
   }
 
-  executeAttack(attacker, spell, target) {
-    // pausar alla inputs medan attacken sker
-    this.inputLocked = true;
+  executeTurn(currentTurn) {
+      this.inputLocked = true;
 
-    // damage calc
-    target.health -= spell.damage(player.stats);
+      if (this.battleEnded) {
+        console.log("The battle has already ended. No further actions are allowed.");
+        return;
+      }
+      if (this.enemy.health <= 0) {
+        this.battleEnded = true;
+        this.inputLocked = false;
+        return;
+      }
 
-    if (target.health <= 0) {
-      console.log(`${target.name} is defeated!`);
-      this.displayStats();
-      this.checkBattleOutcome(); // går nog att skriva det här på ett bättre sätt
-      this.inputLocked = false;
-      return; // avsluta funktionen
-    }
-
-    this.displayStats();
-
-    this.hitAnimation = {
-      text: this.add.text(700, 500, "Animation in progress", { fontSize: '52px' }),
-    }
-
-    this.time.delayedCall(1000, () => {
-      this.hitAnimation.text.destroy();
-
-      this.passTurn();
-
-      // ai attackerar spelaren varje gång det är deras turn
-      if (this.currentTurn == 1 && !this.battleEnded) {
+      if (currentTurn == 0) {
+        this.executeAttack(this.player, this.player.weapon.castable.heavy_swing, this.enemy);
+        this.passTurn();
+      }
+      else if (currentTurn == 1) {
         const firstSpell = Object.values(this.enemy.weapon.castable)[0];
         this.executeAttack(this.enemy, firstSpell, this.player);
+        this.passTurn();
       }
-      // tillåter inputs igen efter attacken
+
+      this.displayStats();
+      this.checkBattleOutcome();
+      
+
       this.inputLocked = false;
+
+
+    }
+
+  executeAttack(attacker, spell, target) {
+    target.health -= spell.damage(attacker.stats);
+
+    //this.displayStats();
+
+    this.hitAnimation = {
+        text: this.add.text(700, 500, "Animation in progress", { fontSize: '52px' }),
+    };
+
+    this.time.delayedCall(1000, () => {
+        this.hitAnimation.text.destroy();
+
+        //this.passTurn();
+
+        // AI attacks the player if it's their turn
+        /*if (this.currentTurn == 1 && !this.battleEnded) {
+            const firstSpell = Object.values(this.enemy.weapon.castable)[0];
+            this.executeAttack(this.enemy, firstSpell, this.player);
+        }*/
+
+        // Allow inputs again after the attack
+        //this.inputLocked = false;
+        //resolve("Attacked finished");
     });
   }
+
+    /*
+  if (target.health <= 0) {
+      console.log(`${target.name} is defeated!`);
+      this.battleEnded = true; // Mark the battle as ended
+      this.checkBattleOutcome(); // Handle the battle outcome
+      this.inputLocked = false;
+      resolve("Jens was defeated");
+      return; // Exit the function
+  }
+  
+
+  if (target.health <= 0) {
+    this.battleEnded = true;
+    this.inputLocked = false;
+    resolve("Jens was defeated");
+    return;
+  }
+  */
 
   checkBattleOutcome() {
     if (this.enemy.health <= 0) {
       this.add.text(960, 640, 'You win!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
 
       player.level = (player.level || 1) + 1; // copilot type shit
-      console.log(`Player leveled up! Current level: ${player.level}`);
+      //console.log(`Player leveled up! Current level: ${player.level}`);
 
       this.levelData.completed = true;
 
@@ -171,14 +212,14 @@ class BattleScene extends Phaser.Scene {
       item => item.x == this.currentSelection.x && item.y == this.currentSelection.y
     );
 
-    console.log(selectedItem);
+    //console.log(selectedItem);
 
     if (selectedItem) {
-      console.log(`Selected menu item: ${selectedItem.text}`);
+      //console.log(`Selected menu item: ${selectedItem.text}`);
       // Handle menu item actions here
       if (selectedItem.text == 'Slåss') {
         console.log('Attack selected!');
-        this.executeAttack(this.player, this.player.weapon.castable.heavy_swing, this.enemy);
+        this.executeTurn(this.currentTurn);  
       }
       else if (selectedItem.text == 'Bag') {
         console.log('Bag selected!');

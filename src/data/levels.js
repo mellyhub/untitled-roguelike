@@ -25,6 +25,11 @@ const levels = [
                 name: "Goblin",
                 health: getRandomHealth(seed, 50, 100),
                 weapon: weapons.dagger, // hämtar Dagger från weapons.js
+                stats: {
+                    strength: 0,
+                    agility: 0,
+                    intelligence: 0
+                },
             },
         ]
     },
@@ -36,6 +41,11 @@ const levels = [
                 name: "Jens",
                 health: getRandomHealth(seed, 120, 150),
                 weapon: weapons.dagger, // hämtar Dagger från weapons.js
+                stats: {
+                    strength: 0,
+                    agility: 0,
+                    intelligence: 0
+                },
             },
         ]
     },
@@ -47,6 +57,11 @@ const levels = [
                 name: "Megadraken",
                 health: 200,
                 weapon: weapons.dragon, // hämtar Dragon från weapons.js
+                stats: {
+                    strength: 0,
+                    agility: 0,
+                    intelligence: 0
+                },
             },
         ]
     }
