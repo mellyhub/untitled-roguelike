@@ -10,6 +10,7 @@ class BattleScene extends Phaser.Scene {
     this.load.image('background', 'src/assets/images/bg.png');
     this.load.image('player', 'src/assets/images/warrior-prototyp1.png');
     this.load.image('battleUi', 'src/assets/images/fight-ui-prototyp1.png');
+    this.load.image('goblin', 'src/assets/images/goblin-prototyp1.png');
   }
 
   init(data) {
@@ -105,6 +106,7 @@ class BattleScene extends Phaser.Scene {
     this.add.image(960, 540, 'background').setAlpha(0.1);
     this.add.image(960, 540, 'battleUi');
     this.add.image(480, 540, 'player').setScale(0.4);
+    this.add.image(1440, 540, 'goblin');
     this.hitAnimation;
 
     // menyn representeras av en 2d array
