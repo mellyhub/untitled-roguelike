@@ -1,3 +1,5 @@
+import seedrandom from 'seedrandom';
+
 class BattleScene extends Phaser.Scene {
   constructor() {
     super('BattleScene');
@@ -126,6 +128,12 @@ class BattleScene extends Phaser.Scene {
     this.inputLocked = false;
   }
 
+  getEnemy() {
+    const rng = seedrandom(this.seed);
+    const random = rng();
+    this.enemy = this.levelData.enemies[Math.floor(random * this.levelData.enemies.length)];
+  }
+
   create(data) {
     this.player = data.player;
     this.levelData = data.level;
@@ -136,7 +144,7 @@ class BattleScene extends Phaser.Scene {
     console.log(`Player initialized with class: ${this.player.class.name}`);
     console.log(`Player stats:`, this.player.class.stats);
 
-    this.enemy = this.levelData.enemies[0]; // hämtar den första fienden från vald level
+    this.getEnemy();
     this.enemyStartHP = this.enemy.health;
 
     this.turnOrder = [this.player, this.enemy];
