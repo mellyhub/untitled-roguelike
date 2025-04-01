@@ -17,7 +17,7 @@ class MainMenuScene extends Phaser.Scene {
     this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
 
     const music = this.sound.add("background", { loop: true, volume: 0.1 });
-    music.play();
+    //music.play();
 
     this.add.text(960, 400, 'Choose Class', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
 

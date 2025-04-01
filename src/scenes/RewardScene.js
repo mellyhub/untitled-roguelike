@@ -1,4 +1,5 @@
 import weapons from '../data/weapons.js';
+import spells from '../data/spells.js';
 import seedrandom from 'seedrandom';
 
 // generating random health by using the seed
@@ -50,9 +51,9 @@ class RewardScene extends Phaser.Scene {
                 description: "Learns the Frostbolt spell.",
                 // how fix ?
                 effect: () => {
-                    this.player.weapon.castable = {
-                        ...this.player.weapon.castable,
-                        frostbolt: this.player.weapon.castable.frostbolt,
+                    this.player.spells = {
+                        ...this.player.spells,
+                        frostbolt: spells.frostbolt,
                     };
                 }
             },
@@ -121,6 +122,8 @@ class RewardScene extends Phaser.Scene {
         selectedReward.effect();
         
         console.log(`Selected reward: ${selectedReward.name}`);
+
+        console.log(this.player);
 
         this.scene.start('MapScene', { player: this.player });
     }
