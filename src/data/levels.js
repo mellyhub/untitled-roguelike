@@ -24,6 +24,15 @@ function generateLevels(seed) {
                 enemies.megadraken(seed),
             ],
         },
+        {
+            name: "Random",
+            completed: false,
+            enemies: [
+                enemies.goblin(seed),
+                enemies.jens(seed),
+                enemies.megadraken(seed)
+            ],
+        },
     ];
 }
 
