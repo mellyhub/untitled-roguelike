@@ -7,14 +7,14 @@ class MapScene extends Phaser.Scene {
 
     preload() {
         // Load assets (images, sounds, etc.)
-        this.load.image('map', 'src/assets/images/castle.jpg');
+        this.load.image('map', 'src/assets/images/map.png');
     }
 
     create(data) {
         this.player = data.player; // gets player object that we created in MainMenu
         this.seed = data.seed;
         this.levels = generateLevels(this.seed);
-        this.add.image(0, 0, 'map').setOrigin(0).setScale(1.25);
+        this.add.image(0, 0, 'map').setOrigin(0);
 
         // dynamically generates level nodes
         const xPos = 800;
