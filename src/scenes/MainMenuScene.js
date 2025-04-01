@@ -74,7 +74,12 @@ class MainMenuScene extends Phaser.Scene {
     console.log(`Selected class: ${selectedClass.name}`);
     this.player.class = selectedClass;
     this.player.stats = selectedClass.stats;
-    this.scene.start('MapScene', { player: this.player });
+
+    // setting the seed for the run
+    const seed = String(Date.now());
+    console.log(`Seed: ${seed}`);
+
+    this.scene.start('MapScene', { player: this.player, seed: this.seed });
   }
 }
 

@@ -1,4 +1,4 @@
-import levels from '../data/levels.js';
+import generateLevels from '../data/levels.js';
 
 class MapScene extends Phaser.Scene {
     constructor() {
@@ -12,29 +12,17 @@ class MapScene extends Phaser.Scene {
 
     create(data) {
         this.player = data.player; // gets player object that we created in MainMenu
+        this.seed = data.seed;
+        this.levels = generateLevels(this.seed);
         this.add.image(0, 0, 'map').setOrigin(0).setScale(1.25);
 
-        // levelNodes kanske bör ligga i en separat fil?
-        this.levelNodes = [
-            {
-                level: levels[0],
-                render: this.add.rectangle(440, 300, 50, 50, 0x000000, 0.7),
-                text: this.add.text(440, 300, "1", { fontSize: '20px' }),
-                completed: levels[0].completed
-            },
-            {
-                level: levels[1],
-                render: this.add.rectangle(600, 420, 50, 50, 0x000000, 0.7),
-                text: this.add.text(600, 420, "2", { fontSize: '20px' }),
-                completed: levels[1].completed
-            },
-            {
-                level: levels[2],
-                render: this.add.rectangle(770, 420, 50, 50, 0x000000, 0.7),
-                text: this.add.text(770, 420, "3", { fontSize: '20px' }),
-                completed: levels[2].completed
-            },
-        ];
+        // dynamically generates level nodes
+        this.levelNodes = this.levels.map((level, index) => ({
+            level: level,
+            render: this.add.rectangle(440 + index * 160, 300, 50, 50, 0x000000, 0.7),
+            text: this.add.text(440 + index * 160, 300, `${index + 1}`, { fontSize: '20px' }),
+            completed: level.completed,
+        }));
 
         // Update the appearance of all nodes based on their completion status
         this.levelNodes.forEach((node, index) => {
@@ -135,7 +123,7 @@ class MapScene extends Phaser.Scene {
     startLevel(index) {
         // startar battlescene för vald index
         console.log(`Starting level ${index + 1}`);
-        this.scene.start('BattleScene', { level: this.levelNodes[index].level, player: this.player });
+        this.scene.start('BattleScene', { level: this.levelNodes[index].level, player: this.player, seed: this.seed });
 
         // markerar banan som completed efter att den startas
         // lite fult skrivet kanske?

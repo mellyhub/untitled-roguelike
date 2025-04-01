@@ -126,7 +126,9 @@ class BattleScene extends Phaser.Scene {
 
   create(data) {
     this.player = data.player;
-    this.levelData = data.level
+    this.levelData = data.level;
+    this.seed = data.seed;
+
     this.playerStartHP = this.player.health;
 
     console.log(`Player initialized with class: ${this.player.class.name}`);
