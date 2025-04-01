@@ -1,5 +1,3 @@
-import player, { initializePlayer } from '../data/player.js';
-
 class BattleScene extends Phaser.Scene {
   constructor() {
     super('BattleScene');
@@ -16,13 +14,6 @@ class BattleScene extends Phaser.Scene {
     this.load.image('player', 'src/assets/images/warrior-prototyp1.png');
     this.load.image('battleUi', 'src/assets/images/fight-ui-prototyp1.png');
     this.load.image('goblin', 'src/assets/images/goblin-prototyp1.png');
-  }
-
-  init(data) {
-    this.levelData = data.level;
-    this.selectedClass = data.selectedClass; // hämtar vald class
-
-    initializePlayer(this.selectedClass);
   }
 
   addMenuItem(x, y, text) {
@@ -101,7 +92,7 @@ class BattleScene extends Phaser.Scene {
       this.time.delayedCall(1000, () => {
         animationText.destroy();
         target.health -= spell.damage(attacker.stats);
-        //console.log(`${attacker.name} attacks ${target.name} with ${spell.name} for ${spell.damage(attacker.stats)} damage.`);
+        console.log(`${attacker.name} attacks ${target.name} with ${spell.name} for ${spell.damage(attacker.stats)} damage.`);
         this.displayStats();
         resolve();
       });
@@ -118,7 +109,7 @@ class BattleScene extends Phaser.Scene {
   async checkRoundOutcome() {
     if (this.enemy.health <= 0) {
       this.add.text(960, 640, 'You win!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
-      player.level++;
+      this.player.level++;
       this.levelData.completed = true;
 
       await this.switchScene();
@@ -133,13 +124,13 @@ class BattleScene extends Phaser.Scene {
     this.inputLocked = false;
   }
 
-  create() {
-    // skapar spelaren
-    this.player = player; //hämtar spelaren från player.js
-    this.playerStartHP = player.health;
+  create(data) {
+    this.player = data.player;
+    this.levelData = data.level
+    this.playerStartHP = this.player.health;
 
     console.log(`Player initialized with class: ${this.player.class.name}`);
-    console.log(`Player stats:`, this.player.stats);
+    console.log(`Player stats:`, this.player.class.stats);
 
     this.enemy = this.levelData.enemies[0]; // hämtar den första fienden från vald level
     this.enemyStartHP = this.enemy.health;
@@ -215,10 +206,7 @@ class BattleScene extends Phaser.Scene {
       item => item.x == this.currentSelection.x && item.y == this.currentSelection.y
     );
 
-    //console.log(selectedItem);
-
     if (selectedItem) {
-      //console.log(`Selected menu item: ${selectedItem.text}`);
       // Handle menu item actions here
       if (selectedItem.text == 'Slåss') {
         console.log('Attack selected!');
@@ -242,18 +230,6 @@ class BattleScene extends Phaser.Scene {
     this.currentMenu = menu;
     this.currentSelection = { x: 0, y: 0 };
     this.renderMenu(menu); // rendrar nya menyn
-  }
-
-  switchToBagMenu() {
-    this.currentMenu = this.bagMenu;
-    this.currentSelection = { x: 0, y: 0 };
-    this.renderMenu(this.currentMenu); // rendrar nya menyn
-  }
-
-  switchToMainMenu() {
-    this.currentMenu = this.mainMenu;
-    this.currentSelection = { x: 0, y: 0 };
-    this.renderMenu(this.currentMenu); // rendrar nya menyn
   }
 
   update() {

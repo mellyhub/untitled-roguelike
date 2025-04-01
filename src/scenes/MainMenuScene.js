@@ -1,4 +1,5 @@
 import classes from "../data/classes";
+import player from "../data/player";
 
 class MainMenuScene extends Phaser.Scene {
   constructor() {
@@ -10,6 +11,7 @@ class MainMenuScene extends Phaser.Scene {
   }
 
   create() {
+    this.player = player;
     this.cursors = this.input.keyboard.createCursorKeys();
     this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
 
@@ -70,9 +72,9 @@ class MainMenuScene extends Phaser.Scene {
     // hämtar classen som är selectad
     const selectedClass = this.classArray[this.currentSelection];
     console.log(`Selected class: ${selectedClass.name}`);
-
-    // skickar med den valda classen till MapScene
-    this.scene.start('MapScene', { selectedClass });
+    this.player.class = selectedClass;
+    this.player.stats = selectedClass.stats;
+    this.scene.start('MapScene', { player: this.player });
   }
 }
 
