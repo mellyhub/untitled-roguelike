@@ -37,6 +37,18 @@ const weapons = {
         {
             heavy_swing: spells.heavy_swing,
         }   
+    },
+    jens_sword: {
+        name: "Jens Svärd",
+        stats: {
+            strength: 1000,
+            agility: 1000,
+            intelligence: 1000,
+        },
+        castable:
+        {
+            heavy_swing: spells.heavy_swing,
+        }   
     }
 };
 

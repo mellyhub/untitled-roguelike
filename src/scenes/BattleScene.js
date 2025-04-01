@@ -104,7 +104,7 @@ class BattleScene extends Phaser.Scene {
 
   async switchScene() {
     await new Promise(resolve => this.time.delayedCall(3000, resolve));
-    this.scene.switch('MapScene');
+    this.scene.start('RewardScene', { player: this.player, seed: this.seed });
     this.inputLocked = false;
   }
 
