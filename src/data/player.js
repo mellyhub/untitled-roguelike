@@ -4,6 +4,7 @@ const player = {
 	name: "Player",
 	health: 1000,
 	weapon: weapons.big_axe, // spelaren börjar alltid med big_axe
+	spells: {},
 	class: null,
 	stats: null,
 	talentPoints: 50,

@@ -1,4 +1,5 @@
 import weapons from '../data/weapons.js';
+import spells from '../data/spells.js';
 import seedrandom from 'seedrandom';
 
 // generating random health by using the seed
@@ -6,6 +7,15 @@ function getRandomStat(player, seed) {
     const rng = seedrandom(seed);
     const statKeys = Object.keys(player.stats);
     return statKeys[Math.floor(rng() * statKeys.length)];
+}
+
+function getRandomWeapon(seed) {
+    const rng = seedrandom(seed);
+    const weaponKeys = Object.keys(weapons);
+    const randomKey = weaponKeys[Math.floor(rng() * weaponKeys.length)];
+    const randomWeapon = weapons[randomKey];
+    console.log(`Selected weapon: ${randomWeapon.name}`);
+    return randomWeapon;
 }
 
 class RewardScene extends Phaser.Scene {
@@ -22,12 +32,14 @@ class RewardScene extends Phaser.Scene {
         this.player = data.player;
         this.seed = data.seed;
 
-        const randomStat = getRandomStat(this.player, this.seed)
+        const randomStat = getRandomStat(this.player, this.seed);
+        const randomWeapon = getRandomWeapon(this.seed);
+        console.log(randomWeapon);
         this.rewards = [
             {
-                name: "Weapon:\nJens svärd",
-                description: "Equips Jens Svärd.",
-                effect: () => { this.player.weapon = weapons.jens_sword }
+                name: `Weapon:\n${randomWeapon.name}`,
+                description: "Equip a new weapon.",
+                effect: () => { this.player.weapon = weapons.randomWeapon }
             },
             {
                 name: `Gain 5 ${randomStat}`,
@@ -39,9 +51,9 @@ class RewardScene extends Phaser.Scene {
                 description: "Learns the Frostbolt spell.",
                 // how fix ?
                 effect: () => {
-                    this.player.weapon.castable = {
-                        ...this.player.weapon.castable,
-                        frostbolt: this.player.weapon.castable.frostbolt,
+                    this.player.spells = {
+                        ...this.player.spells,
+                        frostbolt: spells.frostbolt,
                     };
                 }
             },
@@ -110,6 +122,8 @@ class RewardScene extends Phaser.Scene {
         selectedReward.effect();
         
         console.log(`Selected reward: ${selectedReward.name}`);
+
+        console.log(this.player);
 
         this.scene.start('MapScene', { player: this.player });
     }
