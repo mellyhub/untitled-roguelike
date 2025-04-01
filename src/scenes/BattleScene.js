@@ -69,10 +69,6 @@ class BattleScene extends Phaser.Scene {
     this.renderedElements.push(this.add.text(1220, 200, `${this.enemy.name}: ${Math.max(0, this.enemy.health)} HP`, { fontSize: '52px' }));
   }
 
-  passTurn() {
-    this.currentTurn = (this.currentTurn + 1) % 2;
-  }
-
   async executeTurn() {
     this.inputLocked = true;
 
@@ -100,7 +96,6 @@ class BattleScene extends Phaser.Scene {
         this.displayStats();
         resolve();
       });
-      
     });
   }
 
@@ -125,6 +120,7 @@ class BattleScene extends Phaser.Scene {
       this.add.text(960, 540, 'You lose!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
       this.scene.pause();
     }
+    this.totalTurns++;
     this.inputLocked = false;
   }
 
@@ -148,7 +144,8 @@ class BattleScene extends Phaser.Scene {
     this.enemyStartHP = this.enemy.health;
 
     this.turnOrder = [this.player, this.enemy];
-    this.currentTurn = 0;
+    this.totalTurns = 0;
+    this.currentTurn = this.totalTurns % 2;
 
     this.cursors = this.input.keyboard.createCursorKeys(); // lägger till arrow keys
     this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER); // lägger till enter key
