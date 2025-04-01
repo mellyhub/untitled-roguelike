@@ -77,6 +77,8 @@ class BattleScene extends Phaser.Scene {
     await this.executeAttack(this.player, this.player.weapon.castable.heavy_swing, this.enemy);
 
     if (this.enemy.health > 0) {
+      // ai for opponent
+      // currently hardcoded to always use the first spell
       const firstSpell = Object.values(this.enemy.weapon.castable)[0];
       await this.executeAttack(this.enemy, firstSpell, this.player);
     }
