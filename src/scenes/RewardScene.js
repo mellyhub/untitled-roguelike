@@ -49,7 +49,6 @@ class RewardScene extends Phaser.Scene {
             {
                 name: "Gain spell:\nFrostbolt",
                 description: "Learns the Frostbolt spell.",
-                // how fix ?
                 effect: () => {
                     this.player.spells = {
                         ...this.player.spells,
@@ -64,13 +63,15 @@ class RewardScene extends Phaser.Scene {
 
         this.renderCards();
 
-        this.cursors = this.input.keyboard.createCursorKeys();
-        this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
-
-        this.add.text(960, 700, 'Use Left/Right to navigate and Enter to select', {
+        this.descriptionText = this.add.text(960, 700, this.rewards[this.currentSelection].description, {
             fontSize: '32px',
             fill: '#fff',
+            wordWrap: { width: 800 },
+            align: 'center',
         }).setOrigin(0.5);
+
+        this.cursors = this.input.keyboard.createCursorKeys();
+        this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
     }
 
     renderCards() {
@@ -83,7 +84,8 @@ class RewardScene extends Phaser.Scene {
             // highlight selected card
             if (index === this.currentSelection) {
                 card.setTint(0xffff00); // highlight in yellow
-            } else {
+            }
+            else {
                 card.clearTint(); // remove highlight
             }
 
@@ -92,6 +94,7 @@ class RewardScene extends Phaser.Scene {
                 color: "#000000",
                 align: "center",
             }).setOrigin(0.5, 0.5);
+
             return { card, title };
         });
     }
@@ -115,6 +118,8 @@ class RewardScene extends Phaser.Scene {
 
         // re-render cards to display the change
         this.renderCards();
+
+        this.descriptionText.setText(this.rewards[this.currentSelection].description);
     }
 
     selectCard() {
