@@ -4,29 +4,19 @@ import enemies from './enemies.js';
 function generateLevels(seed) {
     return [
         {
-            name: "Level 1",
+            name: "Portal",
             completed: false,
+            level: 0,
             enemies: [
                 enemies.goblin(seed),
-            ],
-        },
-        {
-            name: "Level 2",
-            completed: false,
-            enemies: [
                 enemies.jens(seed),
+                enemies.megadraken(seed)
             ],
         },
         {
-            name: "Level 3",
+            name: "test",
             completed: false,
-            enemies: [
-                enemies.megadraken(seed),
-            ],
-        },
-        {
-            name: "Random",
-            completed: false,
+            level: 0,
             enemies: [
                 enemies.goblin(seed),
                 enemies.jens(seed),

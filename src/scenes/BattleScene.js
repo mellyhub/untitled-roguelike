@@ -131,7 +131,7 @@ class BattleScene extends Phaser.Scene {
   getEnemy() {
     const rng = seedrandom(this.seed);
     const random = rng();
-    this.enemy = this.levelData.enemies[Math.floor(random * this.levelData.enemies.length)];
+    this.enemy = this.levelData.enemies[Math.floor(random * this.levelData.enemies.length)];  
   }
 
   create(data) {
@@ -174,9 +174,17 @@ class BattleScene extends Phaser.Scene {
       { x: 1, y: 1, text: 'Back' }
     ];
 
+    this.playerStats = [
+      { x: 0, y: 0, text: `Strength: ${ this.player.stats.strength }` },
+      { x: 0, y: 1, text: `Agility: ${ this.player.stats.agility }`},
+      { x: 0, y: 2, text: `Intelligence: ${ this.player.stats.intelligence }` },
+      { x: 0, y: 3, text: `Intelligence: ${ this.player.stats.intelligence }` },
+    ];
+
     this.currentMenu = this.mainMenu; // startar på main menyn
     this.currentSelection = { x: 0, y: 0 }; // default
     this.renderMenu(this.currentMenu);
+    this.renderPlayerStats();
     this.displayStats();
   }
 
@@ -197,6 +205,15 @@ class BattleScene extends Phaser.Scene {
 
       return text;
     });
+  }
+
+  renderPlayerStats() {
+    this.playerStats.map(item => {
+      const xPosition = 1100 + item.x * 200; // horisontell spacing
+      const yPosition = 820 + item.y * 50; // vertikal spacing
+      const text = this.add.text(xPosition, yPosition, item.text, { fontSize: '24px', fill: '#fff' }).setOrigin(0.5);
+    })
+    this.add.rectangle(1250, 800, 400, 200, Phaser.Display.Color.GetColor32(79, 52, 41, 255)).setOrigin(0);
   }
 
   changeSelection(deltaX, deltaY) {
