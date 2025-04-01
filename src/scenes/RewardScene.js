@@ -8,6 +8,15 @@ function getRandomStat(player, seed) {
     return statKeys[Math.floor(rng() * statKeys.length)];
 }
 
+function getRandomWeapon(seed) {
+    const rng = seedrandom(seed);
+    const weaponKeys = Object.keys(weapons);
+    const randomKey = weaponKeys[Math.floor(rng() * weaponKeys.length)];
+    const randomWeapon = weapons[randomKey];
+    console.log(`Selected weapon: ${randomWeapon.name}`);
+    return randomWeapon;
+}
+
 class RewardScene extends Phaser.Scene {
     constructor() {
         super('RewardScene');
@@ -22,12 +31,14 @@ class RewardScene extends Phaser.Scene {
         this.player = data.player;
         this.seed = data.seed;
 
-        const randomStat = getRandomStat(this.player, this.seed)
+        const randomStat = getRandomStat(this.player, this.seed);
+        const randomWeapon = getRandomWeapon(this.seed);
+        console.log(randomWeapon);
         this.rewards = [
             {
-                name: "Weapon:\nJens svärd",
-                description: "Equips Jens Svärd.",
-                effect: () => { this.player.weapon = weapons.jens_sword }
+                name: `Weapon:\n${randomWeapon.name}`,
+                description: "Equip a new weapon.",
+                effect: () => { this.player.weapon = weapons.randomWeapon }
             },
             {
                 name: `Gain 5 ${randomStat}`,
