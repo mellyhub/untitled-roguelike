@@ -8,11 +8,7 @@ class MainMenuScene extends Phaser.Scene {
 
   preload() {
     // Load assets (images, sounds, etc.)
-
-    this.load.audio("background", [
-      "./assets/audio/soundtest.ogg",
-      "./assets/audio/soundtest.mp3"
-    ]);
+    this.load.audio("background", "src/assets/audio/soundtest.mp3");
   }
 
   create() {
@@ -20,8 +16,8 @@ class MainMenuScene extends Phaser.Scene {
     this.cursors = this.input.keyboard.createCursorKeys();
     this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
 
-    //const music = this.sound.add("background", { loop: true, volume: 0.5 });
-    //music.play();
+    const music = this.sound.add("background", { loop: true, volume: 0.1 });
+    music.play();
 
     this.add.text(960, 400, 'Choose Class', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
 
