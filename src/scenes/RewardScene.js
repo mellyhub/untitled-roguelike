@@ -18,6 +18,15 @@ function getRandomWeapon(seed) {
     return randomWeapon;
 }
 
+function getRandomSpell(seed) {
+    const rng = seedrandom(seed);
+    const spellKeys = Object.keys(spells);
+    const randomKey = spellKeys[Math.floor(rng() * spellKeys.length)];
+    const randomSpell = spells[randomKey];
+    console.log(`Selected spell: ${randomSpell.name}`);
+    return randomSpell;
+}
+
 class RewardScene extends Phaser.Scene {
     constructor() {
         super('RewardScene');
@@ -34,6 +43,8 @@ class RewardScene extends Phaser.Scene {
 
         const randomStat = getRandomStat(this.player, this.seed);
         const randomWeapon = getRandomWeapon(this.seed);
+        const randomSpell = getRandomSpell(this.seed);
+
         console.log(randomWeapon);
         this.rewards = [
             {
@@ -47,13 +58,10 @@ class RewardScene extends Phaser.Scene {
                 effect: () => { this.player.stats[randomStat] += 5; }
             },
             {
-                name: "Gain spell:\nFrostbolt",
-                description: "Learns the Frostbolt spell.",
+                name: `Gain spell:\n${randomSpell.name}`,
+                description: `Learns the ${randomSpell.name} spell`,
                 effect: () => {
-                    this.player.spells = {
-                        ...this.player.spells,
-                        frostbolt: spells.frostbolt,
-                    };
+                    this.player.spells.push(randomSpell);
                 }
             },
         ];

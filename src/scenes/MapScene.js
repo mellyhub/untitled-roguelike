@@ -55,7 +55,7 @@ class MapScene extends Phaser.Scene {
 
         // "N" byter mellan kartan och BattleScene
         this.input.keyboard.on('keydown-N', () => {
-            this.scene.switch('TalentScene');
+            this.scene.switch('TalentScene', { player: this.player });
         });
 
     }

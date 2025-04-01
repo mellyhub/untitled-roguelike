@@ -1,5 +1,3 @@
-import player from '../data/player.js';
-
 class TalentScene extends Phaser.Scene {
   constructor() {
     super('TalentScene');
@@ -10,7 +8,9 @@ class TalentScene extends Phaser.Scene {
 
   }
 
-  create() {
+  create(data) {
+    this.player = data.player;
+
     // lägger till keyboard inputs
     this.cursors = this.input.keyboard.createCursorKeys();
     this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
@@ -21,8 +21,7 @@ class TalentScene extends Phaser.Scene {
     });
 
     // behöver hitta en mer dynamisk lösning på hur vi interagerar med spelare objektet
-    this.talentPoints = player.talentPoints;
-    
+  
     this.attributes = [
       { name: 'Talent1', value: 0 },
       { name: 'Talent2', value: 0 },
@@ -42,7 +41,7 @@ class TalentScene extends Phaser.Scene {
 
     // visa tillgängliga talent points
     this.uiElements = [];
-    const talentPointsText = this.add.text(960, 200, `Talent Points: ${this.talentPoints}`, {
+    const talentPointsText = this.add.text(960, 200, `Talent Points: ${this.player.talentPoints}`, {
       fontSize: '48px',
       fill: '#fff',
     }).setOrigin(0.5);
@@ -90,12 +89,12 @@ class TalentScene extends Phaser.Scene {
 
   allocatePoint() {
     // kolla ifall det finns tillgängliga poäng
-    if (this.talentPoints > 0) {
+    if (this.player.talentPoints > 0) {
       // ökar värde på valt attribut
       this.attributes[this.currentSelection].value += 1;
 
       // spenderar en talent point
-      this.talentPoints -= 1;
+      this.player.talentPoints -= 1;
 
       // rendrar ui på nytt för att uppdatera ändringarna
       this.renderUI();

@@ -161,9 +161,9 @@ class BattleScene extends Phaser.Scene {
 
     // menyn representeras av en 2d array
     this.mainMenu = [
-      { x: 0, y: 0, text: 'Slåss' },
-      { x: 1, y: 0, text: 'Bag' },
-      { x: 0, y: 1, text: 'Menu3' },
+      { x: 0, y: 0, text: 'Attack' },
+      { x: 1, y: 0, text: 'Cast' },
+      { x: 0, y: 1, text: 'Bag' },
       { x: 1, y: 1, text: 'Menu4' },
     ];
 
@@ -171,7 +171,16 @@ class BattleScene extends Phaser.Scene {
       { x: 0, y: 0, text: 'Potion' },
       { x: 1, y: 0, text: 'Elixir' },
       { x: 0, y: 1, text: 'Bomb' },
-      { x: 1, y: 1, text: 'Back' }
+      { x: 1, y: 1, text: 'Back' },
+    ];
+
+
+  // hårdkodat deluxe
+    this.castMenu = [
+      { x: 0, y: 0, text: this.player.spells.length === 0 ? "None" : this.player.spells[0].name },
+      { x: 1, y: 0, text: this.player.spells.length === 0 ? "None" : this.player.spells[0].name },
+      { x: 0, y: 1, text: this.player.spells.length === 0 ? "None" : this.player.spells[0].name },
+      { x: 1, y: 1, text: 'Back' },
     ];
 
     this.playerStats = [
@@ -237,7 +246,7 @@ class BattleScene extends Phaser.Scene {
 
     if (selectedItem) {
       // Handle menu item actions here
-      if (selectedItem.text == 'Slåss') {
+      if (selectedItem.text == 'Attack') {
         console.log('Attack selected!');
         this.executeTurn();  
       }
@@ -248,6 +257,10 @@ class BattleScene extends Phaser.Scene {
       else if (selectedItem.text == 'Back') {
         console.log('Back selected!');
         this.switchMenu(this.mainMenu);
+      }
+      else if (selectedItem.text == 'Cast') {
+        console.log('Cast selected!');
+        this.switchMenu(this.castMenu);
       }
       else {
         console.log(`${selectedItem.text} selected`);
