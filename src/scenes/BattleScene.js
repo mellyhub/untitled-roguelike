@@ -15,7 +15,7 @@ class BattleScene extends Phaser.Scene {
     this.load.image('background', 'src/assets/images/bg.png');
     this.load.image('player', 'src/assets/images/warrior-prototyp1.png');
     this.load.image('battleUi', 'src/assets/images/fight-ui-prototyp1.png');
-    this.load.image('goblin', 'src/assets/images/goblin-prototyp1.png');
+    this.load.image('goblin', 'src/assets/images/dragon2.png');
   }
 
   addMenuItem(x, y, text) {
@@ -67,6 +67,12 @@ class BattleScene extends Phaser.Scene {
     this.displayHealthBarBorder(1220, 200, 500, 50);
     this.renderedElements.push(this.add.rectangle(1220, 200, enemyHealthBarSize.width, enemyHealthBarSize.height, COLOR_CODES.RED).setOrigin(0));
     this.renderedElements.push(this.add.text(1220, 200, `${this.enemy.name}: ${Math.max(0, this.enemy.health)} HP`, { fontSize: '52px' }));
+
+    this.renderedElements.push(this.add.text(1100, 820, `Strength: ${this.player.stats.strength}`, { fontSize: '24px', fill: '#fff' }).setOrigin(0.5));
+    this.renderedElements.push(this.add.text(1100, 820 + 50, `Agility: ${this.player.stats.agility}`, { fontSize: '24px', fill: '#fff' }).setOrigin(0.5));
+    this.renderedElements.push(this.add.text(1100, 820 + 100, `Intelligence: ${this.player.stats.intelligence}`, { fontSize: '24px', fill: '#fff' }).setOrigin(0.5));
+    this.renderedElements.push(this.add.text(1100, 820 + 150, `Intelligence: ${this.player.stats.intelligence}`, { fontSize: '24px', fill: '#fff' }).setOrigin(0.5));
+    this.renderedElements.push(this.add.rectangle(1250, 800, 400, 200, Phaser.Display.Color.GetColor32(79, 52, 41, 255)).setOrigin(0));
   }
 
   async executeTurn(action, selectedSpell = null) {
@@ -97,7 +103,7 @@ class BattleScene extends Phaser.Scene {
 
       this.time.delayedCall(1000, () => {
         animationText.destroy();
-        target.health -= attacker.weapon.attack;
+        target.health -= attacker.weapon.attack * attacker.stats.strength * 0.1;
         console.log(`${attacker.name} attacks ${target.name} with ${attacker.weapon.name} for ${attacker.weapon.attack} damage.`);
         this.displayStats();
         resolve();
@@ -117,9 +123,11 @@ class BattleScene extends Phaser.Scene {
           target.health -= spell.damage(attacker.stats);
           console.log(`${attacker.name} casts ${spell.name} on ${target.name} for ${spell.damage(attacker.stats)} damage.`);
         }
-        else if (spell.effect) {
+
+        if (spell.effect) {
           // if the spell has an effect
           spell.effect(attacker);
+          this.displayStats();
           console.log(`${attacker.name} casts ${spell.name}.`);
         }
         this.displayStats();
@@ -210,17 +218,9 @@ class BattleScene extends Phaser.Scene {
       { x: 1, y: 1, text: 'Back' },
     ];
 
-    this.playerStats = [
-      { x: 0, y: 0, text: `Strength: ${this.player.stats.strength}` },
-      { x: 0, y: 1, text: `Agility: ${this.player.stats.agility}` },
-      { x: 0, y: 2, text: `Intelligence: ${this.player.stats.intelligence}` },
-      { x: 0, y: 3, text: `Intelligence: ${this.player.stats.intelligence}` },
-    ];
-
     this.currentMenu = this.mainMenu; // startar på main menyn
     this.currentSelection = { x: 0, y: 0 }; // default
     this.renderMenu(this.currentMenu);
-    this.renderPlayerStats();
     this.displayStats();
   }
 
@@ -241,15 +241,6 @@ class BattleScene extends Phaser.Scene {
 
       return text;
     });
-  }
-
-  renderPlayerStats() {
-    this.playerStats.map(item => {
-      const xPosition = 1100 + item.x * 200; // horisontell spacing
-      const yPosition = 820 + item.y * 50; // vertikal spacing
-      const text = this.add.text(xPosition, yPosition, item.text, { fontSize: '24px', fill: '#fff' }).setOrigin(0.5);
-    })
-    this.add.rectangle(1250, 800, 400, 200, Phaser.Display.Color.GetColor32(79, 52, 41, 255)).setOrigin(0);
   }
 
   changeSelection(deltaX, deltaY) {
