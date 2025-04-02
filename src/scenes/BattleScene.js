@@ -33,10 +33,10 @@ class BattleScene extends Phaser.Scene {
   displayHealthBarBorder(x, y, width, height) {
     const borderSize = 4;
     this.add.rectangle(
-      x - borderSize / 2, 
-      y - borderSize / 2, 
-      width + borderSize, 
-      height + borderSize, 
+      x - borderSize / 2,
+      y - borderSize / 2,
+      width + borderSize,
+      height + borderSize,
       Phaser.Display.Color.GetColor32(0, 0, 0, 255)
     ).setOrigin(0);
   }
@@ -69,13 +69,15 @@ class BattleScene extends Phaser.Scene {
     this.renderedElements.push(this.add.text(1220, 200, `${this.enemy.name}: ${Math.max(0, this.enemy.health)} HP`, { fontSize: '52px' }));
   }
 
-  async executeTurn(action) {
+  async executeTurn(action, selectedSpell = null) {
     this.inputLocked = true;
+    console.log(selectedSpell);
 
     if (action === 'attack') {
       await this.executeAttack(this.player, this.enemy);
-    } else if (action === 'cast') {
-      await this.executeSpell(this.player, this.player.spells[0], this.enemy); // currently hardcoded to always use the first spell
+    }
+    else if (action === 'cast' && selectedSpell) {
+      await this.executeSpell(this.player, selectedSpell, this.enemy);
     }
 
     if (this.enemy.health > 0) {
@@ -91,7 +93,7 @@ class BattleScene extends Phaser.Scene {
   executeAttack(attacker, target) {
     return new Promise((resolve) => {
 
-      const animationText = this.add.text(700, 500, `${attacker.name} attacks...`, { fontSize: '52px', fill: '#fff'});
+      const animationText = this.add.text(700, 500, `${attacker.name} attacks...`, { fontSize: '52px', fill: '#fff' });
 
       this.time.delayedCall(1000, () => {
         animationText.destroy();
@@ -103,18 +105,27 @@ class BattleScene extends Phaser.Scene {
     });
   }
 
-  executeSpell(attacker, spell, target){
+  executeSpell(attacker, spell, target) {
     return new Promise((resolve) => {
-      const animationText = this.add.text(700, 500, `${attacker.name} casts ${spell.name}...`, { fontSize: '52px', fill: '#fff'});
+      const animationText = this.add.text(700, 500, `${attacker.name} casts ${spell.name}...`, { fontSize: '52px', fill: '#fff' });
 
       this.time.delayedCall(1000, () => {
         animationText.destroy();
-        target.health -= spell.damage(attacker.stats);
-        console.log(`${attacker.name} casts ${spell.name} on ${target.name} for ${spell.damage(attacker.stats)} damage.`);
+
+        if (spell.damage) {
+          // if the spell deals damage
+          target.health -= spell.damage(attacker.stats);
+          console.log(`${attacker.name} casts ${spell.name} on ${target.name} for ${spell.damage(attacker.stats)} damage.`);
+        }
+        else if (spell.effect) {
+          // if the spell has an effect
+          spell.effect(attacker);
+          console.log(`${attacker.name} casts ${spell.name}.`);
+        }
         this.displayStats();
         resolve();
       });
-    }); 
+    });
   }
 
   async switchScene() {
@@ -145,7 +156,7 @@ class BattleScene extends Phaser.Scene {
   getEnemy() {
     const rng = seedrandom(this.seed);
     const random = rng();
-    this.enemy = this.levelData.enemies[Math.floor(random * this.levelData.enemies.length)];  
+    this.enemy = this.levelData.enemies[Math.floor(random * this.levelData.enemies.length)];
   }
 
   create(data) {
@@ -191,19 +202,19 @@ class BattleScene extends Phaser.Scene {
     ];
 
 
-  // hårdkodat deluxe
+    // hårdkodat deluxe
     this.castMenu = [
       { x: 0, y: 0, text: this.player.spells.length === 0 ? "None" : this.player.spells[0].name },
-      { x: 1, y: 0, text: this.player.spells.length === 0 ? "None" : this.player.spells[0].name },
+      { x: 1, y: 0, text: this.player.spells.length === 0 ? "None" : this.player.spells[1].name },
       { x: 0, y: 1, text: this.player.spells.length === 0 ? "None" : this.player.spells[0].name },
       { x: 1, y: 1, text: 'Back' },
     ];
 
     this.playerStats = [
-      { x: 0, y: 0, text: `Strength: ${ this.player.stats.strength }` },
-      { x: 0, y: 1, text: `Agility: ${ this.player.stats.agility }`},
-      { x: 0, y: 2, text: `Intelligence: ${ this.player.stats.intelligence }` },
-      { x: 0, y: 3, text: `Intelligence: ${ this.player.stats.intelligence }` },
+      { x: 0, y: 0, text: `Strength: ${this.player.stats.strength}` },
+      { x: 0, y: 1, text: `Agility: ${this.player.stats.agility}` },
+      { x: 0, y: 2, text: `Intelligence: ${this.player.stats.intelligence}` },
+      { x: 0, y: 3, text: `Intelligence: ${this.player.stats.intelligence}` },
     ];
 
     this.currentMenu = this.mainMenu; // startar på main menyn
@@ -261,7 +272,6 @@ class BattleScene extends Phaser.Scene {
     );
 
     if (selectedItem) {
-      // Handle menu item actions here
       if (selectedItem.text == 'Attack') {
         console.log('Attack selected!');
         this.executeTurn('attack'); // attacks enemy
@@ -279,11 +289,12 @@ class BattleScene extends Phaser.Scene {
         this.switchMenu(this.castMenu);
       }
       else if (selectedItem.text == this.player.spells[0].name) {
-        console.log(`Cast ${selectedItem.text} selected!`);
-        this.executeTurn('cast'); // casts spell
+        console.log(`Cast ${this.player.spells[0].name} selected!`);
+        this.executeTurn('cast', this.player.spells[0]); // casts spell
       }
-      else {
-        console.log(`${selectedItem.text} selected`);
+      else if (selectedItem.text == this.player.spells[1].name) {
+        console.log(`Cast ${this.player.spells[1].name} selected!`);
+        this.executeTurn('cast', this.player.spells[1]); // casts spell
       }
     }
   }
