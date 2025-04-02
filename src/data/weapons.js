@@ -9,7 +9,7 @@ const weapons = {
     staff: {
         name: "Staff",
         attack: 5,
-        castable:
+        spells:
         {
             frostbolt: spells.frostbolt,
             fireball: spells.fireball
@@ -36,7 +36,7 @@ const weapons = {
             agility: 1000,
             intelligence: 1000,
         },
-        castable:
+        spells:
         {
             heavy_swing: spells.heavy_swing,
         }
