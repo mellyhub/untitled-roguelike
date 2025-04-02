@@ -139,6 +139,7 @@ class BattleScene extends Phaser.Scene {
 
     console.log(`Player initialized with class: ${this.player.class.name}`);
     console.log(`Player stats:`, this.player.class.stats);
+    console.log('Player spells:', this.player.spells);
 
     this.getEnemy();
     this.enemyStartHP = this.enemy.health;

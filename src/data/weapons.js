@@ -27,6 +27,10 @@ const weapons = {
             agility: 5,
             intelligence: 0,
         },
+        spells:
+        {
+            heavy_swing: spells.heavy_swing,
+        }
     },
     jens_sword: {
         name: "Jens Svärd",
