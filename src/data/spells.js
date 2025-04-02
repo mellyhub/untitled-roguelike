@@ -1,9 +1,7 @@
 const spells = {
     stab: {
         name: "Stab",
-        damage: function(attackerStats){
-            return 5 + attackerStats.strength * 5;
-        }
+        damage: 70,
     },
     frostbolt: {
         name: "Frostbolt",

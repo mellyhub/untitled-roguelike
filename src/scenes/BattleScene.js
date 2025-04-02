@@ -69,22 +69,26 @@ class BattleScene extends Phaser.Scene {
     this.renderedElements.push(this.add.text(1220, 200, `${this.enemy.name}: ${Math.max(0, this.enemy.health)} HP`, { fontSize: '52px' }));
   }
 
-  async executeTurn() {
+  async executeTurn(action) {
     this.inputLocked = true;
 
-    await this.executeAttack(this.player, this.player.weapon.attack, this.enemy);
+    if (action === 'attack') {
+      await this.executeAttack(this.player, this.enemy);
+    } else if (action === 'cast') {
+      await this.executeSpell(this.player, this.player.spells[0], this.enemy); // currently hardcoded to always use the first spell
+    }
 
     if (this.enemy.health > 0) {
       // ai for opponent
       // currently hardcoded to always use the first spell *currently not used*
       // const firstSpell = Object.values(this.enemy.weapon.castable)[0];
-      await this.executeAttack(this.enemy, this.enemy.weapon.attack, this.player);
+      await this.executeAttack(this.enemy, this.player);
     }
 
     this.checkRoundOutcome();
   }
 
-  executeAttack(attacker, spell, target) {
+  executeAttack(attacker, target) {
     return new Promise((resolve) => {
 
       const animationText = this.add.text(700, 500, `${attacker.name} attacks...`, { fontSize: '52px', fill: '#fff'});
@@ -97,6 +101,20 @@ class BattleScene extends Phaser.Scene {
         resolve();
       });
     });
+  }
+
+  executeSpell(attacker, spell, target){
+    return new Promise((resolve) => {
+      const animationText = this.add.text(700, 500, `${attacker.name} casts ${spell.name}...`, { fontSize: '52px', fill: '#fff'});
+
+      this.time.delayedCall(1000, () => {
+        animationText.destroy();
+        target.health -= spell.damage;
+        console.log(`${attacker.name} casts ${spell.name} on ${target.name} for ${spell.damage} damage.`);
+        this.displayStats();
+        resolve();
+      });
+    }); 
   }
 
   async switchScene() {
@@ -246,7 +264,7 @@ class BattleScene extends Phaser.Scene {
       // Handle menu item actions here
       if (selectedItem.text == 'Attack') {
         console.log('Attack selected!');
-        this.executeTurn();  
+        this.executeTurn('attack'); // attacks enemy
       }
       else if (selectedItem.text == 'Bag') {
         console.log('Bag selected!');
@@ -259,6 +277,10 @@ class BattleScene extends Phaser.Scene {
       else if (selectedItem.text == 'Cast') {
         console.log('Cast selected!');
         this.switchMenu(this.castMenu);
+      }
+      else if (selectedItem.text == this.player.spells[0].name) {
+        console.log(`Cast ${selectedItem.text} selected!`);
+        this.executeTurn('cast'); // casts spell
       }
       else {
         console.log(`${selectedItem.text} selected`);
