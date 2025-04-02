@@ -109,8 +109,8 @@ class BattleScene extends Phaser.Scene {
 
       this.time.delayedCall(1000, () => {
         animationText.destroy();
-        target.health -= spell.damage;
-        console.log(`${attacker.name} casts ${spell.name} on ${target.name} for ${spell.damage} damage.`);
+        target.health -= spell.damage(attacker.stats);
+        console.log(`${attacker.name} casts ${spell.name} on ${target.name} for ${spell.damage(attacker.stats)} damage.`);
         this.displayStats();
         resolve();
       });

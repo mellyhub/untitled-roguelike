@@ -1,42 +1,44 @@
 const spells = {
     stab: {
         name: "Stab",
-        damage: 70,
+        damage(attackerStats){
+            return 25 + attackerStats.agility * 2 + attackerStats.strength * 2;
+        }
     },
     frostbolt: {
         name: "Frostbolt",
-        damage: function(attackerStats){
-            return attackerStats.strength * 5;
+        damage(attackerStats){
+            return 10 + attackerStats.intelligence * 3;
         }
     },
     fireball: {
         name: "Fireball",
-        damage: function(attackerStats){
-            return attackerStats.strength * 5;
+        damage(attackerStats){
+            return 25 + attackerStats.strength * 2;
         }
     },
     fire_breath: {
         name: "Fire Breath",
-        damage: function(attackerStats){
-            return attackerStats.strength * 5;
+        damage(attackerStats){
+            return 25 + attackerStats.strength * 2;
         }
     },
     tail_whip: {
         name: "Tail Whip",
-        damage: function(attackerStats){
-            return attackerStats.strength * 5;
+        damage(attackerStats){
+            return 25 + attackerStats.strength * 2;
         }
     },
     bite: {
         name: "Bite",
-        damage: function(attackerStats){
-            return attackerStats.strength * 5;
+        damage(attackerStats){
+            return 25 + attackerStats.strength * 2;
         }
     },
     heavy_swing: {
         name: "Heavy Swing",
-        damage: function(attackerStats){
-            return attackerStats.strength * 5;
+        damage(attackerStats){
+            return 25 + attackerStats.strength * 2;
         }
     },
 };
