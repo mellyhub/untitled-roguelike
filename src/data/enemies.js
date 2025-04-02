@@ -13,6 +13,7 @@ const enemies = {
         name: "Goblin",
         health: getRandomHealth(seed, 50, 100),
         weapon: weapons.dagger,
+        spells: [],
         stats: {
             strength: 0,
             agility: 0,
@@ -24,6 +25,7 @@ const enemies = {
         name: "Jens",
         health: getRandomHealth(seed, 120, 150),
         weapon: weapons.dagger,
+        spells: [],
         stats: {
             strength: 0,
             agility: 0,
@@ -35,6 +37,7 @@ const enemies = {
         name: "Megadraken",
         health: 200,
         weapon: weapons.dragon,
+        spells: [],
         stats: {
             strength: 0,
             agility: 0,

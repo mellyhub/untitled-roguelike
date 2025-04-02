@@ -72,13 +72,13 @@ class BattleScene extends Phaser.Scene {
   async executeTurn() {
     this.inputLocked = true;
 
-    await this.executeAttack(this.player, this.player.weapon.castable.heavy_swing, this.enemy);
+    await this.executeAttack(this.player, this.player.weapon.attack, this.enemy);
 
     if (this.enemy.health > 0) {
       // ai for opponent
-      // currently hardcoded to always use the first spell
-      const firstSpell = Object.values(this.enemy.weapon.castable)[0];
-      await this.executeAttack(this.enemy, firstSpell, this.player);
+      // currently hardcoded to always use the first spell *currently not used*
+      // const firstSpell = Object.values(this.enemy.weapon.castable)[0];
+      await this.executeAttack(this.enemy, this.enemy.weapon.attack, this.player);
     }
 
     this.checkRoundOutcome();
@@ -91,8 +91,8 @@ class BattleScene extends Phaser.Scene {
 
       this.time.delayedCall(1000, () => {
         animationText.destroy();
-        target.health -= spell.damage(attacker.stats);
-        console.log(`${attacker.name} attacks ${target.name} with ${spell.name} for ${spell.damage(attacker.stats)} damage.`);
+        target.health -= attacker.weapon.attack;
+        console.log(`${attacker.name} attacks ${target.name} with ${attacker.weapon.name} for ${attacker.weapon.attack} damage.`);
         this.displayStats();
         resolve();
       });

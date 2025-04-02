@@ -4,13 +4,11 @@ import spells from '../data/spells.js';
 const weapons = {
     dagger: {
         name: "Dagger",
-        castable:
-        {
-            stab: spells.stab
-        }
+        attack: 10,
     },
     staff: {
         name: "Staff",
+        attack: 5,
         castable:
         {
             frostbolt: spells.frostbolt,
@@ -19,27 +17,20 @@ const weapons = {
     },
     dragon: {
         name: "Dragon",
-        castable:
-        {
-            fire_breath: spells.fire_breath,
-            tail_whip: spells.tail_whip,
-            bite: spells.bite
-        }
+        attack: 30,
     },
     big_axe: {
         name: "Big Axe",
+        attack: 60,
         stats: {
             strength: 2,
             agility: 5,
             intelligence: 0,
         },
-        castable:
-        {
-            heavy_swing: spells.heavy_swing,
-        }   
     },
     jens_sword: {
         name: "Jens Svärd",
+        attack: 100,
         stats: {
             strength: 1000,
             agility: 1000,
@@ -48,7 +39,7 @@ const weapons = {
         castable:
         {
             heavy_swing: spells.heavy_swing,
-        }   
+        }
     }
 };
 
