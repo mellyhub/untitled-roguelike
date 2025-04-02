@@ -35,6 +35,7 @@ class RewardScene extends Phaser.Scene {
     preload() {
         // Load assets (images, sounds, etc.)
         this.load.image('card', 'src/assets/images/card.png'); // placeholder
+        this.load.image('frostbolt-icon', 'src/assets/images/spell-icons/frostbolt-icon.png'); // loads frostbolt spell icon
     }
 
     create(data) {
@@ -69,7 +70,7 @@ class RewardScene extends Phaser.Scene {
         // track currently selected card
         this.currentSelection = 0;
 
-        this.renderCards();
+        this.renderCards(randomWeapon, randomStat, randomSpell);
 
         this.descriptionText = this.add.text(960, 700, this.rewards[this.currentSelection].description, {
             fontSize: '32px',
@@ -82,12 +83,16 @@ class RewardScene extends Phaser.Scene {
         this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
     }
 
-    renderCards() {
+    renderCards(weapon, stat, spell) {
         this.cardElements = this.rewards.map((reward, index) => {
             const xPosition = 560 + index * 400; // position cards horizontally
             const yPosition = 400;
 
             const card = this.add.image(xPosition, yPosition, 'card').setScale(1.5);
+
+            if (index === 2) {
+                this.add.image(xPosition, yPosition - 100, 'frostbolt-icon').setScale(0.8);
+            }
 
             // highlight selected card
             if (index === this.currentSelection) {
@@ -97,7 +102,7 @@ class RewardScene extends Phaser.Scene {
                 card.clearTint(); // remove highlight
             }
 
-            const title = this.add.text(xPosition, yPosition, reward.name, {
+            const title = this.add.text(xPosition, yPosition + 100, reward.name, {
                 fontSize: '32px',
                 color: "#000000",
                 align: "center",
