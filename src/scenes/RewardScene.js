@@ -50,10 +50,10 @@ class RewardScene extends Phaser.Scene {
             {
                 name: `Weapon:\n${randomWeapon.name}`,
                 description: "Equip a new weapon.",
-                effect: () => { this.player.weapon = weapons.randomWeapon }
+                effect: () => { this.player.weapon = randomWeapon }
             },
             {
-                name: `Gain 5 ${randomStat}`,
+                name: `Gain 5\n${randomStat}`,
                 description: `Increase ${randomStat} by 5.`,
                 effect: () => { this.player.stats[randomStat] += 5; }
             },
