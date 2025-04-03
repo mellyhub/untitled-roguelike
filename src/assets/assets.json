@@ -1,0 +1,107 @@
+[
+	{
+		"path": "src/assets/images/backgrounds",
+		"assets": [
+			{
+				"type": "image",
+				"key": "bg",
+				"url": "bg.png"
+			},
+			{
+				"type": "image",
+				"key": "castle",
+				"url": "castle.jpg"
+			},
+			{
+				"type": "image",
+				"key": "map",
+				"url": "map.png"
+			}
+		]
+	},
+	{
+		"path": "src/assets/images/enemy-sprites",
+		"assets": [
+			{
+				"type": "image",
+				"key": "dragon2",
+				"url": "dragon2.png"
+			},
+			{
+				"type": "image",
+				"key": "goblin-prototyp1",
+				"url": "goblin-prototyp1.png"
+			},
+			{
+				"type": "image",
+				"key": "night-glider",
+				"url": "night-glider.png"
+			}
+		]
+	},
+	{
+		"path": "src/assets/images/item-icons",
+		"assets": [
+			{
+				"type": "image",
+				"key": "jens-sword-icon",
+				"url": "jens-sword-icon.png"
+			}
+		]
+	},
+	{
+		"path": "src/assets/images/player-model",
+		"assets": [
+			{
+				"type": "image",
+				"key": "warrior-prototyp1",
+				"url": "warrior-prototyp1.png"
+			}
+		]
+	},
+	{
+		"path": "src/assets/images/spell-icons",
+		"assets": [
+			{
+				"type": "image",
+				"key": "frostbolt-icon",
+				"url": "frostbolt-icon.png"
+			}		
+		]
+	},
+	{
+		"path": "src/assets/images/stat-icons",
+		"assets": [
+			{
+				"type": "image",
+				"key": "agility-icon",
+				"url": "agility-icon.png"
+			},
+			{
+				"type": "image",
+				"key": "intelligence-icon",
+				"url": "intelligence-icon.png"
+			},
+			{
+				"type": "image",
+				"key": "strength-icon",
+				"url": "strength-icon.png"
+			}
+		]
+	},
+	{
+		"path": "src/assets/images/ui",
+		"assets": [
+			{
+				"type": "image",
+				"key": "card",
+				"url": "card.png"
+			},
+			{
+				"type": "image",
+				"key": "fight-ui-prototyp1",
+				"url": "fight-ui-prototyp1.png"
+			}
+		]
+	}
+]
