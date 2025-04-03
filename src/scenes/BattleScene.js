@@ -76,9 +76,27 @@ class BattleScene extends Phaser.Scene {
     this.renderedElements.push(this.add.rectangle(1250, 800, 400, 200, Phaser.Display.Color.GetColor32(79, 52, 41, 255)).setOrigin(0));
   }
 
+  processActiveEffects(unit) {
+    if (!unit.activeEffects) return;
+
+    // iterates through active effects and applies them
+    unit.activeEffects = unit.activeEffects.filter(effect => {
+      effect.applyEffect();
+      effect.remainingTurns--;
+
+      // remove effect if expired
+      if (effect.remainingTurns <= 0) {
+        console.log(`${effect.name} effect on ${unit.name} has expired.`);
+        return false; // remove effect
+      }
+
+      return true; // keep effect
+    });
+  }
+
   async executeTurn(action, selectedSpell = null) {
     this.inputLocked = true;
-    console.log(selectedSpell);
+    this.processActiveEffects(this.player);
 
     if (action === 'attack') {
       await this.executeAttack(this.player, this.enemy);
@@ -88,9 +106,8 @@ class BattleScene extends Phaser.Scene {
     }
 
     if (this.enemy.health > 0) {
+      this.processActiveEffects(this.enemy);
       // ai for opponent
-      // currently hardcoded to always use the first spell *currently not used*
-      // const firstSpell = Object.values(this.enemy.weapon.castable)[0];
       await this.executeAttack(this.enemy, this.player);
     }
 
@@ -127,7 +144,7 @@ class BattleScene extends Phaser.Scene {
 
         if (spell.effect) {
           // if the spell has an effect
-          spell.effect(attacker);
+          spell.effect(attacker, target, this);
           this.displayStats();
           console.log(`${attacker.name} casts ${spell.name}.`);
         }
@@ -143,7 +160,7 @@ class BattleScene extends Phaser.Scene {
     this.inputLocked = false;
   }
 
-  async   checkRoundOutcome() {
+  async checkRoundOutcome() {
     if (this.enemy.health <= 0) {
       this.add.text(960, 640, 'You win!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
       this.player.level++;
@@ -215,7 +232,7 @@ class BattleScene extends Phaser.Scene {
     this.castMenu = [
       { x: 0, y: 0, text: this.player.spells.length === 0 ? "None" : this.player.spells[0].name },
       { x: 1, y: 0, text: this.player.spells.length === 0 ? "None" : this.player.spells[1].name },
-      { x: 0, y: 1, text: this.player.spells.length === 0 ? "None" : this.player.spells[0].name },
+      { x: 0, y: 1, text: this.player.spells.length === 0 ? "None" : this.player.spells[2].name },
       { x: 1, y: 1, text: 'Back' },
     ];
 
@@ -287,6 +304,10 @@ class BattleScene extends Phaser.Scene {
       else if (selectedItem.text == this.player.spells[1].name) {
         console.log(`Cast ${this.player.spells[1].name} selected!`);
         this.executeTurn('cast', this.player.spells[1]); // casts spell
+      }
+      else if (selectedItem.text == this.player.spells[2].name) {
+        console.log(`Cast ${this.player.spells[2].name} selected!`);
+        this.executeTurn('cast', this.player.spells[2]); // casts spell
       }
     }
   }

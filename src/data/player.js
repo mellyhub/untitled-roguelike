@@ -5,7 +5,7 @@ const player = {
     name: "Player",
     health: 200,
     weapon: weapons.big_axe, // The player starts with big_axe
-    spells: [spells.frostbolt, spells.aura_of_might], // Initialize an empty spells array
+    spells: [spells.frostbolt, spells.aura_of_might, spells.ignite], // Initialize an empty spells array
     class: null,
     stats: null,
     talentPoints: 50,
