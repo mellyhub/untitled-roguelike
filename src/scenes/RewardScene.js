@@ -91,8 +91,40 @@ class RewardScene extends Phaser.Scene {
         // track currently selected card
         this.currentSelection = 0;
 
-        this.renderCards(this.randomWeapon, this.randomStat, this.randomSpell);
+        // cards are rendered once
+        this.cardElements = [];
+        this.rewards.forEach((reward, index) => {
+            const xPosition = 560 + index * 400; // position cards horizontally
+            const yPosition = 400;
 
+            const card = this.add.image(xPosition, yPosition, 'card').setScale(1.5);
+
+            let iconKey = null;
+            if (index === 0) {
+                iconKey = getIconForReward('weapon', this.randomWeapon.name);
+            } else if (index === 1) {
+                iconKey = getIconForReward('stat', this.randomStat);
+            } else if (index === 2) {
+                iconKey = getIconForReward('spell', this.randomSpell.name);
+            }
+
+            // add icon if it exists
+            if (iconKey && this.textures.exists(iconKey)) {
+                this.add.image(xPosition, yPosition - 100, iconKey);
+            } else {
+                console.warn(`Icon not found or not loaded: ${iconKey}`);
+            }
+
+            const title = this.add.text(xPosition, yPosition + 100, reward.name, {
+                fontSize: '32px',
+                color: "#000000",
+                align: "center",
+            }).setOrigin(0.5, 0.5);
+
+            this.cardElements.push({ card, title });
+        });
+
+        // add description text
         this.descriptionText = this.add.text(960, 700, this.rewards[this.currentSelection].description, {
             fontSize: '32px',
             fill: '#fff',
@@ -102,50 +134,8 @@ class RewardScene extends Phaser.Scene {
 
         this.cursors = this.input.keyboard.createCursorKeys();
         this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
-    }
 
-    renderCards(weapon, stat, spell) {
-        this.cardElements = this.rewards.map((reward, index) => {
-            const xPosition = 560 + index * 400; // position cards horizontally
-            const yPosition = 400;
-
-            const card = this.add.image(xPosition, yPosition, 'card').setScale(1.5);
-
-            let iconKey = null;
-            if (index === 0) {
-                iconKey = getIconForReward('weapon', weapon.name);
-            }
-            else if (index === 1) {
-                iconKey = getIconForReward('stat', stat);
-            }
-            else if (index === 2) {
-                iconKey = getIconForReward('spell', spell.name);
-            }
-
-            // add icon if it exists
-            if (iconKey && this.textures.exists(iconKey)) {
-                this.add.image(xPosition, yPosition - 100, iconKey);
-            }
-            else {
-                console.warn(`Icon not found or not loaded: ${iconKey}`);
-            }
-
-            // highlight selected card
-            if (index === this.currentSelection) {
-                card.setTint(0xffff00); // highlight in yellow
-            }
-            else {
-                card.clearTint(); // remove highlight
-            }
-
-            const title = this.add.text(xPosition, yPosition + 100, reward.name, {
-                fontSize: '32px',
-                color: "#000000",
-                align: "center",
-            }).setOrigin(0.5, 0.5);
-
-            return { card, title };
-        });
+        this.updateCardHighlights();
     }
 
     update() {
@@ -164,10 +154,11 @@ class RewardScene extends Phaser.Scene {
     changeSelection(direction) {
         // update selection index
         this.currentSelection = (this.currentSelection + direction + this.rewards.length) % this.rewards.length;
+        
+        // update card highlight
+        this.updateCardHighlights();
 
-        // re-render cards to display the change
-        this.renderCards(this.randomWeapon, this.randomStat, this.randomSpell);
-
+        // update description text
         this.descriptionText.setText(this.rewards[this.currentSelection].description);
     }
 
@@ -180,6 +171,16 @@ class RewardScene extends Phaser.Scene {
         console.log(this.player);
 
         this.scene.start('MapScene', { player: this.player });
+    }
+    updateCardHighlights() {
+        this.cardElements.forEach((element, index) => {
+            if (index === this.currentSelection) {
+                element.card.setTint(0xffff00); // highlight in yellow
+            }
+            else {
+                element.card.clearTint(); // remove highlight
+            }
+        });
     }
 }
 
