@@ -34,10 +34,12 @@ class RewardScene extends Phaser.Scene {
 
     preload() {
         // Load assets (images, sounds, etc.)
-        this.load.image('card', 'src/assets/images/ui/card.png'); // placeholder
+        this.load.image('card', 'src/assets/images/ui/card.png'); // loads the card image (placeholder)
         this.load.image('frostbolt-icon', 'src/assets/images/spell-icons/frostbolt-icon.png'); // loads frostbolt spell icon (placerholder)
         this.load.image('jens-sword-icon', 'src/assets/images/item-icons/jens-sword-icon.png'); // loads jens sword icon (placeholder)
         this.load.image('strength-icon', 'src/assets/images/stat-icons/strength-icon.png'); // loads strength icon (placeholder)
+        this.load.image('agility-icon', 'src/assets/images/stat-icons/agility-icon.png'); // loads agility icon (placeholder)
+        this.load.image('intelligence-icon', 'src/assets/images/stat-icons/intelligence-icon.png'); // loads intelligence icon (placeholder)
     }
 
     create(data) {
@@ -47,7 +49,7 @@ class RewardScene extends Phaser.Scene {
         const randomStat = getRandomStat(this.player, this.seed);
         const randomWeapon = getRandomWeapon(this.seed);
         const randomSpell = getRandomSpell(this.seed);
-
+        
         console.log(randomWeapon);
         this.rewards = [
             {
@@ -95,13 +97,13 @@ class RewardScene extends Phaser.Scene {
             // add icons to cards
             switch (index) {
                 case 0:
-                    this.add.image(xPosition, yPosition - 100, 'jens-sword-icon');
+                    this.add.image(xPosition, yPosition - 100, weapon.icon);
                     break;
                 case 1:
                     this.add.image(xPosition, yPosition - 100, 'strength-icon');
                     break;
                 case 2:
-                    this.add.image(xPosition, yPosition - 100, 'frostbolt-icon');
+                    this.add.image(xPosition, yPosition - 100, spell.icon);
                     break;  
             }
 
