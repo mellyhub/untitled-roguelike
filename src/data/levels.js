@@ -10,7 +10,8 @@ function generateLevels(seed) {
             enemies: [
                 enemies.goblin(seed),
                 enemies.jens(seed),
-                enemies.megadraken(seed)
+                enemies.megadraken(seed),
+                enemies.snowman(seed)
             ],
         },
         {
@@ -20,7 +21,8 @@ function generateLevels(seed) {
             enemies: [
                 enemies.goblin(seed),
                 enemies.jens(seed),
-                enemies.megadraken(seed)
+                enemies.megadraken(seed),
+                enemies.snowman(seed)
             ],
         },
     ];

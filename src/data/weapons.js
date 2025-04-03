@@ -49,7 +49,17 @@ const weapons = {
         {
             heavy_swing: spells.heavy_swing,
         }
-    }
+    },
+    snowmans_bane: {
+        name: "Snowman’s Bane",
+        description: "The dreaded bane of the snowman, a weapon forged in the darkest corners of winter’s wrath",
+        icon: "snowmans-bane-icon",
+        attack: 10,
+        spells:
+        {
+            heavy_swing: spells.heavy_swing,
+        }
+    },
 };
 
 export default weapons;

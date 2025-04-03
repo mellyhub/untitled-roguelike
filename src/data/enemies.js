@@ -44,6 +44,18 @@ const enemies = {
             intelligence: 0,
         },
     }),
+
+    snowman: (seed) => ({
+        name: "Snowman",
+        health: 200,
+        weapon: weapons.dagger,
+        spells: [],
+        stats: {
+            strength: 20,
+            agility: 20,
+            intelligence: 20,
+        },
+    }),
 }
 
 export default enemies;

@@ -156,8 +156,14 @@ class BattleScene extends Phaser.Scene {
   
         this.time.delayedCall(1000, () => {
           animationText.destroy();
-          target.health -= attacker.weapon.attack * attacker.stats.strength * 0.1;
-          console.log(`${attacker.name} attacks ${target.name} with ${attacker.weapon.name} for ${attacker.weapon.attack} damage multiplied by strength ${attacker.stats.strength} * 0.1 = ${attacker.weapon.attack * attacker.stats.strength * 0.1}`);
+          if(attacker.weapon.name === "Snowman’s Bane" & target.name === "Snowman") {
+            target.health = 0;
+            console.log("The Snowman’s Bane is mercilessly wielded to bring an end to the reign of the snowman, ensuring its icy demise.");
+          }
+          else {
+            target.health -= attacker.weapon.attack * attacker.stats.strength * 0.1;
+            console.log(`${attacker.name} attacks ${target.name} with ${attacker.weapon.name} for ${attacker.weapon.attack} damage multiplied by strength ${attacker.stats.strength} * 0.1 = ${attacker.weapon.attack * attacker.stats.strength * 0.1}`);
+          }
           this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP);
           resolve();
         });
