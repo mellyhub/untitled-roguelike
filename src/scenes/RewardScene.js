@@ -36,6 +36,7 @@ class RewardScene extends Phaser.Scene {
         // Load assets (images, sounds, etc.)
         this.load.image('card', 'src/assets/images/ui/card.png'); // loads the card image (placeholder)
         this.load.image('frostbolt-icon', 'src/assets/images/spell-icons/frostbolt-icon.png'); // loads frostbolt spell icon (placerholder)
+        this.load.image('fireball-icon', 'src/assets/images/spell-icons/fireball-icon.png'); // loads frostbolt spell icon (placerholder)
         this.load.image('jens-sword-icon', 'src/assets/images/item-icons/jens-sword-icon.png'); // loads jens sword icon (placeholder)
         this.load.image('strength-icon', 'src/assets/images/stat-icons/strength-icon.png'); // loads strength icon (placeholder)
         this.load.image('agility-icon', 'src/assets/images/stat-icons/agility-icon.png'); // loads agility icon (placeholder)

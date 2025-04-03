@@ -15,14 +15,14 @@ const spells = {
     },
     fireball: {
         name: "Fireball",
-        icon: "frostbolt-icon",
+        icon: "fireball-icon",
         damage(attackerStats){
             return 25 + attackerStats.strength * 2;
         }
     },
     fire_breath: {
         name: "Fire Breath",
-        icon: "frostbolt-icon",
+        icon: "fireball-icon",
         damage(attackerStats){
             return 25 + attackerStats.strength * 2;
         }
@@ -50,7 +50,7 @@ const spells = {
     },
     aura_of_might: {
         name: "Aura of Might",
-        icon: null,
+        icon: "strength-icon",
         effect(attacker) {
             attacker.stats.strength += 10;
             console.log(`${attacker.name} is empowered, increasing their strength by 10.`);

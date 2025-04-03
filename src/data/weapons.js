@@ -19,7 +19,7 @@ const weapons = {
     },
     dragon: {
         name: "Dragon",
-        icon: null,
+        icon: "fireball-icon",
         attack: 30,
     },
     big_axe: {
