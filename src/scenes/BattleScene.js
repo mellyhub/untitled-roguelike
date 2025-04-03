@@ -12,10 +12,10 @@ class BattleScene extends Phaser.Scene {
 
   preload() {
     // Load assets (images, sounds, etc.)
-    this.load.image('background', 'src/assets/images/bg.png');
-    this.load.image('player', 'src/assets/images/warrior-prototyp1.png');
-    this.load.image('battleUi', 'src/assets/images/fight-ui-prototyp1.png');
-    this.load.image('goblin', 'src/assets/images/dragon2.png');
+    this.load.image('background', 'src/assets/images/backgrounds/bg.png');
+    this.load.image('player', 'src/assets/images/player-model/warrior-prototyp1.png');
+    this.load.image('battleUi', 'src/assets/images/ui/fight-ui-prototyp1.png');
+    this.load.image('goblin', 'src/assets/images/enemy-sprites/dragon2.png');
   }
 
   addMenuItem(x, y, text) {

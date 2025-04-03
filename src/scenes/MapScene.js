@@ -7,7 +7,7 @@ class MapScene extends Phaser.Scene {
 
     preload() {
         // Load assets (images, sounds, etc.)
-        this.load.image('map', 'src/assets/images/map.png');
+        this.load.image('map', 'src/assets/images/backgrounds/map.png');
     }
 
     create(data) {
