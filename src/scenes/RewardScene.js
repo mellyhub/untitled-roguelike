@@ -45,28 +45,27 @@ class RewardScene extends Phaser.Scene {
     create(data) {
         this.player = data.player;
         this.seed = data.seed;
-
-        const randomStat = getRandomStat(this.player, this.seed);
-        const randomWeapon = getRandomWeapon(this.seed);
-        const randomSpell = getRandomSpell(this.seed);
+        this.randomStat = getRandomStat(this.player, this.seed);
+        this.randomWeapon = getRandomWeapon(this.seed);
+        this.randomSpell = getRandomSpell(this.seed);
         
-        console.log(randomWeapon);
+        console.log(this.randomWeapon);
         this.rewards = [
             {
-                name: `Weapon:\n${randomWeapon.name}`,
+                name: `Weapon:\n${this.randomWeapon.name}`,
                 description: "Equip a new weapon.",
-                effect: () => { this.player.weapon = randomWeapon }
+                effect: () => { this.player.weapon = this.randomWeapon }
             },
             {
-                name: `Gain 5\n${randomStat}`,
-                description: `Increase ${randomStat} by 5.`,
-                effect: () => { this.player.stats[randomStat] += 5; }
+                name: `Gain 5\n${this.randomStat}`,
+                description: `Increase ${this.randomStat} by 5.`,
+                effect: () => { this.player.stats[this.randomStat] += 5; }
             },
             {
-                name: `Gain spell:\n${randomSpell.name}`,
-                description: `Learns the ${randomSpell.name} spell`,
+                name: `Gain spell:\n${this.randomSpell.name}`,
+                description: `Learns the ${this.randomSpell.name} spell`,
                 effect: () => {
-                    this.player.spells.push(randomSpell);
+                    this.player.spells.push(this.randomSpell);
                 }
             },
         ];
@@ -74,7 +73,7 @@ class RewardScene extends Phaser.Scene {
         // track currently selected card
         this.currentSelection = 0;
 
-        this.renderCards(randomWeapon, randomStat, randomSpell);
+        this.renderCards(this.randomWeapon, this.randomStat, this.randomSpell);
 
         this.descriptionText = this.add.text(960, 700, this.rewards[this.currentSelection].description, {
             fontSize: '32px',
@@ -89,6 +88,7 @@ class RewardScene extends Phaser.Scene {
 
     renderCards(weapon, stat, spell) {
         console.log(spell);
+        console.log(weapon)
         this.cardElements = this.rewards.map((reward, index) => {
             const xPosition = 560 + index * 400; // position cards horizontally
             const yPosition = 400;
@@ -152,7 +152,7 @@ class RewardScene extends Phaser.Scene {
         this.currentSelection = (this.currentSelection + direction + this.rewards.length) % this.rewards.length;
 
         // re-render cards to display the change
-        this.renderCards();
+        this.renderCards(this.randomWeapon,this.randomStat,this.randomSpell);
 
         this.descriptionText.setText(this.rewards[this.currentSelection].description);
     }

@@ -8,42 +8,42 @@ const spells = {
     },
     frostbolt: {
         name: "Frostbolt",
-        icon: "src/assets/images/spell-icons/frostbolt-icon.png",
+        icon: "frostbolt-icon",
         damage(attackerStats){
             return 10 + attackerStats.intelligence * 3;
         }
     },
     fireball: {
         name: "Fireball",
-        icon: null,
+        icon: "frostbolt-icon",
         damage(attackerStats){
             return 25 + attackerStats.strength * 2;
         }
     },
     fire_breath: {
         name: "Fire Breath",
-        icon: null,
+        icon: "frostbolt-icon",
         damage(attackerStats){
             return 25 + attackerStats.strength * 2;
         }
     },
     tail_whip: {
         name: "Tail Whip",
-        icon: null,
+        icon: "frostbolt-icon",
         damage(attackerStats){
             return 25 + attackerStats.strength * 2;
         }
     },
     bite: {
         name: "Bite",
-        icon: null,
+        icon: "frostbolt-icon",
         damage(attackerStats){
             return 25 + attackerStats.strength * 2;
         }
     },
     heavy_swing: {
         name: "Heavy Swing",
-        icon: null,
+        icon: "frostbolt-icon",
         damage(attackerStats){
             return 25 + attackerStats.strength * 2;
         }
