@@ -14,8 +14,9 @@ class BattleScene extends Phaser.Scene {
     // Load assets (images, sounds, etc.)
     this.load.image('background', 'src/assets/images/backgrounds/bg.png');
     this.load.image('player', 'src/assets/images/player-model/warrior-prototyp1.png');
+    this.load.image('goblin', 'src/assets/images/enemy-sprites/goblin-prototyp1.png');
+    this.load.image('night-glider', 'src/assets/images/enemy-sprites/night-glider.png');
     this.load.image('battleUi', 'src/assets/images/ui/fight-ui-prototyp1.png');
-    this.load.image('goblin', 'src/assets/images/enemy-sprites/dragon2.png');
   }
 
   addMenuItem(x, y, text) {
@@ -189,9 +190,9 @@ class BattleScene extends Phaser.Scene {
     this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER); // lägger till enter key
 
     this.add.image(960, 540, 'background').setAlpha(0.1);
-    this.add.image(960, 540, 'battleUi');
     this.add.image(480, 540, 'player').setScale(0.4);
-    this.add.image(1440, 540, 'goblin');
+    this.add.image(1440, 540, 'night-glider').setScale(0.7);
+    this.add.image(960, 540, 'battleUi');
     this.hitAnimation;
 
     // menyn representeras av en 2d array
