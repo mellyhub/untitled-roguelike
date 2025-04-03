@@ -88,23 +88,32 @@ class RewardScene extends Phaser.Scene {
     }
 
     renderCards(weapon, stat, spell) {
+        console.log(spell);
         this.cardElements = this.rewards.map((reward, index) => {
             const xPosition = 560 + index * 400; // position cards horizontally
             const yPosition = 400;
 
             const card = this.add.image(xPosition, yPosition, 'card').setScale(1.5);
 
-            // add icons to cards
+            // Add icons to cards
             switch (index) {
-                case 0:
-                    this.add.image(xPosition, yPosition - 100, weapon.icon);
+                case 0: // Weapon card
+                    if (weapon.icon) {
+                        this.add.image(xPosition, yPosition - 100, weapon.icon);
+                    } else {
+                        console.warn(`Weapon ${weapon.name} is missing an icon.`);
+                    }
                     break;
-                case 1:
-                    this.add.image(xPosition, yPosition - 100, 'strength-icon');
+                case 1: // Stat card
+                    this.add.image(xPosition, yPosition - 100, 'strength-icon'); // Use a generic stat icon
                     break;
-                case 2:
-                    this.add.image(xPosition, yPosition - 100, spell.icon);
-                    break;  
+                case 2: // Spell card
+                    if (spell.icon) {
+                        this.add.image(xPosition, yPosition - 100, spell.icon);
+                    } else {
+                        console.warn(`Spell ${spell.name} is missing an icon.`);
+                    }
+                    break;
             }
 
             // highlight selected card
