@@ -4,10 +4,12 @@ import spells from '../data/spells.js';
 const weapons = {
     dagger: {
         name: "Dagger",
+        icon: null,
         attack: 10,
     },
     staff: {
         name: "Staff",
+        icon: null,
         attack: 5,
         spells:
         {
@@ -17,10 +19,12 @@ const weapons = {
     },
     dragon: {
         name: "Dragon",
+        icon: null,
         attack: 30,
     },
     big_axe: {
         name: "Big Axe",
+        icon: null,
         attack: 60,
         stats: {
             strength: 2,
@@ -34,6 +38,7 @@ const weapons = {
     },
     jens_sword: {
         name: "Jens Svärd",
+        icon: "src/assets/images/item-icons/jens-sword-icon.png",
         attack: 100,
         stats: {
             strength: 1000,
