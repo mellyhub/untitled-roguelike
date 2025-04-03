@@ -36,7 +36,7 @@ const spells = {
     },
     bite: {
         name: "Bite",
-        icon: "frostbolt-icon",
+        icon: "bite-icon",
         damage(attackerStats){
             return 25 + attackerStats.strength * 2;
         }
