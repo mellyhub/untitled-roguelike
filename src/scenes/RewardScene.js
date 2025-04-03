@@ -1,9 +1,10 @@
 import weapons from '../data/weapons.js';
 import spells from '../data/spells.js';
 import seedrandom from 'seedrandom';
+import assets from '../assets/assets.json'; // Import the assets.json file
 
 // generating random health by using the seed
-function getRandomStat(player, seed) {
+function getRandomStat(seed, player) {
     const rng = seedrandom(seed);
     const statKeys = Object.keys(player.stats);
     return statKeys[Math.floor(rng() * statKeys.length)];
@@ -27,30 +28,45 @@ function getRandomSpell(seed) {
     return randomSpell;
 }
 
+function getIconForReward(rewardType, rewardName) {
+    const iconMapping = {
+        // chatgpt type shit
+        weapon: rewardName.toLowerCase().replace(/\s+/g, '-') + '-icon',
+        stat: rewardName.toLowerCase() + '-icon',
+        spell: rewardName.toLowerCase().replace(/\s+/g, '-') + '-icon',
+    };
+
+    const iconKey = iconMapping[rewardType];
+    console.log(`Icon key for ${rewardType} (${rewardName}): ${iconKey}`);
+    return iconKey;
+}
+
 class RewardScene extends Phaser.Scene {
     constructor() {
         super('RewardScene');
     }
 
     preload() {
-        // Load assets (images, sounds, etc.)
-        this.load.image('card', 'src/assets/images/ui/card.png'); // loads the card image (placeholder)
-        this.load.image('frostbolt-icon', 'src/assets/images/spell-icons/frostbolt-icon.png'); // loads frostbolt spell icon (placerholder)
-        this.load.image('fireball-icon', 'src/assets/images/spell-icons/fireball-icon.png'); // loads fireball spell icon
-        this.load.image('bite-icon', 'src/assets/images/spell-icons/bite-icon.png'); // loads bite spell icon
-        this.load.image('jens-sword-icon', 'src/assets/images/item-icons/jens-sword-icon.png'); // loads jens sword icon
-        this.load.image('strength-icon', 'src/assets/images/stat-icons/strength-icon.png'); // loads strength icon
-        this.load.image('agility-icon', 'src/assets/images/stat-icons/agility-icon.png'); // loads agility icon
-        this.load.image('intelligence-icon', 'src/assets/images/stat-icons/intelligence-icon.png'); // loads intelligence icon
+        // iterate through assets
+        assets.forEach(assetGroup => {
+            assetGroup.assets.forEach(asset => {
+                if (asset.type === 'image') {
+                    const assetPath = `${assetGroup.path}/${asset.url}`;
+                    console.log(assetPath)
+                    // dynamically loads image asset
+                    this.load.image(asset.key, assetPath);
+                }
+            });
+        });
     }
 
     create(data) {
         this.player = data.player;
         this.seed = data.seed;
-        this.randomStat = getRandomStat(this.player, this.seed);
+        this.randomStat = getRandomStat(this.seed, this.player);
         this.randomWeapon = getRandomWeapon(this.seed);
         this.randomSpell = getRandomSpell(this.seed);
-        
+
         console.log(this.randomWeapon);
         this.rewards = [
             {
@@ -89,33 +105,29 @@ class RewardScene extends Phaser.Scene {
     }
 
     renderCards(weapon, stat, spell) {
-        console.log(spell);
-        console.log(weapon)
         this.cardElements = this.rewards.map((reward, index) => {
             const xPosition = 560 + index * 400; // position cards horizontally
             const yPosition = 400;
 
             const card = this.add.image(xPosition, yPosition, 'card').setScale(1.5);
 
-            // Add icons to cards
-            switch (index) {
-                case 0: // Weapon card
-                    if (weapon.icon) {
-                        this.add.image(xPosition, yPosition - 100, weapon.icon);
-                    } else {
-                        console.warn(`Weapon ${weapon.name} is missing an icon.`);
-                    }
-                    break;
-                case 1: // Stat card
-                    this.add.image(xPosition, yPosition - 100, 'strength-icon'); // Use a generic stat icon
-                    break;
-                case 2: // Spell card
-                    if (spell.icon) {
-                        this.add.image(xPosition, yPosition - 100, spell.icon);
-                    } else {
-                        console.warn(`Spell ${spell.name} is missing an icon.`);
-                    }
-                    break;
+            let iconKey = null;
+            if (index === 0) {
+                iconKey = getIconForReward('weapon', weapon.name);
+            }
+            else if (index === 1) {
+                iconKey = getIconForReward('stat', stat);
+            }
+            else if (index === 2) {
+                iconKey = getIconForReward('spell', spell.name);
+            }
+
+            // add icon if it exists
+            if (iconKey && this.textures.exists(iconKey)) {
+                this.add.image(xPosition, yPosition - 100, iconKey);
+            }
+            else {
+                console.warn(`Icon not found or not loaded: ${iconKey}`);
             }
 
             // highlight selected card
@@ -154,7 +166,7 @@ class RewardScene extends Phaser.Scene {
         this.currentSelection = (this.currentSelection + direction + this.rewards.length) % this.rewards.length;
 
         // re-render cards to display the change
-        this.renderCards(this.randomWeapon,this.randomStat,this.randomSpell);
+        this.renderCards(this.randomWeapon, this.randomStat, this.randomSpell);
 
         this.descriptionText.setText(this.rewards[this.currentSelection].description);
     }
@@ -162,7 +174,7 @@ class RewardScene extends Phaser.Scene {
     selectCard() {
         const selectedReward = this.rewards[this.currentSelection];
         selectedReward.effect();
-        
+
         console.log(`Selected reward: ${selectedReward.name}`);
 
         console.log(this.player);
