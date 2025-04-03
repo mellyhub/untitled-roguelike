@@ -15,7 +15,7 @@ const enemies = {
         weapon: weapons.dagger,
         spells: [],
         stats: {
-            strength: 0,
+            strength: 10,
             agility: 0,
             intelligence: 0,
         },
@@ -27,7 +27,7 @@ const enemies = {
         weapon: weapons.dagger,
         spells: [],
         stats: {
-            strength: 0,
+            strength: 10,
             agility: 0,
             intelligence: 0,
         },
@@ -39,7 +39,7 @@ const enemies = {
         weapon: weapons.dragon,
         spells: [],
         stats: {
-            strength: 0,
+            strength: 10,
             agility: 0,
             intelligence: 0,
         },

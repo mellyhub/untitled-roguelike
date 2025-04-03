@@ -105,7 +105,7 @@ class BattleScene extends Phaser.Scene {
       this.time.delayedCall(1000, () => {
         animationText.destroy();
         target.health -= attacker.weapon.attack * attacker.stats.strength * 0.1;
-        console.log(`${attacker.name} attacks ${target.name} with ${attacker.weapon.name} for ${attacker.weapon.attack} damage.`);
+        console.log(`${attacker.name} attacks ${target.name} with ${attacker.weapon.name} for ${attacker.weapon.attack} damage multiplied by strength ${attacker.stats.strength} * 0.1 = ${attacker.weapon.attack * attacker.stats.strength * 0.1}`);
         this.displayStats();
         resolve();
       });
@@ -143,7 +143,7 @@ class BattleScene extends Phaser.Scene {
     this.inputLocked = false;
   }
 
-  async checkRoundOutcome() {
+  async   checkRoundOutcome() {
     if (this.enemy.health <= 0) {
       this.add.text(960, 640, 'You win!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
       this.player.level++;
