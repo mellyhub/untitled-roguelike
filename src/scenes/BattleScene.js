@@ -1,14 +1,10 @@
 import seedrandom from 'seedrandom';
+import BattleUI from './BattleUI';
 
 class BattleScene extends Phaser.Scene {
   constructor() {
     super('BattleScene');
   }
-
-  // Array of rendered elements (healthbar, text, etc..), used for removing elements before rerendering
-  renderedElements = [];
-  playerStartHP = 0;
-  enemyStartHP = 0;
 
   preload() {
     // Load assets (images, sounds, etc.)
@@ -19,182 +15,12 @@ class BattleScene extends Phaser.Scene {
     this.load.image('battleUi', 'src/assets/images/ui/fight-ui-prototyp1.png');
   }
 
-  addMenuItem(x, y, text) {
-    return this.add.text(x, y, text, { fontSize: '52px' })
-  }
-
-  calculateHealthBarSize(maxUnitHealth, currentUnitHealth) {
-    const MAX_WIDTH = 500;
-    const clampedHealth = Phaser.Math.Clamp(currentUnitHealth, 0, maxUnitHealth);
-    let width = (clampedHealth / maxUnitHealth) * MAX_WIDTH;
-
-    return { width, height: 50 };
-  }
-
-  displayHealthBarBorder(x, y, width, height) {
-    const borderSize = 4;
-    this.add.rectangle(
-      x - borderSize / 2,
-      y - borderSize / 2,
-      width + borderSize,
-      height + borderSize,
-      Phaser.Display.Color.GetColor32(0, 0, 0, 255)
-    ).setOrigin(0);
-  }
-
-  displayStats() {
-    const COLOR_CODES = {
-      GREEN: Phaser.Display.Color.GetColor32(0, 255, 0, 255),
-      RED: Phaser.Display.Color.GetColor32(255, 0, 0, 255),
-      WHITE: Phaser.Display.Color.GetColor32(255, 255, 255, 255),
-      BLACK: Phaser.Display.Color.GetColor32(0, 0, 0, 255)
-    }
-
-    // Remove previous renders so it doesn't overlap
-    this.renderedElements.forEach(render => render.destroy());
-
-    const borderSize = 4;
-
-    // Player health bar
-    const playerHealthBarSize = this.calculateHealthBarSize(this.playerStartHP, this.player.health);
-    this.displayHealthBarBorder(400, 200, 500, 50);
-    this.renderedElements.push(this.add.rectangle(400, 200, playerHealthBarSize.width, playerHealthBarSize.height, COLOR_CODES.GREEN).setOrigin(0));
-    this.renderedElements.push(this.add.text(400, 100, `Class: ${this.player.class.name}`, { fontSize: '52px' }));
-    this.renderedElements.push(this.add.text(400, 150, `Level: ${this.player.level}`, { fontSize: '52px' }));
-    this.renderedElements.push(this.add.text(400, 200, `${this.player.name}: ${Math.max(0, this.player.health)} HP`, { fontSize: '52px' }));
-
-    // Enemy health bar
-    const enemyHealthBarSize = this.calculateHealthBarSize(this.enemyStartHP, this.enemy.health);
-    this.displayHealthBarBorder(1220, 200, 500, 50);
-    this.renderedElements.push(this.add.rectangle(1220, 200, enemyHealthBarSize.width, enemyHealthBarSize.height, COLOR_CODES.RED).setOrigin(0));
-    this.renderedElements.push(this.add.text(1220, 200, `${this.enemy.name}: ${Math.max(0, this.enemy.health)} HP`, { fontSize: '52px' }));
-
-    this.renderedElements.push(this.add.text(1100, 820, `Strength: ${this.player.stats.strength}`, { fontSize: '24px', fill: '#fff' }).setOrigin(0.5));
-    this.renderedElements.push(this.add.text(1100, 820 + 50, `Agility: ${this.player.stats.agility}`, { fontSize: '24px', fill: '#fff' }).setOrigin(0.5));
-    this.renderedElements.push(this.add.text(1100, 820 + 100, `Intelligence: ${this.player.stats.intelligence}`, { fontSize: '24px', fill: '#fff' }).setOrigin(0.5));
-    this.renderedElements.push(this.add.text(1100, 820 + 150, `Intelligence: ${this.player.stats.intelligence}`, { fontSize: '24px', fill: '#fff' }).setOrigin(0.5));
-    this.renderedElements.push(this.add.rectangle(1250, 800, 400, 200, Phaser.Display.Color.GetColor32(79, 52, 41, 255)).setOrigin(0));
-  }
-
-  processActiveEffects(unit) {
-    if (!unit.activeEffects) return;
-
-    // iterates through active effects and applies them
-    unit.activeEffects = unit.activeEffects.filter(effect => {
-      effect.applyEffect();
-      effect.remainingTurns--;
-
-      // remove effect if expired
-      if (effect.remainingTurns <= 0) {
-        console.log(`${effect.name} effect on ${unit.name} has expired.`);
-        return false; // remove effect
-      }
-
-      return true; // keep effect
-    });
-  }
-
-  async executeTurn(action, selectedSpell = null) {
-    this.inputLocked = true;
-    this.processActiveEffects(this.player);
-
-    if (action === 'attack') {
-      await this.executeAttack(this.player, this.enemy);
-    }
-    else if (action === 'cast' && selectedSpell) {
-      await this.executeSpell(this.player, selectedSpell, this.enemy);
-    }
-
-    if (this.enemy.health > 0) {
-      this.processActiveEffects(this.enemy);
-      // ai for opponent
-      await this.executeAttack(this.enemy, this.player);
-    }
-
-    this.checkRoundOutcome();
-  }
-
-  executeAttack(attacker, target) {
-    return new Promise((resolve) => {
-
-      const animationText = this.add.text(700, 500, `${attacker.name} attacks...`, { fontSize: '52px', fill: '#fff' });
-
-      this.time.delayedCall(1000, () => {
-        animationText.destroy();
-        target.health -= attacker.weapon.attack * attacker.stats.strength * 0.1;
-        console.log(`${attacker.name} attacks ${target.name} with ${attacker.weapon.name} for ${attacker.weapon.attack} damage multiplied by strength ${attacker.stats.strength} * 0.1 = ${attacker.weapon.attack * attacker.stats.strength * 0.1}`);
-        this.displayStats();
-        resolve();
-      });
-    });
-  }
-
-  executeSpell(attacker, spell, target) {
-    return new Promise((resolve) => {
-      const animationText = this.add.text(700, 500, `${attacker.name} casts ${spell.name}...`, { fontSize: '52px', fill: '#fff' });
-
-      this.time.delayedCall(1000, () => {
-        animationText.destroy();
-
-        if (spell.damage) {
-          // if the spell deals damage
-          target.health -= spell.damage(attacker.stats);
-          console.log(`${attacker.name} casts ${spell.name} on ${target.name} for ${spell.damage(attacker.stats)} damage.`);
-        }
-
-        if (spell.effect) {
-          // if the spell has an effect
-          spell.effect(attacker, target, this);
-          this.displayStats();
-          console.log(`${attacker.name} casts ${spell.name}.`);
-        }
-        this.displayStats();
-        resolve();
-      });
-    });
-  }
-
-  async switchScene() {
-    await new Promise(resolve => this.time.delayedCall(3000, resolve));
-    this.scene.start('RewardScene', { player: this.player, seed: this.seed });
-    this.inputLocked = false;
-  }
-
-  async checkRoundOutcome() {
-    if (this.enemy.health <= 0) {
-      this.add.text(960, 640, 'You win!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
-      this.player.level++;
-      this.levelData.completed = true;
-
-      await this.switchScene();
-
-      return;
-    }
-
-    if (this.player.health <= 0) {
-      this.add.text(960, 540, 'You lose!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
-      this.scene.pause();
-    }
-    this.totalTurns++;
-    this.inputLocked = false;
-  }
-
-  getEnemy() {
-    const rng = seedrandom(this.seed);
-    const random = rng();
-    this.enemy = this.levelData.enemies[Math.floor(random * this.levelData.enemies.length)];
-  }
-
   create(data) {
     this.player = data.player;
     this.levelData = data.level;
     this.seed = data.seed;
 
     this.playerStartHP = this.player.health;
-
-    console.log(`Player initialized with class: ${this.player.class.name}`);
-    console.log(`Player stats:`, this.player.class.stats);
-    console.log('Player spells:', this.player.spells);
 
     this.getEnemy();
     this.enemyStartHP = this.enemy.health;
@@ -210,9 +36,10 @@ class BattleScene extends Phaser.Scene {
     this.add.image(480, 540, 'player').setScale(0.4);
     this.add.image(1440, 540, 'night-glider').setScale(0.7);
     this.add.image(960, 540, 'battleUi');
-    this.hitAnimation;
 
-    // menyn representeras av en 2d array
+    // initialize battle ui
+    this.battleUI = new BattleUI(this);
+
     this.mainMenu = [
       { x: 0, y: 0, text: 'Attack' },
       { x: 1, y: 0, text: 'Cast' },
@@ -236,86 +63,13 @@ class BattleScene extends Phaser.Scene {
       { x: 1, y: 1, text: 'Back' },
     ];
 
-    this.currentMenu = this.mainMenu; // startar på main menyn
-    this.currentSelection = { x: 0, y: 0 }; // default
-    this.renderMenu(this.currentMenu);
-    this.displayStats();
-  }
+    this.hitAnimation;
 
-  renderMenu(menu) {
-    if (this.menuItems) {
-      this.menuItems.forEach(item => item.destroy());
-    }
-
-    this.menuItems = menu.map(menuItem => {
-      const xPosition = 300 + menuItem.x * 200; // horisontell spacing
-      const yPosition = 850 + menuItem.y * 100; // vertikal spacing
-      const text = this.add.text(xPosition, yPosition, menuItem.text, { fontSize: '48px', fill: '#fff' }).setOrigin(0.5);
-
-      // highlightar valt item
-      if (menuItem.x == this.currentSelection.x && menuItem.y == this.currentSelection.y) {
-        text.setColor('#ff0000');
-      }
-
-      return text;
-    });
-  }
-
-  changeSelection(deltaX, deltaY) {
-    // uppdaterar val
-    const newX = this.currentSelection.x + deltaX;
-    const newY = this.currentSelection.y + deltaY;
-
-    // förhindrar out of bounds
-    const isValidSelection = this.currentMenu.some(item => item.x == newX && item.y == newY);
-    if (isValidSelection) {
-      this.currentSelection = { x: newX, y: newY };
-      this.renderMenu(this.currentMenu); // rendrar menyn på nytt
-    }
-  }
-
-  selectMenuItem() {
-    // hittar valt item
-    const selectedItem = this.currentMenu.find(
-      item => item.x == this.currentSelection.x && item.y == this.currentSelection.y
-    );
-
-    if (selectedItem) {
-      if (selectedItem.text == 'Attack') {
-        console.log('Attack selected!');
-        this.executeTurn('attack'); // attacks enemy
-      }
-      else if (selectedItem.text == 'Bag') {
-        console.log('Bag selected!');
-        this.switchMenu(this.bagMenu);
-      }
-      else if (selectedItem.text == 'Back') {
-        console.log('Back selected!');
-        this.switchMenu(this.mainMenu);
-      }
-      else if (selectedItem.text == 'Cast') {
-        console.log('Cast selected!');
-        this.switchMenu(this.castMenu);
-      }
-      else if (selectedItem.text == this.player.spells[0].name) {
-        console.log(`Cast ${this.player.spells[0].name} selected!`);
-        this.executeTurn('cast', this.player.spells[0]); // casts spell
-      }
-      else if (selectedItem.text == this.player.spells[1].name) {
-        console.log(`Cast ${this.player.spells[1].name} selected!`);
-        this.executeTurn('cast', this.player.spells[1]); // casts spell
-      }
-      else if (selectedItem.text == this.player.spells[2].name) {
-        console.log(`Cast ${this.player.spells[2].name} selected!`);
-        this.executeTurn('cast', this.player.spells[2]); // casts spell
-      }
-    }
-  }
-
-  switchMenu(menu) {
-    this.currentMenu = menu;
+    // Render initial stats and menu
+    this.currentMenu = this.mainMenu;
     this.currentSelection = { x: 0, y: 0 };
-    this.renderMenu(menu); // rendrar nya menyn
+    this.battleUI.renderMenu(this.currentMenu, this.currentSelection);
+    this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP);
   }
 
   update() {
@@ -324,20 +78,27 @@ class BattleScene extends Phaser.Scene {
     }
 
     if (Phaser.Input.Keyboard.JustDown(this.cursors.up)) {
-      this.changeSelection(0, -1); // Move up
+      this.battleUI.changeSelection(0, -1); // Move up
     }
     else if (Phaser.Input.Keyboard.JustDown(this.cursors.down)) {
-      this.changeSelection(0, 1); // Move down
+      this.battleUI.changeSelection(0, 1); // Move down
     }
     else if (Phaser.Input.Keyboard.JustDown(this.cursors.left)) {
-      this.changeSelection(-1, 0); // Move left
+      this.battleUI.changeSelection(-1, 0); // Move left
     }
     else if (Phaser.Input.Keyboard.JustDown(this.cursors.right)) {
-      this.changeSelection(1, 0); // Move right
+      this.battleUI.changeSelection(1, 0); // Move right
     }
 
     if (Phaser.Input.Keyboard.JustDown(this.enterKey)) {
-      this.selectMenuItem();
+      this.battleUI.selectMenuItem(
+        this.player,
+        this.executeTurn.bind(this),
+        this.battleUI.switchMenu.bind(this.battleUI),
+        this.castMenu,
+        this.bagMenu,
+        this.mainMenu
+      );
     }
 
     // "M" byter mellan kartan och BattleScene
@@ -345,5 +106,118 @@ class BattleScene extends Phaser.Scene {
       this.scene.switch('MapScene');
     });
   }
+    // Array of rendered elements (healthbar, text, etc..), used for removing elements before rerendering
+    renderedElements = [];
+    playerStartHP = 0;
+    enemyStartHP = 0;
+  
+    processActiveEffects(unit) {
+      if (!unit.activeEffects) return;
+  
+      // iterates through active effects and applies them
+      unit.activeEffects = unit.activeEffects.filter(effect => {
+        effect.applyEffect();
+        effect.remainingTurns--;
+  
+        // remove effect if expired
+        if (effect.remainingTurns <= 0) {
+          console.log(`${effect.name} effect on ${unit.name} has expired.`);
+          return false; // remove effect
+        }
+  
+        return true; // keep effect
+      });
+    }
+  
+    async executeTurn(action, selectedSpell = null) {
+      this.inputLocked = true;
+      this.processActiveEffects(this.player);
+  
+      if (action === 'attack') {
+        await this.executeAttack(this.player, this.enemy);
+      }
+      else if (action === 'cast' && selectedSpell) {
+        await this.executeSpell(this.player, selectedSpell, this.enemy);
+      }
+  
+      if (this.enemy.health > 0) {
+        this.processActiveEffects(this.enemy);
+        // ai for opponent
+        await this.executeAttack(this.enemy, this.player);
+      }
+  
+      this.checkRoundOutcome();
+    }
+  
+    executeAttack(attacker, target) {
+      return new Promise((resolve) => {
+  
+        const animationText = this.add.text(700, 500, `${attacker.name} attacks...`, { fontSize: '52px', fill: '#fff' });
+  
+        this.time.delayedCall(1000, () => {
+          animationText.destroy();
+          target.health -= attacker.weapon.attack * attacker.stats.strength * 0.1;
+          console.log(`${attacker.name} attacks ${target.name} with ${attacker.weapon.name} for ${attacker.weapon.attack} damage multiplied by strength ${attacker.stats.strength} * 0.1 = ${attacker.weapon.attack * attacker.stats.strength * 0.1}`);
+          this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP);
+          resolve();
+        });
+      });
+    }
+  
+    executeSpell(attacker, spell, target) {
+      return new Promise((resolve) => {
+        const animationText = this.add.text(700, 500, `${attacker.name} casts ${spell.name}...`, { fontSize: '52px', fill: '#fff' });
+  
+        this.time.delayedCall(1000, () => {
+          animationText.destroy();
+  
+          if (spell.damage) {
+            // if the spell deals damage
+            target.health -= spell.damage(attacker.stats);
+            console.log(`${attacker.name} casts ${spell.name} on ${target.name} for ${spell.damage(attacker.stats)} damage.`);
+          }
+  
+          if (spell.effect) {
+            // if the spell has an effect
+            spell.effect(attacker, target, this);
+            this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP);
+            console.log(`${attacker.name} casts ${spell.name}.`);
+          }
+          this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP);
+          resolve();
+        });
+      });
+    }
+  
+    async switchScene() {
+      await new Promise(resolve => this.time.delayedCall(3000, resolve));
+      this.scene.start('RewardScene', { player: this.player, seed: this.seed });
+      this.inputLocked = false;
+    }
+  
+    async checkRoundOutcome() {
+      if (this.enemy.health <= 0) {
+        this.add.text(960, 640, 'You win!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
+        this.player.level++;
+        this.levelData.completed = true;
+  
+        await this.switchScene();
+  
+        return;
+      }
+  
+      if (this.player.health <= 0) {
+        this.add.text(960, 540, 'You lose!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
+        this.scene.pause();
+      }
+      this.totalTurns++;
+      this.inputLocked = false;
+    }
+  
+    getEnemy() {
+      const rng = seedrandom(this.seed);
+      const random = rng();
+      this.enemy = this.levelData.enemies[Math.floor(random * this.levelData.enemies.length)];
+    }
 }
 export default BattleScene;

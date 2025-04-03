@@ -76,7 +76,7 @@ const spells = {
                 applyEffect: () => {
                     target.health -= this.damagePerTurn;
                     console.log(`${target.name} takes ${this.damagePerTurn} damage from Ignite.`);
-                    battleScene.displayStats();
+                    battleScene.battleUI.displayStats(battleScene.player, battleScene.enemy, battleScene.playerStartHP, battleScene.enemyStartHP);
                 }
             });
         }
