@@ -136,6 +136,7 @@ export function executeSpell(scene, attacker, spell, target) {
                 }
                 else if (attacker.class.name === "Mage") {
                     attacker.class.resource.focusPoints = 0; // reset focus points if different action is performed
+                    console.log(`${attacker.name} loses all focus points.`);
                 }
                 attacker.lastAction = spell.name; // update last action
 
@@ -160,7 +161,6 @@ export function executeSpell(scene, attacker, spell, target) {
             }
 
             if (spell.effect) {
-                // If the spell has an effect
                 spell.effect(attacker, target, scene);
                 scene.battleUI.displayStats(scene.player, scene.enemy, scene.playerStartHP, scene.enemyStartHP);
                 console.log(`${attacker.name} casts ${spell.name}.`);

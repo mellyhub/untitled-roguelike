@@ -7,7 +7,7 @@ const player = {
     energy: 100,
     weapon: weapons.big_axe, // The player starts with big_axe
     inventory: [],
-    spells: [spells.frostbolt, spells.aura_of_might, spells.ignite], // Initialize an empty spells array
+    spells: [spells.frostbolt, spells.aura_of_might, spells.rejuvenation], // Initialize an empty spells array
     spellbook: [],
     class: null,
     stats: null,

@@ -81,5 +81,30 @@ const spells = {
             });
         }
     },
+    rejuvenation: {
+        name: "Rejuvenation",
+        icon: "rejuvenation-icon",
+        healPerTurn: 10,
+        turnDuration: 3,
+        effect(attacker, target, battleScene) {
+            console.log(`${attacker.name} casts Rejuvenation, applying healing over ${this.turnDuration} turns.`);
+
+            attacker.activeEffects = target.activeEffects || [];
+            attacker.activeEffects.push({
+                name: this.name,
+                remainingTurns: this.turnDuration,
+                applyEffect: () => {
+                    // scale healing with focus points
+                    if (attacker.class && attacker.class.name === "Mage") {
+                        this.healPerTurn *= 1 + attacker.class.resource.focusPoints * 0.1; // increase healing by 10% per focus point
+                        console.log(this.healPerTurn);
+                    }
+                    attacker.health += this.healPerTurn;
+                    console.log(`${attacker.name} heals ${this.healPerTurn} from Rejuvenation.`);
+                    battleScene.battleUI.displayStats(battleScene.player, battleScene.enemy, battleScene.playerStartHP, battleScene.enemyStartHP);
+                }
+            });
+        },
+    }
 }
 export default spells;
