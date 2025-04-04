@@ -58,7 +58,7 @@ export function executeAttack(scene, attacker, target) {
             console.log(`${attacker.name} attacks ${target.name} with ${attacker.weapon.name} for ${damage} damage.`);
 
             if (target.class && target.class.name === 'Warrior') {
-                const rageAmount = 50; // amount of rage gained when hit
+                const rageAmount = 10; // amount of rage gained when hit
                 target.class.resource.rage = Math.min(target.class.resource.rage + rageAmount, 100); // cap rage at 100
                 console.log(`${target.name} gains ${rageAmount} rage. Total rage: ${target.class.resource.rage}`);
             }
@@ -87,6 +87,12 @@ export function executeSpell(scene, attacker, spell, target) {
                     damage = spell.damage(attacker.stats);
                 }
 
+                if (attacker.class && attacker.class.name === 'Warrior') {
+                    const rageMultiplier = 1 + attacker.class.resource.rage * 0.002;
+                    console.log(`Rage multiplier: ${rageMultiplier}`);
+                    damage *= rageMultiplier;
+                }
+                
                 if (target.class && target.class.name === 'Warrior') {
                     const rageAmount = 10; // amount of rage gained when hit
                     target.class.resource.rage = Math.min(target.class.resource.rage + rageAmount, 100); // cap rage at 100
