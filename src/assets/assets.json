@@ -64,9 +64,19 @@
 		"assets": [
 			{
 				"type": "image",
+				"key": "bite-icon",
+				"url": "bite-icon.png"
+			},
+			{
+				"type": "image",
+				"key": "fireball-icon",
+				"url": "fireball-icon.png"
+			},
+			{
+				"type": "image",
 				"key": "frostbolt-icon",
 				"url": "frostbolt-icon.png"
-			}		
+			}
 		]
 	},
 	{
