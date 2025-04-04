@@ -46,6 +46,11 @@
 				"type": "image",
 				"key": "jens-sword-icon",
 				"url": "jens-sword-icon.png"
+			},
+			{
+				"type": "image",
+				"key": "snowmans-bane-icon",
+				"url": "snowmans-bane-icon.png"
 			}
 		]
 	},
