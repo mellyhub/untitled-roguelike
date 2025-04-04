@@ -1,14 +1,6 @@
 import seedrandom from 'seedrandom';
 import BattleUI from './BattleUI';
-
-function isCrit(critChance) {
-  const critRoll = Math.random();
-  if (critChance > critRoll) {
-    console.log("Critical hit!");
-    return true;
-  };
-  return false;
-}
+import { executeAttack, executeSpell, processActiveEffects } from './DamageCalc';
 
 class BattleScene extends Phaser.Scene {
   constructor() {
@@ -123,102 +115,27 @@ class BattleScene extends Phaser.Scene {
     playerStartHP = 0;
     enemyStartHP = 0;
   
-    processActiveEffects(unit) {
-      if (!unit.activeEffects) return;
-  
-      // iterates through active effects and applies them
-      unit.activeEffects = unit.activeEffects.filter(effect => {
-        effect.applyEffect();
-        effect.remainingTurns--;
-  
-        // remove effect if expired
-        if (effect.remainingTurns <= 0) {
-          console.log(`${effect.name} effect on ${unit.name} has expired.`);
-          return false; // remove effect
-        }
-  
-        return true; // keep effect
-      });
-    }
-  
     async executeTurn(action, selectedSpell = null) {
       this.inputLocked = true;
-      this.processActiveEffects(this.player);
+      processActiveEffects(this.player);
   
       if (action === 'attack') {
-        await this.executeAttack(this.player, this.enemy);
+        await executeAttack(this, this.player, this.enemy);
       }
       else if (action === 'cast' && selectedSpell) {
-        await this.executeSpell(this.player, selectedSpell, this.enemy);
+        await executeSpell(this, this.player, selectedSpell, this.enemy);
       }
   
       if (this.enemy.health > 0) {
-        this.processActiveEffects(this.enemy);
+        processActiveEffects(this, this.enemy);
         // ai for opponent
-        await this.executeAttack(this.enemy, this.player);
+        await executeAttack(this, this.enemy, this.player);
       }
   
       this.checkRoundOutcome();
     }
   
-    executeAttack(attacker, target) {
-      return new Promise((resolve) => {
-  
-        const animationText = this.add.text(700, 500, `${attacker.name} attacks...`, { fontSize: '52px', fill: '#fff' });
-  
-        this.time.delayedCall(1000, () => {
-          animationText.destroy();
-          if(attacker.weapon.name === "Snowman’s Bane" && target.name === "Snowman") {
-            target.health = 0;
-            console.log("The Snowman’s Bane is mercilessly wielded to bring an end to the reign of the snowman, ensuring its icy demise.");
-          }
-          else {
-            if (isCrit(attacker.stats.critChance)) {
-              target.health -= attacker.weapon.damage * attacker.stats.strength * 0.1 * attacker.stats.critDamage;
-              console.log(`${attacker.name} attacks ${target.name} with ${attacker.weapon.name} for ${attacker.weapon.damage * attacker.stats.critDamage} damage.`);
-            }
-            else {
-              target.health -= attacker.weapon.damage * attacker.stats.strength * 0.1;
-              console.log(`${attacker.name} attacks ${target.name} with ${attacker.weapon.name} for ${attacker.weapon.damage} damage.`);
-            }
-            
-          }
-          this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP);
-          resolve();
-        });
-      });
-    }
-  
-    executeSpell(attacker, spell, target) {
-      return new Promise((resolve) => {
-        const animationText = this.add.text(700, 500, `${attacker.name} casts ${spell.name}...`, { fontSize: '52px', fill: '#fff' });
-  
-        this.time.delayedCall(1000, () => {
-          animationText.destroy();
-  
-          if (spell.damage) {
-            // if the spell deals damage
-            if (isCrit(attacker.stats.critChance)) {
-              target.health -= spell.damage(attacker.stats) * attacker.stats.critDamage;
-              console.log(`${attacker.name} casts ${spell.name} on ${target.name} for ${spell.damage(attacker.stats) * attacker.stats.critDamage} damage.`);
-            }
-            else {
-              target.health -= spell.damage(attacker.stats);
-              console.log(`${attacker.name} casts ${spell.name} on ${target.name} for ${spell.damage(attacker.stats)} damage.`);
-            }
-          }
-  
-          if (spell.effect) {
-            // if the spell has an effect
-            spell.effect(attacker, target, this);
-            this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP);
-            console.log(`${attacker.name} casts ${spell.name}.`);
-          }
-          this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP);
-          resolve();
-        });
-      });
-    }
+    
   
     async switchScene() {
       await new Promise(resolve => this.time.delayedCall(3000, resolve));
