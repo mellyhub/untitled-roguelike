@@ -30,7 +30,7 @@ const enemies = {
         weapon: weapons.dagger,
         spells: [],
         stats: {
-            strength: 10,
+            strength: 1000,
             agility: 0,
             intelligence: 0,
         },
