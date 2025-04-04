@@ -110,62 +110,62 @@ class BattleScene extends Phaser.Scene {
       this.scene.switch('MapScene');
     });
   }
-    // Array of rendered elements (healthbar, text, etc..), used for removing elements before rerendering
-    renderedElements = [];
-    playerStartHP = 0;
-    enemyStartHP = 0;
-  
-    async executeTurn(action, selectedSpell = null) {
-      this.inputLocked = true;
-      processActiveEffects(this.player);
-  
-      if (action === 'attack') {
-        await executeAttack(this, this.player, this.enemy);
-      }
-      else if (action === 'cast' && selectedSpell) {
-        await executeSpell(this, this.player, selectedSpell, this.enemy);
-      }
-  
-      if (this.enemy.health > 0) {
-        processActiveEffects(this, this.enemy);
-        // ai for opponent
-        await executeAttack(this, this.enemy, this.player);
-      }
-  
-      this.checkRoundOutcome();
+  // Array of rendered elements (healthbar, text, etc..), used for removing elements before rerendering
+  renderedElements = [];
+  playerStartHP = 0;
+  enemyStartHP = 0;
+
+  async executeTurn(action, selectedSpell = null) {
+    this.inputLocked = true;
+    processActiveEffects(this.player);
+
+    if (action === 'attack') {
+      await executeAttack(this, this.player, this.enemy);
     }
-  
-    
-  
-    async switchScene() {
-      await new Promise(resolve => this.time.delayedCall(3000, resolve));
-      this.scene.start('RewardScene', { player: this.player, seed: this.seed });
-      this.inputLocked = false;
+    else if (action === 'cast' && selectedSpell) {
+      await executeSpell(this, this.player, selectedSpell, this.enemy);
     }
-  
-    async checkRoundOutcome() {
-      if (this.enemy.health <= 0) {
-        this.add.text(960, 640, 'You win!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
-        this.player.level++;
-        this.levelData.completed = true;
-  
-        await this.switchScene();
-  
-        return;
-      }
-  
-      if (this.player.health <= 0) {
-        this.add.text(960, 540, 'You lose!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
-        this.scene.pause();
-      }
-      this.totalTurns++;
-      this.inputLocked = false;
+
+    if (this.enemy.health > 0) {
+      processActiveEffects(this, this.enemy);
+      // ai for opponent
+      await executeAttack(this, this.enemy, this.player);
     }
-  
-    getEnemy() {
-      const rng = seedrandom(this.seed);
-      const random = rng();
-      this.enemy = this.levelData.enemies[Math.floor(random * this.levelData.enemies.length)];
+
+    this.checkRoundOutcome();
+  }
+
+
+
+  async switchScene() {
+    await new Promise(resolve => this.time.delayedCall(3000, resolve));
+    this.scene.start('RewardScene', { player: this.player, seed: this.seed });
+    this.inputLocked = false;
+  }
+
+  async checkRoundOutcome() {
+    if (this.enemy.health <= 0) {
+      this.add.text(960, 640, 'You win!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
+      this.player.level++;
+      this.levelData.completed = true;
+
+      await this.switchScene();
+
+      return;
     }
+
+    if (this.player.health <= 0) {
+      this.add.text(960, 540, 'You lose!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
+      this.scene.pause();
+    }
+    this.totalTurns++;
+    this.inputLocked = false;
+  }
+
+  getEnemy() {
+    const rng = seedrandom(this.seed);
+    const random = rng();
+    this.enemy = this.levelData.enemies[Math.floor(random * this.levelData.enemies.length)];
+  }
 }
 export default BattleScene;

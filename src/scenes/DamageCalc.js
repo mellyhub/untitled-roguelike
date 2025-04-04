@@ -32,17 +32,34 @@ export function executeAttack(scene, attacker, target) {
         scene.time.delayedCall(1000, () => {
             animationText.destroy();
 
+            let damage = 0;
+
             if (attacker.weapon.name === "Snowman’s Bane" && target.name === "Snowman") {
                 target.health = 0;
                 console.log("The Snowman’s Bane is mercilessly wielded to bring an end to the reign of the snowman, ensuring its icy demise.");
-            } else {
-                if (isCrit(attacker.stats.critChance)) {
-                    target.health -= attacker.weapon.damage * attacker.stats.strength * 0.1 * attacker.stats.critDamage;
-                    console.log(`${attacker.name} attacks ${target.name} with ${attacker.weapon.name} for ${attacker.weapon.damage * attacker.stats.critDamage} damage.`);
-                } else {
-                    target.health -= attacker.weapon.damage * attacker.stats.strength * 0.1;
-                    console.log(`${attacker.name} attacks ${target.name} with ${attacker.weapon.name} for ${attacker.weapon.damage} damage.`);
-                }
+            }
+
+            if (isCrit(attacker.stats.critChance)) {
+                damage = attacker.weapon.damage * attacker.stats.strength * 0.1 * attacker.stats.critDamage;
+            }
+            else {
+                damage = attacker.weapon.damage * attacker.stats.strength * 0.1;
+            }
+
+            if (attacker.class && attacker.class.name === 'Warrior') {
+                const rageMultiplier = 1 + attacker.class.resource.rage * 0.01; // 1% extra damage per rage point
+                damage *= rageMultiplier;
+            }
+
+            // rounds to nearest integer
+            damage = Math.round(damage);
+            target.health -= damage;
+            console.log(`${attacker.name} attacks ${target.name} with ${attacker.weapon.name} for ${damage} damage.`);
+
+            if (target.class && target.class.name === 'Warrior') {
+                const rageAmount = 10; // amount of rage gained when hit
+                target.class.resource.rage = Math.min(target.class.resource.rage + rageAmount, 100); // cap rage at 100
+                console.log(`${target.name} gains ${rageAmount} rage. Total rage: ${target.class.resource.rage}`);
             }
 
             scene.battleUI.displayStats(scene.player, scene.enemy, scene.playerStartHP, scene.enemyStartHP);
@@ -58,15 +75,27 @@ export function executeSpell(scene, attacker, spell, target) {
         scene.time.delayedCall(1000, () => {
             animationText.destroy();
 
+            let damage = 0;
+
             if (spell.damage) {
                 // If the spell deals damage
                 if (isCrit(attacker.stats.critChance)) {
-                    target.health -= spell.damage(attacker.stats) * attacker.stats.critDamage;
-                    console.log(`${attacker.name} casts ${spell.name} on ${target.name} for ${spell.damage(attacker.stats) * attacker.stats.critDamage} damage.`);
-                } else {
-                    target.health -= spell.damage(attacker.stats);
-                    console.log(`${attacker.name} casts ${spell.name} on ${target.name} for ${spell.damage(attacker.stats)} damage.`);
+                    damage = spell.damage(attacker.stats) * attacker.stats.critDamage;
                 }
+                else {
+                    damage = spell.damage(attacker.stats);
+                }
+
+                if (target.class && target.class.name === 'Warrior') {
+                    const rageAmount = 10; // amount of rage gained when hit
+                    target.class.resource.rage = Math.min(target.class.resource.rage + rageAmount, 100); // cap rage at 100
+                    console.log(`${target.name} gains ${rageAmount} rage. Total rage: ${target.class.resource.rage}`);
+                }
+
+                // rounds to nearest integer
+                damage = Math.round(damage);
+                target.health -= damage;
+                console.log(`${attacker.name} casts ${spell.name} on ${target.name} for ${damage} damage.`);
             }
 
             if (spell.effect) {
