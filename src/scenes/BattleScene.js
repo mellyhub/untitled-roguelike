@@ -11,9 +11,12 @@ class BattleScene extends Phaser.Scene {
     // Load assets (images, sounds, etc.)
     this.load.image('background', 'src/assets/images/backgrounds/bg.png');
     this.load.image('player', 'src/assets/images/player-model/warrior-prototyp1.png');
-    this.load.image('goblin', 'src/assets/images/enemy-sprites/goblin-prototyp1.png');
-    this.load.image('night-glider', 'src/assets/images/enemy-sprites/night-glider.png');
+    this.load.image('Goblin', 'src/assets/images/enemy-sprites/goblin-prototyp1.png');
+    this.load.image('Jens', 'src/assets/images/enemy-sprites/jens.jpg');
+    this.load.image('Snowman', 'src/assets/images/enemy-sprites/snowman.png');
+    this.load.image('Megadraken', 'src/assets/images/enemy-sprites/night-glider.png');
     this.load.image('battleUi', 'src/assets/images/ui/fight-ui-prototyp1.png');
+
   }
 
   create(data) {
@@ -35,7 +38,7 @@ class BattleScene extends Phaser.Scene {
 
     this.add.image(960, 540, 'background').setAlpha(0.1);
     this.add.image(480, 540, 'player').setScale(0.4);
-    this.add.image(1440, 540, 'night-glider').setScale(0.7);
+    this.add.image(1440, 540, this.enemy.name).setScale(0.7);
     this.add.image(960, 540, 'battleUi');
 
     // initialize battle ui

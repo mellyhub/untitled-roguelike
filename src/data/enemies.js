@@ -20,6 +20,7 @@ const enemies = {
             agility: 0,
             intelligence: 0,
         },
+        image: 'src/assets/images/enemy-sprites/goblin-prototyp1.png'
     }),
 
     jens: (seed) => ({
@@ -33,6 +34,7 @@ const enemies = {
             agility: 0,
             intelligence: 0,
         },
+        image: 'src/assets/images/enemy-sprites/goblin-prototyp1.png'
     }),
 
     megadraken: (seed) => ({
@@ -46,6 +48,7 @@ const enemies = {
             agility: 0,
             intelligence: 0,
         },
+        image: 'src/assets/images/enemy-sprites/night-glider.png'
     }),
 
     snowman: (seed) => ({
@@ -59,6 +62,7 @@ const enemies = {
             agility: 20,
             intelligence: 20,
         },
+        image: 'src/assets/images/enemy-sprites/night-glider.png'
     }),
 }
 
