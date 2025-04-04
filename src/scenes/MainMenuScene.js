@@ -8,6 +8,7 @@ class MainMenuScene extends Phaser.Scene {
 
   preload() {
     // Load assets (images, sounds, etc.)
+    this.load.image('background-img', 'src/assets/images/backgrounds/main-menu.png');
     this.load.audio("background", "src/assets/audio/soundtest.mp3");
   }
 
@@ -17,6 +18,7 @@ class MainMenuScene extends Phaser.Scene {
     this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
 
     const music = this.sound.add("background", { loop: true, volume: 0.1 });
+    this.add.image(960, 540, 'background-img').setScale(1);
     //music.play();
 
     this.add.text(960, 400, 'Choose Class', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
@@ -36,7 +38,7 @@ class MainMenuScene extends Phaser.Scene {
 
     this.currentSelection = 0;
 
-    this.descriptionText = this.add.text(960, 700, '', { fontSize: '32px', fill: '#fff', wordWrap: { width: 800 } }).setOrigin(0.5);
+    this.descriptionText = this.add.text(960, 800, '', { fontSize: '32px', fill: '#fff', wordWrap: { width: 800 } }).setOrigin(0.5);
     this.updateDescription();
   }
 
