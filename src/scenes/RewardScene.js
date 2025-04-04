@@ -77,14 +77,22 @@ class RewardScene extends Phaser.Scene {
             {
                 name: `Gain 5\n${this.randomStat}`,
                 description: `Increase ${this.randomStat} by 5.`,
-                effect: () => { this.player.stats[this.randomStat] += 5; }
+                effect: () => {
+                        this.player.stats[this.randomStat] += 5;
+                }
             },
             {
                 name: `Gain spell:\n${this.randomSpell.name}`,
                 description: `Learns the ${this.randomSpell.name} spell`,
                 effect: () => {
+                    if (this.player.spells.length >= 3) {
+                        this.player.spellbook.push(this.randomSpell);
+                        console.log(`${this.randomSpell.name} added to spellbook`);
+                    }
+                    else {
                     this.player.spells.push(this.randomSpell);
-                }
+                    }
+                }   
             },
         ];
 
