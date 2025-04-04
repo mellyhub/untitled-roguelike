@@ -46,6 +46,17 @@ export function executeAttack(scene, attacker, target) {
                 damage = attacker.weapon.damage * attacker.stats.strength * 0.1;
             }
 
+            // handle rogue combo points scaling
+            if (attacker.class && attacker.class.name === "Rogue" && attacker.lastAction === 'attack') {
+                attacker.class.resource.comboPoints = Math.min(attacker.class.resource.comboPoints - 1, 3); // cap at 3 FP
+                console.log(`${attacker.name} uses 1 combo point. Total combo points: ${attacker.class.resource.comboPoints}`);
+                damage *= 1 + attacker.class.resource.comboPoints * 0.1;
+                console.log(damage);
+            }
+            else if (attacker.class && attacker.class.name === "Rogue") {
+                attacker.class.resource.comboPoints++;
+            }
+
             // handle mage focus points scaling
             if (attacker.class && attacker.class.name === "Mage" && attacker.lastAction === 'attack') {
                 attacker.class.resource.focusPoints = Math.min(attacker.class.resource.focusPoints + 1, 3); // cap at 3 FP
@@ -53,10 +64,9 @@ export function executeAttack(scene, attacker, target) {
                 damage *= 1 + attacker.class.resource.focusPoints * 0.1; // increase by 10% per focus point
                 console.log(damage);
             }
-            else {
-                attacker.focusPoints = 0; // reset focus points if different action is performed
+            else if (attacker.class && attacker.class.name === "Mage") {
+                attacker.class.resource.focusPoints = 0; // reset focus points if different action is performed
             }
-            attacker.lastAction = 'attack'; // update last action
 
             // handle warrior rage scaling
             if (attacker.class && attacker.class.name === 'Warrior') {
@@ -64,6 +74,8 @@ export function executeAttack(scene, attacker, target) {
                 console.log(`Rage multiplier: ${rageMultiplier}`);
                 damage *= rageMultiplier;
             }
+
+            attacker.lastAction = 'attack'; // update last action
 
             // rounds to nearest integer
             damage = Math.round(damage);
@@ -100,6 +112,21 @@ export function executeSpell(scene, attacker, spell, target) {
                 else {
                     damage = spell.damage(attacker.stats);
                 }
+
+                // handle rogue combo points scaling
+                if (attacker.class && attacker.class.name === "Rogue" && attacker.lastAction === spell.name) {
+                    console.log(attacker.class.resource.comboPoints);
+                    attacker.class.resource.comboPoints--;
+                    
+                    console.log(`${attacker.name} uses 1 combo point. Total combo points: ${attacker.class.resource.comboPoints}`);
+                    damage *= 1 + attacker.class.resource.comboPoints * 0.1;
+                    console.log(damage);
+                }
+                else if (attacker.class && attacker.class.name === "Rogue") {
+                    attacker.class.resource.comboPoints++;
+                    console.log(`${attacker.name} gains 1 combo point. Total combo points: ${attacker.class.resource.comboPoints}`);
+                }
+
                 // handle mage focus points scaling
                 if (attacker.class.name === "Mage" && attacker.lastAction === spell.name) {
                     attacker.class.resource.focusPoints = Math.min(attacker.class.resource.focusPoints + 1, 3); // cap at 3 FP
@@ -107,8 +134,8 @@ export function executeSpell(scene, attacker, spell, target) {
                     damage *= 1 + attacker.class.resource.focusPoints * 0.1; // increase by 10% per focus point
                     console.log(damage);
                 }
-                else {
-                    attacker.focusPoints = spell.name; // reset focus points if different action is performed
+                else if (attacker.class.name === "Mage") {
+                    attacker.class.resource.focusPoints = 0; // reset focus points if different action is performed
                 }
                 attacker.lastAction = spell.name; // update last action
 
