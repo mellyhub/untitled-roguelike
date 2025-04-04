@@ -46,6 +46,19 @@ export function executeAttack(scene, attacker, target) {
                 damage = attacker.weapon.damage * attacker.stats.strength * 0.1;
             }
 
+            // handle mage focus points scaling
+            if (attacker.class && attacker.class.name === "Mage" && attacker.lastAction === 'attack') {
+                attacker.class.resource.focusPoints = Math.min(attacker.class.resource.focusPoints + 1, 3); // cap at 3 FP
+                console.log(`${attacker.name} gains 1 focus point. Total focus points: ${attacker.class.resource.focusPoints}`);
+                damage *= 1 + attacker.class.resource.focusPoints * 0.1; // increase by 10% per focus point
+                console.log(damage);
+            }
+            else {
+                attacker.focusPoints = 0; // reset focus points if different action is performed
+            }
+            attacker.lastAction = 'attack'; // update last action
+
+            // handle warrior rage scaling
             if (attacker.class && attacker.class.name === 'Warrior') {
                 const rageMultiplier = 1 + attacker.class.resource.rage * 0.002;
                 console.log(`Rage multiplier: ${rageMultiplier}`);
@@ -57,6 +70,7 @@ export function executeAttack(scene, attacker, target) {
             target.health -= damage;
             console.log(`${attacker.name} attacks ${target.name} with ${attacker.weapon.name} for ${damage} damage.`);
 
+            // warrior rage gain on hit
             if (target.class && target.class.name === 'Warrior') {
                 const rageAmount = 10; // amount of rage gained when hit
                 target.class.resource.rage = Math.min(target.class.resource.rage + rageAmount, 100); // cap rage at 100
@@ -86,13 +100,26 @@ export function executeSpell(scene, attacker, spell, target) {
                 else {
                     damage = spell.damage(attacker.stats);
                 }
+                // handle mage focus points scaling
+                if (attacker.class.name === "Mage" && attacker.lastAction === spell.name) {
+                    attacker.class.resource.focusPoints = Math.min(attacker.class.resource.focusPoints + 1, 3); // cap at 3 FP
+                    console.log(`${attacker.name} gains 1 focus point. Total focus points: ${attacker.class.resource.focusPoints}`);
+                    damage *= 1 + attacker.class.resource.focusPoints * 0.1; // increase by 10% per focus point
+                    console.log(damage);
+                }
+                else {
+                    attacker.focusPoints = spell.name; // reset focus points if different action is performed
+                }
+                attacker.lastAction = spell.name; // update last action
 
+                // handle warrior rage scaling
                 if (attacker.class && attacker.class.name === 'Warrior') {
                     const rageMultiplier = 1 + attacker.class.resource.rage * 0.002;
                     console.log(`Rage multiplier: ${rageMultiplier}`);
                     damage *= rageMultiplier;
                 }
-                
+
+                // warrior rage gain on hit
                 if (target.class && target.class.name === 'Warrior') {
                     const rageAmount = 10; // amount of rage gained when hit
                     target.class.resource.rage = Math.min(target.class.resource.rage + rageAmount, 100); // cap rage at 100

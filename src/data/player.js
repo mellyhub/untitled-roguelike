@@ -11,6 +11,7 @@ const player = {
     spellbook: [],
     class: null,
     stats: null,
+    lastAction: null,
     talentPoints: 50,
     level: 1,
 };
