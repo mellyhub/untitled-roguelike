@@ -1,6 +1,15 @@
 import seedrandom from 'seedrandom';
 import BattleUI from './BattleUI';
 
+function isCrit(critChance) {
+  const critRoll = Math.random();
+  if (critChance > critRoll) {
+    console.log("Critical hit!");
+    return true;
+  };
+  return false;
+}
+
 class BattleScene extends Phaser.Scene {
   constructor() {
     super('BattleScene');
@@ -156,13 +165,20 @@ class BattleScene extends Phaser.Scene {
   
         this.time.delayedCall(1000, () => {
           animationText.destroy();
-          if(attacker.weapon.name === "Snowman’s Bane" & target.name === "Snowman") {
+          if(attacker.weapon.name === "Snowman’s Bane" && target.name === "Snowman") {
             target.health = 0;
             console.log("The Snowman’s Bane is mercilessly wielded to bring an end to the reign of the snowman, ensuring its icy demise.");
           }
           else {
-            target.health -= attacker.weapon.attack * attacker.stats.strength * 0.1;
-            console.log(`${attacker.name} attacks ${target.name} with ${attacker.weapon.name} for ${attacker.weapon.attack} damage multiplied by strength ${attacker.stats.strength} * 0.1 = ${attacker.weapon.attack * attacker.stats.strength * 0.1}`);
+            if (isCrit(attacker.stats.critChance)) {
+              target.health -= attacker.weapon.damage * attacker.stats.strength * 0.1 * attacker.stats.critDamage;
+              console.log(`${attacker.name} attacks ${target.name} with ${attacker.weapon.name} for ${attacker.weapon.damage * attacker.stats.critDamage} damage.`);
+            }
+            else {
+              target.health -= attacker.weapon.damage * attacker.stats.strength * 0.1;
+              console.log(`${attacker.name} attacks ${target.name} with ${attacker.weapon.name} for ${attacker.weapon.damage} damage.`);
+            }
+            
           }
           this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP);
           resolve();
@@ -179,8 +195,14 @@ class BattleScene extends Phaser.Scene {
   
           if (spell.damage) {
             // if the spell deals damage
-            target.health -= spell.damage(attacker.stats);
-            console.log(`${attacker.name} casts ${spell.name} on ${target.name} for ${spell.damage(attacker.stats)} damage.`);
+            if (isCrit(attacker.stats.critChance)) {
+              target.health -= spell.damage(attacker.stats) * attacker.stats.critDamage;
+              console.log(`${attacker.name} casts ${spell.name} on ${target.name} for ${spell.damage(attacker.stats) * attacker.stats.critDamage} damage.`);
+            }
+            else {
+              target.health -= spell.damage(attacker.stats);
+              console.log(`${attacker.name} casts ${spell.name} on ${target.name} for ${spell.damage(attacker.stats)} damage.`);
+            }
           }
   
           if (spell.effect) {

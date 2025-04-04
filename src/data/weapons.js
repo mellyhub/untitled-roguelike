@@ -5,12 +5,12 @@ const weapons = {
     dagger: {
         name: "Dagger",
         icon: "jens-sword-icon",
-        attack: 10,
+        damage: 10,
     },
     staff: {
         name: "Staff",
         icon: "jens-sword-icon",
-        attack: 5,
+        damage: 5,
         spells:
         {
             frostbolt: spells.frostbolt,
@@ -20,12 +20,12 @@ const weapons = {
     dragon: {
         name: "Dragon",
         icon: "fireball-icon",
-        attack: 30,
+        damage: 30,
     },
     big_axe: {
         name: "Big Axe",
         icon: null,
-        attack: 60,
+        damage: 60,
         stats: {
             strength: 2,
             agility: 5,
@@ -39,7 +39,7 @@ const weapons = {
     jens_sword: {
         name: "Jens Svärd",
         icon: "jens-sword-icon",
-        attack: 100,
+        damage: 100,
         stats: {
             strength: 1000,
             agility: 1000,
@@ -54,7 +54,7 @@ const weapons = {
         name: "Snowman’s Bane",
         description: "The dreaded bane of the snowman, a weapon forged in the darkest corners of winter’s wrath",
         icon: "snowmans-bane-icon",
-        attack: 10,
+        damage: 10,
         spells:
         {
             heavy_swing: spells.heavy_swing,

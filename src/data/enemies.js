@@ -12,6 +12,7 @@ const enemies = {
     goblin: (seed) => ({
         name: "Goblin",
         health: getRandomHealth(seed, 50, 100),
+        energy: 100,
         weapon: weapons.dagger,
         spells: [],
         stats: {
@@ -24,6 +25,7 @@ const enemies = {
     jens: (seed) => ({
         name: "Jens",
         health: getRandomHealth(seed, 120, 150),
+        energy: 100,
         weapon: weapons.dagger,
         spells: [],
         stats: {
@@ -36,6 +38,7 @@ const enemies = {
     megadraken: (seed) => ({
         name: "Megadraken",
         health: 200,
+        energy: 100,
         weapon: weapons.dragon,
         spells: [],
         stats: {
@@ -48,6 +51,7 @@ const enemies = {
     snowman: (seed) => ({
         name: "Snowman",
         health: 200,
+        energy: 100,
         weapon: weapons.dagger,
         spells: [],
         stats: {
