@@ -12,7 +12,7 @@ class BattleScene extends Phaser.Scene {
     this.load.image('background', 'src/assets/images/backgrounds/bg.png');
     this.load.image('player', 'src/assets/images/player-model/warrior-prototyp1.png');
     this.load.image('Goblin', 'src/assets/images/enemy-sprites/goblin-prototyp1.png');
-    this.load.image('Jens', 'src/assets/images/enemy-sprites/jens.png');
+    this.load.image('Jens', 'src/assets/images/enemy-sprites/jens.jpg');
     this.load.image('Snowman', 'src/assets/images/enemy-sprites/snowman.png');
     this.load.image('Megadraken', 'src/assets/images/enemy-sprites/night-glider.png');
     this.load.image('battleUi', 'src/assets/images/ui/fight-ui-prototyp1.png');
