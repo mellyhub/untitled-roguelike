@@ -146,8 +146,14 @@ class BattleScene extends Phaser.Scene {
 
     if (this.enemy.health > 0) {
       processActiveEffects(this, this.enemy);
+
       // ai for opponent
-      await executeAttack(this, this.enemy, this.player);
+      if(this.enemy.name === 'Megadraken') {
+        await executeSpell(this, this.enemy, this.enemy.spells[0], this.player);
+      }
+      else {
+        await executeAttack(this, this.enemy, this.player);
+      }
     }
 
     this.checkRoundOutcome();

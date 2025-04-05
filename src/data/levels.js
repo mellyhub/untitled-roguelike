@@ -19,10 +19,10 @@ function generateLevels(seed) {
             completed: false,
             level: 0,
             enemies: [
-                enemies.goblin(seed),
-                enemies.jens(seed),
-                enemies.megadraken(seed),
-                enemies.snowman(seed)
+                enemies.goblin(seed, 5),
+                enemies.jens(seed, 5),
+                enemies.megadraken(seed, 5),
+                enemies.snowman(seed, 5)
             ],
         },
     ];
