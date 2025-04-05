@@ -1,6 +1,7 @@
 import seedrandom from 'seedrandom';
 import BattleUI from './BattleUI';
 import { executeAttack, executeSpell, processActiveEffects } from './DamageCalc';
+import { setCookie, getCookie } from './cookieUtils.js';
 
 class BattleScene extends Phaser.Scene {
   constructor() {
@@ -175,6 +176,12 @@ class BattleScene extends Phaser.Scene {
 
       this.player.score += 100; // example: add 100 points for defeating an enemy
       console.log(`Player score: ${this.player.score}`);
+
+      const highestScore = parseInt(getCookie('highestScore')) || 0;
+        if (this.player.score > highestScore) {
+            setCookie('highestScore', this.player.score, 365); // Save the new high score for 1 year
+            console.log(`New highest score: ${this.player.score}`);
+        }
 
       await this.switchScene();
 

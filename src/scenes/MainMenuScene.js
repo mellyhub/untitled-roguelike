@@ -1,5 +1,6 @@
 import classes from "../data/classes";
 import player from "../data/player";
+import { getCookie } from "./cookieUtils.js";
 
 class MainMenuScene extends Phaser.Scene {
   constructor() {
@@ -20,6 +21,9 @@ class MainMenuScene extends Phaser.Scene {
     const music = this.sound.add("background", { loop: true, volume: 0.1 });
     this.add.image(960, 540, 'background-img').setScale(1);
     //music.play();
+
+    const highestScore = getCookie('highestScore') || 0; // get highscore
+    this.add.text(960, 300, `Highest Score: ${highestScore}`, { fontSize: '32px', fill: '#fff' }).setOrigin(0.5);
 
     this.add.text(960, 400, 'Choose Class', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
 
