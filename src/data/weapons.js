@@ -24,7 +24,7 @@ const weapons = {
     },
     big_axe: {
         name: "Big Axe",
-        icon: null,
+        icon: "big-axe-icon",
         damage: 60,
         stats: {
             strength: 2,

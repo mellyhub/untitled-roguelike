@@ -44,6 +44,11 @@
 		"assets": [
 			{
 				"type": "image",
+				"key": "big-axe-icon",
+				"url": "big-axe-icon.png"
+			},
+			{
+				"type": "image",
 				"key": "jens-sword-icon",
 				"url": "jens-sword-icon.png"
 			},
