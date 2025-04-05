@@ -5,6 +5,8 @@ class BattleUI {
         this.menuItems = [];
         this.currentMenu = null;
         this.currentSelection = { x: 0, y: 0 };
+        this.currentMenuType = 'main';
+        this.spellMenuBackground = null;
     }
 
     calculateHealthBarSize(maxUnitHealth, currentUnitHealth) {
@@ -34,9 +36,12 @@ class BattleUI {
             BLACK: Phaser.Display.Color.GetColor32(0, 0, 0, 255)
         };
 
-        // cleanup old renders
+        // theres a better way to do this but i cba right now
         this.renderedElements.forEach(render => render.destroy());
         this.renderedElements = [];
+
+        // cleanup old renders
+        this.renderedElements.forEach(render => render.destroy());
 
         // players health bar
         const playerHealthBarSize = this.calculateHealthBarSize(playerStartHP, player.health);
@@ -65,12 +70,16 @@ class BattleUI {
             this.menuItems.forEach(item => item.destroy());
         }
 
+        this.renderedElements = [];
         this.currentMenu = menu;
 
         // render menu items
         this.menuItems = menu.map(menuItem => {
-            const xPosition = 300 + menuItem.x * 200; // horizontal spacing
-            const yPosition = 850 + menuItem.y * 100; // vertical spacing
+            // check if the menu is the spell menu
+            const isSpellMenu = menuItem.x === 0 && this.currentMenu.some(item => item.text === 'Back');
+            const xPosition = isSpellMenu ? 960 : 300 + menuItem.x * 200; // center horizontally for spell menu, original position for main menu
+            const yPosition = isSpellMenu ? 400 + menuItem.y * 50 : 850 + menuItem.y * 100; // adjust vertical spacing for spell menu or main menu
+
             const text = this.scene.add.text(xPosition, yPosition, menuItem.text, { fontSize: '48px', fill: '#fff' }).setOrigin(0.5);
 
             // highlight selected item
@@ -82,6 +91,46 @@ class BattleUI {
         });
     }
 
+    renderSpellMenu(player, switchMenu, mainMenu) {
+        // clear current menu
+        this.currentMenu = [];
+        this.currentMenuType = 'spell'; // set menu type to "spell"
+
+        // dynamically adding the spells
+        player.spells.forEach((spell, index) => {
+            this.currentMenu.push({ x: 0, y: index, text: spell.name });
+        });
+
+        // hardcoded back button
+        this.currentMenu.push({ x: 0, y: player.spells.length, text: 'Back' }); // Place "Back" at the end of the list
+
+        // reset selection
+        this.currentSelection = { x: 0, y: 0 };
+
+        // render the spell menu background
+        const backgroundWidth = 400;
+        const backgroundHeight = 50 * this.currentMenu.length + 20; // adjust height based on number of items
+        const backgroundX = 960 - backgroundWidth / 2; // center horizontally
+        const backgroundY = 400 - 25; // start slightly above the first item
+
+        if (this.spellMenuBackground) {
+            this.spellMenuBackground.destroy();
+        }
+
+        this.spellMenuBackground = this.scene.add.rectangle(
+            backgroundX,
+            backgroundY,
+            backgroundWidth,
+            backgroundHeight,
+            Phaser.Display.Color.GetColor(100, 100, 100)
+        ).setOrigin(0);
+
+        this.spellMenuBackground.setAlpha(0.8);
+
+        // render spell menu
+        this.renderMenu(this.currentMenu);
+    }
+
     changeSelection(deltaX, deltaY) {
         const newX = this.currentSelection.x + deltaX;
         const newY = this.currentSelection.y + deltaY;
@@ -89,8 +138,10 @@ class BattleUI {
         // prevent out of bounds selection
         const isValidSelection = this.currentMenu.some(item => item.x === newX && item.y === newY);
         if (isValidSelection) {
+            // update current selection
             this.currentSelection = { x: newX, y: newY };
-            this.renderMenu(this.currentMenu); // re-render menu with updated selection
+
+            this.renderMenu(this.currentMenu);
         }
     }
 
@@ -104,33 +155,53 @@ class BattleUI {
         const selectedItem = this.getSelectedItem();
 
         if (selectedItem) {
-            if (selectedItem.text === 'Attack') {
-                console.log('Attack selected!');
-                executeTurn('attack');
-            }
-            else if (selectedItem.text === 'Bag') {
-                console.log('Bag selected!');
-                switchMenu(bagMenu);
-            }
-            else if (selectedItem.text === 'Back') {
-                console.log('Back selected!');
-                switchMenu(mainMenu);
-            }
-            else if (selectedItem.text === 'Cast') {
-                console.log('Cast selected!');
-                switchMenu(castMenu);
-            }
-            else {
-                const selectedSpell = player.spells.find(spell => spell.name === selectedItem.text);
-                if (selectedSpell) {
-                    console.log(`Cast ${selectedSpell.name} selected!`);
-                    executeTurn('cast', selectedSpell);
+            if (this.currentMenuType === 'main') {
+                if (selectedItem.text === 'Attack') {
+                    console.log('Attack selected!');
+                    executeTurn('attack');
+                }
+                else if (selectedItem.text === 'Bag') {
+                    console.log('Bag selected!');
+                    switchMenu(bagMenu);
+                }
+                else if (selectedItem.text === 'Back') {
+                    console.log('Back selected!');
+                    switchMenu(mainMenu);
+                }
+                else if (selectedItem.text === 'Cast') {
+                    console.log('Cast selected!');
+                    this.renderSpellMenu(player, switchMenu, mainMenu);
+                }
+            } 
+            else if (this.currentMenuType === 'spell') {
+                if (selectedItem.text === 'Back') {
+                    console.log('Back selected!');
+                    switchMenu(mainMenu);
+                    this.currentMenuType = 'main'; // return to main menu
+                }
+                else {
+                    // check if selected item is a spell
+                    const selectedSpell = player.spells.find(spell => spell.name === selectedItem.text);
+                    if (selectedSpell) {
+                        console.log(`Cast ${selectedSpell.name} selected!`);
+                        executeTurn('cast', selectedSpell);
+
+                        // closes spell menu and returns to main menu
+                        switchMenu(mainMenu);
+                        this.currentMenuType = 'main';
+                    }
                 }
             }
         }
     }
 
     switchMenu(menu) {
+        // clear the spell menu background if it exists
+        if (this.spellMenuBackground) {
+            this.spellMenuBackground.destroy();
+            this.spellMenuBackground = null;
+        }
+
         this.currentMenu = menu;
         this.currentSelection = { x: 0, y: 0 };
         this.renderMenu(menu);

@@ -69,7 +69,7 @@ class BattleScene extends Phaser.Scene {
 
     this.hitAnimation;
 
-    // Render initial stats and menu
+    // render initial stats and menu
     this.currentMenu = this.mainMenu;
     this.currentSelection = { x: 0, y: 0 };
     this.battleUI.renderMenu(this.currentMenu, this.currentSelection);
@@ -95,14 +95,27 @@ class BattleScene extends Phaser.Scene {
     }
 
     if (Phaser.Input.Keyboard.JustDown(this.enterKey)) {
-      this.battleUI.selectMenuItem(
-        this.player,
-        this.executeTurn.bind(this),
-        this.battleUI.switchMenu.bind(this.battleUI),
-        this.castMenu,
-        this.bagMenu,
-        this.mainMenu
-      );
+      const selectedItem = this.battleUI.getSelectedItem();
+
+      if (this.battleUI.currentMenuType === 'main' && selectedItem.text === 'Cast') {
+        // opens spell menu
+        this.battleUI.renderSpellMenu(
+          this.player,
+          this.battleUI.switchMenu.bind(this.battleUI),
+          this.mainMenu
+        );
+      }
+      else {
+        // handle other menu actions
+        this.battleUI.selectMenuItem(
+          this.player,
+          this.executeTurn.bind(this),
+          this.battleUI.switchMenu.bind(this.battleUI),
+          this.castMenu,
+          this.bagMenu,
+          this.mainMenu
+        );
+      }
     }
 
     // "M" byter mellan kartan och BattleScene
@@ -122,8 +135,13 @@ class BattleScene extends Phaser.Scene {
     if (action === 'attack') {
       await executeAttack(this, this.player, this.enemy);
     }
-    else if (action === 'cast' && selectedSpell) {
-      await executeSpell(this, this.player, selectedSpell, this.enemy);
+    else if (action === 'cast') {
+      if (selectedSpell) {
+        await executeSpell(this, this.player, selectedSpell, this.enemy);
+      }
+      else {
+        console.warn('No spell selected!');
+      }
     }
 
     if (this.enemy.health > 0) {
