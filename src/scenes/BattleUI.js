@@ -97,7 +97,7 @@ class BattleUI {
         });
     }
 
-    renderSpellMenu(player, switchMenu, mainMenu) {
+    renderSpellMenu(player) {
         // clear current menu
         this.currentMenu = [];
         this.currentMenuType = 'spell'; // set menu type to "spell"
@@ -157,7 +157,7 @@ class BattleUI {
         );
     }
 
-    selectMenuItem(player, executeTurn, switchMenu, castMenu, bagMenu, mainMenu) {
+    selectMenuItem(player, executeTurn, switchMenu, bagMenu, mainMenu) {
         const selectedItem = this.getSelectedItem();
 
         if (selectedItem) {

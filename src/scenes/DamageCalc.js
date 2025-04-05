@@ -92,7 +92,7 @@ export function executeAttack(scene, attacker, target) {
                 console.log(`${target.name} gains ${rageAmount} rage. Total rage: ${target.class.resource.rage}`);
             }
 
-            scene.battleUI.displayStats(scene.player, scene.enemy, scene.playerStartHP, scene.enemyStartHP);
+            scene.battleUI.displayStats(scene.player, scene.enemy, scene.playerStartHP, scene.enemyStartHP, scene.turnCounter);
             resolve();
         });
     });
@@ -165,11 +165,11 @@ export function executeSpell(scene, attacker, spell, target) {
 
             if (spell.effect) {
                 spell.effect(attacker, target, scene);
-                scene.battleUI.displayStats(scene.player, scene.enemy, scene.playerStartHP, scene.enemyStartHP);
+                scene.battleUI.displayStats(scene.player, scene.enemy, scene.playerStartHP, scene.enemyStartHP, scene.turnCounter);
                 console.log(`${attacker.name} casts ${spell.name}.`);
             }
 
-            scene.battleUI.displayStats(scene.player, scene.enemy, scene.playerStartHP, scene.enemyStartHP);
+            scene.battleUI.displayStats(scene.player, scene.enemy, scene.playerStartHP, scene.enemyStartHP, scene.turnCounter);
             resolve();
         });
     });

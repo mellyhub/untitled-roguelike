@@ -102,7 +102,6 @@ class BattleScene extends Phaser.Scene {
           this.player,
           this.executeTurn.bind(this),
           this.battleUI.switchMenu.bind(this.battleUI),
-          this.castMenu,
           this.bagMenu,
           this.mainMenu
         );
