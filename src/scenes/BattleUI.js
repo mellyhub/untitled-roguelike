@@ -28,7 +28,7 @@ class BattleUI {
         ).setOrigin(0);
     }
 
-    displayStats(player, enemy, playerStartHP, enemyStartHP) {
+    displayStats(player, enemy, playerStartHP, enemyStartHP, turnCounter) {
         const COLOR_CODES = {
             GREEN: Phaser.Display.Color.GetColor32(0, 255, 0, 255),
             RED: Phaser.Display.Color.GetColor32(255, 0, 0, 255),
@@ -45,6 +45,9 @@ class BattleUI {
 
         // score
         this.renderedElements.push(this.scene.add.text(0, 0, `Score: ${player.score}`, { fontSize: '32px', fill: '#fff' }));
+
+        // turn counter
+        this.renderedElements.push(this.scene.add.text(0, 50, `Turn: ${turnCounter}`, { fontSize: '32px', fill: '#fff' }));
 
         // players health bar
         const playerHealthBarSize = this.calculateHealthBarSize(playerStartHP, player.health);

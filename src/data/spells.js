@@ -51,11 +51,25 @@ const spells = {
     aura_of_might: {
         name: "Aura of Might",
         icon: "strength-icon",
+        turnDuration: 3,
         effect(attacker) {
             attacker.stats.strength += 10;
             console.log(`${attacker.name} is empowered, increasing their strength by 10.`);
+            attacker.activeEffects = attacker.activeEffects || [];
+            attacker.activeEffects.push({
+                name: this.name,
+                remainingTurns: this.turnDuration,
+                applyEffect: () => {
+                    console.log(`${attacker.name} is empowered by Aura of Might.`);
+                },
+                removeEffect: () => {
+                    attacker.stats.strength -= 10;
+                    console.log(`${attacker.name}'s Aura of Might has expired, removing the strength bonus.`);
+                }
+            });
+            console.log(attacker);
         },
-        description: "Permanently increases strength by 10."
+        description: "Increases strength for 3 turns."
     },
     ignite: {
         name: "Ignite",

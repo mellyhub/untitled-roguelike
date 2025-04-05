@@ -17,6 +17,9 @@ export function processActiveEffects(unit) {
 
         // remove effect if expired
         if (effect.remainingTurns <= 0) {
+            if (effect.removeEffect) {
+                effect.removeEffect(); // call the removeEffect function if it exists
+            }
             console.log(`${effect.name} effect on ${unit.name} has expired.`);
             return false; // remove effect
         }

@@ -30,9 +30,8 @@ class BattleScene extends Phaser.Scene {
     this.getEnemy();
     this.enemyStartHP = this.enemy.health;
 
-    this.turnOrder = [this.player, this.enemy];
-    this.totalTurns = 0;
-    this.currentTurn = this.totalTurns % 2;
+    this.turnCounter = 0;
+    this.currentTurn = this.turnCounter % 2;
 
     this.cursors = this.input.keyboard.createCursorKeys(); // lägger till arrow keys
     this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER); // lägger till enter key
@@ -59,22 +58,13 @@ class BattleScene extends Phaser.Scene {
       { x: 1, y: 1, text: 'Back' },
     ];
 
-
-    // hårdkodat deluxe
-    this.castMenu = [
-      { x: 0, y: 0, text: this.player.spells.length === 0 ? "None" : this.player.spells[0].name },
-      { x: 1, y: 0, text: this.player.spells.length === 0 ? "None" : this.player.spells[1].name },
-      { x: 0, y: 1, text: this.player.spells.length === 0 ? "None" : this.player.spells[2].name },
-      { x: 1, y: 1, text: 'Back' },
-    ];
-
     this.hitAnimation;
 
     // render initial stats and menu
     this.currentMenu = this.mainMenu;
     this.currentSelection = { x: 0, y: 0 };
     this.battleUI.renderMenu(this.currentMenu, this.currentSelection);
-    this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP);
+    this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP, this.turnCounter);
   }
 
   update() {
@@ -146,7 +136,7 @@ class BattleScene extends Phaser.Scene {
     }
 
     if (this.enemy.health > 0) {
-      processActiveEffects(this, this.enemy);
+      processActiveEffects(this.enemy);
 
       // ai for opponent
       if(this.enemy.name === 'Megadraken') {
@@ -156,6 +146,11 @@ class BattleScene extends Phaser.Scene {
         await executeAttack(this, this.enemy, this.player);
       }
     }
+    
+    this.turnCounter++;
+    console.log(this.turnCounter);
+
+    this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP, this.turnCounter);
 
     this.checkRoundOutcome();
   }
@@ -174,6 +169,7 @@ class BattleScene extends Phaser.Scene {
       this.player.level++;
       this.levelData.completed = true;
 
+      this.turnCounter = 0;
       this.player.score += 100; // example: add 100 points for defeating an enemy
       console.log(`Player score: ${this.player.score}`);
 
@@ -192,7 +188,7 @@ class BattleScene extends Phaser.Scene {
       this.add.text(960, 540, 'You lose!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
       this.scene.pause();
     }
-    this.totalTurns++;
+    this.turnCounter++;
     this.inputLocked = false;
   }
 
