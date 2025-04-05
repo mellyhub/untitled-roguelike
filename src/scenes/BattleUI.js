@@ -36,10 +36,6 @@ class BattleUI {
             BLACK: Phaser.Display.Color.GetColor32(0, 0, 0, 255)
         };
 
-        // theres a better way to do this but i cba right now
-        this.renderedElements.forEach(render => render.destroy());
-        this.renderedElements = [];
-
         // cleanup old renders
         this.renderedElements.forEach(render => render.destroy());
 

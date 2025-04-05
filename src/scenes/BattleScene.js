@@ -114,7 +114,6 @@ class BattleScene extends Phaser.Scene {
     });
   }
   // Array of rendered elements (healthbar, text, etc..), used for removing elements before rerendering
-  renderedElements = [];
   playerStartHP = 0;
   enemyStartHP = 0;
 
@@ -187,7 +186,6 @@ class BattleScene extends Phaser.Scene {
       this.add.text(960, 540, 'You lose!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
       this.scene.pause();
     }
-    this.turnCounter++;
     this.inputLocked = false;
   }
 
