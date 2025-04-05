@@ -43,6 +43,9 @@ class BattleUI {
         // cleanup old renders
         this.renderedElements.forEach(render => render.destroy());
 
+        // score
+        this.renderedElements.push(this.scene.add.text(0, 0, `Score: ${player.score}`, { fontSize: '32px', fill: '#fff' }));
+
         // players health bar
         const playerHealthBarSize = this.calculateHealthBarSize(playerStartHP, player.health);
         this.displayHealthBarBorder(400, 200, 500, 50);

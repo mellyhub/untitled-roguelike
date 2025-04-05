@@ -173,6 +173,9 @@ class BattleScene extends Phaser.Scene {
       this.player.level++;
       this.levelData.completed = true;
 
+      this.player.score += 100; // example: add 100 points for defeating an enemy
+      console.log(`Player score: ${this.player.score}`);
+
       await this.switchScene();
 
       return;

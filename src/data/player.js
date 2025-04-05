@@ -15,6 +15,7 @@ const player = {
     lastAction: null,
     talentPoints: 50,
     level: 1,
+    score: 0,
 };
 
 export default player;
