@@ -28,12 +28,21 @@ function getRandomSpell(seed) {
     return randomSpell;
 }
 
+// helper function to format the reward name for getIconForReward()
+function formatRewardName(name) {
+    return name
+        .toLowerCase()
+        .replace(/\s+/g, '-')     // replace spaces with dashes
+        .replace(/[^a-z-]/g, ''); // remove all non-letters except dashes
+}
+
 function getIconForReward(rewardType, rewardName) {
+    const formattedName = formatRewardName(rewardName);
+
     const iconMapping = {
-        // chatgpt type shit
-        weapon: rewardName.toLowerCase().replace(/\s+/g, '-') + '-icon',
-        stat: rewardName.toLowerCase() + '-icon',
-        spell: rewardName.toLowerCase().replace(/\s+/g, '-') + '-icon',
+        weapon: formattedName + '-icon',
+        stat: formattedName + '-icon',
+        spell: formattedName + '-icon',
     };
 
     const iconKey = iconMapping[rewardType];

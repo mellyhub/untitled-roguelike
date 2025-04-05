@@ -37,7 +37,7 @@ const weapons = {
         }
     },
     jens_sword: {
-        name: "Jens Svärd",
+        name: "Jens Sword",
         icon: "jens-sword-icon",
         damage: 100,
         stats: {
