@@ -8,6 +8,7 @@ class BattleUI {
         this.currentSelection = { x: 0, y: 0 };
         this.currentMenuType = 'main';
         this.spellMenuBackground = null;
+        this.actionBarContainer = null;
         this.statsContainer = null;
         this.playerUnitFrame = null;
         this.enemyUnitFrame = null;
@@ -39,8 +40,10 @@ class BattleUI {
         };
 
         if (this.statsContainer) {
+            this.actionBarContainer.destroy(true);
             this.statsContainer.destroy(true);
             this.playerUnitFrame.destroy(true);
+            this.enemyUnitFrame.destroy(true);
         }
 
         const playerHealthBarSize = this.calculateHealthBarSize(playerStartHP, player.health);
@@ -48,9 +51,8 @@ class BattleUI {
         const enemyHealthBarSize = this.calculateHealthBarSize(enemyStartHP, enemy.health);
         const enemyEnergyBarSize = this.calculateEnergyBarSize(enemyStartHP, enemy.energy);
 
-        this.statsContainer = this.scene.add.container(0, 0);
-
         // score and turn counter
+        this.statsContainer = this.scene.add.container(0, 0);
         this.statsContainer.add(this.scene.add.text(0, 0, `Score: ${player.score}`, { fontSize: '32px', fill: '#fff' }));
         this.statsContainer.add(this.scene.add.text(0, 50, `Turn: ${turnCounter}`, { fontSize: '32px', fill: '#fff' }));
 
@@ -74,11 +76,19 @@ class BattleUI {
         this.enemyUnitFrame.add(this.scene.add.text(-200, -120, `${enemy.name}`, { fontSize: '40px' }).setOrigin(1, 0));
         this.enemyUnitFrame.add(this.scene.add.image(0, 0, 'enemy-unitframe-front'));
 
-        // player stats
-        this.statsContainer.add(this.scene.add.text(1100, 820, `Strength: ${player.stats.strength}`, { fontSize: '24px', fill: '#fff' }).setOrigin(0.5));
-        this.statsContainer.add(this.scene.add.text(1100, 870, `Agility: ${player.stats.agility}`, { fontSize: '24px', fill: '#fff' }).setOrigin(0.5));
-        this.statsContainer.add(this.scene.add.text(1100, 920, `Intelligence: ${player.stats.intelligence}`, { fontSize: '24px', fill: '#fff' }).setOrigin(0.5));
-        this.statsContainer.add(this.scene.add.rectangle(1250, 800, 400, 200, Phaser.Display.Color.GetColor32(79, 52, 41, 255)).setOrigin(0));
+        // action bar
+        this.actionBarContainer = this.scene.add.container(0, 0);
+        this.actionBarContainer.add(this.scene.add.image(960, 540, 'fight-ui-prototyp1'));
+        this.actionBarContainer.add(this.scene.add.image(1050, 820, 'strength-icon').setScale(0.4));
+        this.actionBarContainer.add(this.scene.add.image(1050, 820, 'common-item-frame').setScale(0.4));
+        this.actionBarContainer.add(this.scene.add.text(1100, 820, `${player.stats.strength}`, { fontSize: '32px', fill: '#fff' }).setOrigin(0.5));
+        this.actionBarContainer.add(this.scene.add.image(1050, 890, 'agility-icon').setScale(0.4));
+        this.actionBarContainer.add(this.scene.add.image(1050, 890, 'common-item-frame').setScale(0.4));
+        this.actionBarContainer.add(this.scene.add.text(1100, 890, `${player.stats.agility}`, { fontSize: '32px', fill: '#fff' }).setOrigin(0.5));
+        this.actionBarContainer.add(this.scene.add.image(1050, 960, 'intelligence-icon').setScale(0.4));
+        this.actionBarContainer.add(this.scene.add.image(1050, 960, 'common-item-frame').setScale(0.4));
+        this.actionBarContainer.add(this.scene.add.text(1100, 960, `${player.stats.intelligence}`, { fontSize: '32px', fill: '#fff' }).setOrigin(0.5));
+        this.actionBarContainer.add(this.scene.add.rectangle(1250, 800, 400, 200, Phaser.Display.Color.GetColor32(79, 52, 41, 255)).setOrigin(0));
     }
 
     renderMenu(menu) {

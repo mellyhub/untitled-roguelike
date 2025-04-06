@@ -46,7 +46,6 @@ class BattleScene extends Phaser.Scene {
     this.add.image(960, 540, 'ice-cave-background');
     this.add.image(480, 540, 'warrior-prototyp1').setScale(0.4);
     this.add.image(1440, 540, 'night-glider').setScale(0.7);
-    this.add.image(960, 540, 'fight-ui-prototyp1');
 
     // initialize battle ui
     this.battleUI = new BattleUI(this);
@@ -70,8 +69,8 @@ class BattleScene extends Phaser.Scene {
     // render initial stats and menu
     this.currentMenu = this.mainMenu;
     this.currentSelection = { x: 0, y: 0 };
-    this.battleUI.renderMenu(this.currentMenu, this.currentSelection);
     this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP, this.turnCounter);
+    this.battleUI.renderMenu(this.currentMenu, this.currentSelection);
   }
 
   update() {
@@ -162,6 +161,7 @@ class BattleScene extends Phaser.Scene {
     animationText.destroy();
 
     this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP, this.turnCounter);
+    this.battleUI.renderMenu(this.currentMenu, this.currentSelection);
 
     if (this.enemy.health > 0) {
       processActiveEffects(this.enemy);
@@ -175,6 +175,7 @@ class BattleScene extends Phaser.Scene {
     console.log(this.turnCounter);
 
     this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP, this.turnCounter);
+    this.battleUI.renderMenu(this.currentMenu, this.currentSelection);
 
     this.checkRoundOutcome();
   }
