@@ -94,6 +94,11 @@
 			},
 			{
 				"type": "image",
+				"key": "fire-breath-icon",
+				"url": "fire-breath-icon.png"
+			},
+			{
+				"type": "image",
 				"key": "fireball-icon",
 				"url": "fireball-icon.png"
 			},
@@ -101,6 +106,21 @@
 				"type": "image",
 				"key": "frostbolt-icon",
 				"url": "frostbolt-icon.png"
+			},
+			{
+				"type": "image",
+				"key": "heavy-swing-icon",
+				"url": "heavy-swing-icon.png"
+			},
+			{
+				"type": "image",
+				"key": "stab-icon",
+				"url": "stab-icon.png"
+			},
+			{
+				"type": "image",
+				"key": "tail-whip-icon",
+				"url": "tail-whip-icon.png"
 			}
 		]
 	},
