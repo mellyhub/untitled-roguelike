@@ -77,18 +77,17 @@ class BattleUI {
         this.enemyUnitFrame.add(this.scene.add.image(0, 0, 'enemy-unitframe-front'));
 
         // action bar
-        this.actionBarContainer = this.scene.add.container(0, 0);
-        this.actionBarContainer.add(this.scene.add.image(960, 540, 'fight-ui-prototyp1'));
-        this.actionBarContainer.add(this.scene.add.image(1050, 820, 'strength-icon').setScale(0.4));
-        this.actionBarContainer.add(this.scene.add.image(1050, 820, 'common-item-frame').setScale(0.4));
-        this.actionBarContainer.add(this.scene.add.text(1100, 820, `${player.stats.strength}`, { fontSize: '32px', fill: '#fff' }).setOrigin(0.5));
-        this.actionBarContainer.add(this.scene.add.image(1050, 890, 'agility-icon').setScale(0.4));
-        this.actionBarContainer.add(this.scene.add.image(1050, 890, 'common-item-frame').setScale(0.4));
-        this.actionBarContainer.add(this.scene.add.text(1100, 890, `${player.stats.agility}`, { fontSize: '32px', fill: '#fff' }).setOrigin(0.5));
-        this.actionBarContainer.add(this.scene.add.image(1050, 960, 'intelligence-icon').setScale(0.4));
-        this.actionBarContainer.add(this.scene.add.image(1050, 960, 'common-item-frame').setScale(0.4));
-        this.actionBarContainer.add(this.scene.add.text(1100, 960, `${player.stats.intelligence}`, { fontSize: '32px', fill: '#fff' }).setOrigin(0.5));
-        this.actionBarContainer.add(this.scene.add.rectangle(1250, 800, 400, 200, Phaser.Display.Color.GetColor32(79, 52, 41, 255)).setOrigin(0));
+        this.actionBarContainer = this.scene.add.container(960, 910);
+        this.actionBarContainer.add(this.scene.add.image(0, 0, 'action-bar').setScale(0.9, 0.4));
+        this.actionBarContainer.add(this.scene.add.image(400, -70, 'strength-icon').setScale(0.4));
+        this.actionBarContainer.add(this.scene.add.image(400, -70, 'common-item-frame').setScale(0.4));
+        this.actionBarContainer.add(this.scene.add.text(450, -70, `${player.stats.strength}`, { fontSize: '32px', fill: '#fff' }).setOrigin(0.5));
+        this.actionBarContainer.add(this.scene.add.image(400, 0, 'agility-icon').setScale(0.4));
+        this.actionBarContainer.add(this.scene.add.image(400, 0, 'common-item-frame').setScale(0.4));
+        this.actionBarContainer.add(this.scene.add.text(450, 0, `${player.stats.agility}`, { fontSize: '32px', fill: '#fff' }).setOrigin(0.5));
+        this.actionBarContainer.add(this.scene.add.image(400, 70, 'intelligence-icon').setScale(0.4));
+        this.actionBarContainer.add(this.scene.add.image(400, 70, 'common-item-frame').setScale(0.4));
+        this.actionBarContainer.add(this.scene.add.text(450, 70, `${player.stats.intelligence}`, { fontSize: '32px', fill: '#fff' }).setOrigin(0.5));
     }
 
     renderMenu(menu) {
