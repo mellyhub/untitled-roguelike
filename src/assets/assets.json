@@ -149,6 +149,11 @@
 		"assets": [
 			{
 				"type": "image",
+				"key": "action-bar-button",
+				"url": "action-bar-button.png"
+			},
+			{
+				"type": "image",
 				"key": "action-bar",
 				"url": "action-bar.png"
 			},
