@@ -124,7 +124,8 @@ class RewardScene extends Phaser.Scene {
             } else if (index === 2) {
                 iconKey = getIconForReward('spell', this.randomSpell.name);
             }
-
+            // add icon border
+            this.add.image(xPosition, yPosition - 100, 'common-item-frame');
             // add icon if it exists
             if (iconKey && this.textures.exists(iconKey)) {
                 this.add.image(xPosition, yPosition - 100, iconKey);
