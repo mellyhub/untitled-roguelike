@@ -80,13 +80,13 @@ class BattleUI {
         this.actionBarContainer = this.scene.add.container(960, 910);
         this.actionBarContainer.add(this.scene.add.image(0, 0, 'action-bar').setScale(0.9, 0.4));
         this.actionBarContainer.add(this.scene.add.image(400, -70, 'strength-icon').setScale(0.4));
-        this.actionBarContainer.add(this.scene.add.image(400, -70, 'common-item-frame').setScale(0.4));
+        this.actionBarContainer.add(this.scene.add.image(400, -70, 'uncommon-item-frame').setScale(0.4));
         this.actionBarContainer.add(this.scene.add.text(450, -70, `${player.stats.strength}`, { fontSize: '32px', fill: '#fff' }).setOrigin(0.5));
         this.actionBarContainer.add(this.scene.add.image(400, 0, 'agility-icon').setScale(0.4));
-        this.actionBarContainer.add(this.scene.add.image(400, 0, 'common-item-frame').setScale(0.4));
+        this.actionBarContainer.add(this.scene.add.image(400, 0, 'uncommon-item-frame').setScale(0.4));
         this.actionBarContainer.add(this.scene.add.text(450, 0, `${player.stats.agility}`, { fontSize: '32px', fill: '#fff' }).setOrigin(0.5));
         this.actionBarContainer.add(this.scene.add.image(400, 70, 'intelligence-icon').setScale(0.4));
-        this.actionBarContainer.add(this.scene.add.image(400, 70, 'common-item-frame').setScale(0.4));
+        this.actionBarContainer.add(this.scene.add.image(400, 70, 'uncommon-item-frame').setScale(0.4));
         this.actionBarContainer.add(this.scene.add.text(450, 70, `${player.stats.intelligence}`, { fontSize: '32px', fill: '#fff' }).setOrigin(0.5));
     }
 
