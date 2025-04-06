@@ -1,5 +1,6 @@
 import seedrandom from 'seedrandom';
 import BattleUI from './BattleUI';
+import assets from '../assets/assets.json'; // Import the assets.json file
 import { executeAttack, executeSpell, processActiveEffects } from './DamageCalc';
 import { setCookie, getCookie } from './cookieUtils.js';
 import { Goblin } from '../data/goblin.js';
@@ -11,14 +12,17 @@ class BattleScene extends Phaser.Scene {
 
   preload() {
     // Load assets (images, sounds, etc.)
-    this.load.image('background', 'src/assets/images/backgrounds/bg.png');
-    this.load.image('player', 'src/assets/images/player-model/warrior-prototyp1.png');
-    this.load.image('Goblin', 'src/assets/images/enemy-sprites/goblin-prototyp1.png');
-    this.load.image('Jens', 'src/assets/images/enemy-sprites/jens.jpg');
-    this.load.image('Snowman', 'src/assets/images/enemy-sprites/snowman.png');
-    this.load.image('Megadraken', 'src/assets/images/enemy-sprites/night-glider.png');
-    this.load.image('battleUi', 'src/assets/images/ui/fight-ui-prototyp1.png');
-
+    // iterate through assets
+    assets.forEach(assetGroup => {
+      assetGroup.assets.forEach(asset => {
+        if (asset.type === 'image') {
+          const assetPath = `${assetGroup.path}/${asset.url}`;
+          console.log(assetPath)
+          // dynamically loads image asset
+          this.load.image(asset.key, assetPath);
+        }
+      });
+    });
   }
 
   create(data) {
@@ -39,10 +43,10 @@ class BattleScene extends Phaser.Scene {
     this.cursors = this.input.keyboard.createCursorKeys(); // lägger till arrow keys
     this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER); // lägger till enter key
 
-    this.add.image(960, 540, 'background').setAlpha(0.1);
-    this.add.image(480, 540, 'player').setScale(0.4);
-    this.add.image(1440, 540, this.enemy.name).setScale(0.7);
-    this.add.image(960, 540, 'battleUi');
+    this.add.image(960, 540, 'ice-cave-background');
+    this.add.image(480, 540, 'warrior-prototyp1').setScale(0.4);
+    this.add.image(1440, 540, 'night-glider').setScale(0.7);
+    this.add.image(960, 540, 'fight-ui-prototyp1');
 
     // initialize battle ui
     this.battleUI = new BattleUI(this);
@@ -124,7 +128,7 @@ class BattleScene extends Phaser.Scene {
   resolveAfterTime(ms) {
     return new Promise((resolve) => {
       setTimeout(() => {
-          resolve();
+        resolve();
       }, ms);
     })
   }
@@ -166,7 +170,7 @@ class BattleScene extends Phaser.Scene {
       await this.resolveAfterTime(1000);
       animationText.destroy();
     }
-    
+
     this.turnCounter++;
     console.log(this.turnCounter);
 
@@ -192,10 +196,10 @@ class BattleScene extends Phaser.Scene {
       console.log(`Player score: ${this.player.score}`);
 
       const highestScore = parseInt(getCookie('highestScore')) || 0;
-        if (this.player.score > highestScore) {
-            setCookie('highestScore', this.player.score, 365); // Save the new high score for 1 year
-            console.log(`New highest score: ${this.player.score}`);
-        }
+      if (this.player.score > highestScore) {
+        setCookie('highestScore', this.player.score, 365); // Save the new high score for 1 year
+        console.log(`New highest score: ${this.player.score}`);
+      }
 
       await this.switchScene();
 

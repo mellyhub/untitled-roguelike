@@ -159,6 +159,16 @@
 			},
 			{
 				"type": "image",
+				"key": "enemy-unitframe-back",
+				"url": "enemy-unitframe-back.png"
+			},
+			{
+				"type": "image",
+				"key": "enemy-unitframe-front",
+				"url": "enemy-unitframe-front.png"
+			},
+			{
+				"type": "image",
 				"key": "fight-ui-prototyp1",
 				"url": "fight-ui-prototyp1.png"
 			},

@@ -4,7 +4,7 @@ import spells from "./spells.js"; // Import spells from spells.js
 const player = {
     name: "Player",
     health: 200,
-    energy: 100,
+    energy: 200,
     weapon: weapons.big_axe, // The player starts with big_axe
     inventory: [],
     // hardcoded spells for testing

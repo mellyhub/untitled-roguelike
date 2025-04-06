@@ -1,3 +1,5 @@
+import assets from '../assets/assets.json'; // Import the assets.json file
+
 class BattleUI {
     constructor(scene) {
         this.scene = scene;
@@ -7,59 +9,70 @@ class BattleUI {
         this.currentMenuType = 'main';
         this.spellMenuBackground = null;
         this.statsContainer = null;
+        this.playerUnitFrame = null;
+        this.enemyUnitFrame = null;
     }
 
     calculateHealthBarSize(maxUnitHealth, currentUnitHealth) {
-        const MAX_WIDTH = 500;
+        const MAX_WIDTH = 324;
         const clampedHealth = Phaser.Math.Clamp(currentUnitHealth, 0, maxUnitHealth);
         let width = (clampedHealth / maxUnitHealth) * MAX_WIDTH;
 
-        return { width, height: 50 };
+        return { width, height: 84 };
     }
 
-    displayHealthBarBorder(x, y, width, height) {
-        const borderSize = 4;
-        return this.scene.add.rectangle(
-            x - borderSize / 2,
-            y - borderSize / 2,
-            width + borderSize,
-            height + borderSize,
-            Phaser.Display.Color.GetColor32(0, 0, 0, 255)
-        ).setOrigin(0);
+    calculateEnergyBarSize(maxUnitEnergy, currentUnitEnergy) {
+        const MAX_WIDTH = 324;
+        const clampedEnergy = Phaser.Math.Clamp(currentUnitEnergy, 0, maxUnitEnergy);
+        let width = (clampedEnergy / maxUnitEnergy) * MAX_WIDTH;
+
+        return { width, height: 50 };
     }
 
     displayStats(player, enemy, playerStartHP, enemyStartHP, turnCounter) {
         const COLOR_CODES = {
             GREEN: Phaser.Display.Color.GetColor32(0, 255, 0, 255),
             RED: Phaser.Display.Color.GetColor32(255, 0, 0, 255),
+            YELLOW: Phaser.Display.Color.GetColor32(255, 255, 0, 255),
             WHITE: Phaser.Display.Color.GetColor32(255, 255, 255, 255),
             BLACK: Phaser.Display.Color.GetColor32(0, 0, 0, 255)
         };
 
         if (this.statsContainer) {
             this.statsContainer.destroy(true);
+            this.playerUnitFrame.destroy(true);
         }
+
+        const playerHealthBarSize = this.calculateHealthBarSize(playerStartHP, player.health);
+        const playerEnergyBarSize = this.calculateEnergyBarSize(player.energy, player.energy);
+        const enemyHealthBarSize = this.calculateHealthBarSize(enemyStartHP, enemy.health);
+        const enemyEnergyBarSize = this.calculateEnergyBarSize(enemyStartHP, enemy.energy);
+
         this.statsContainer = this.scene.add.container(0, 0);
 
-        // score
+        // score and turn counter
         this.statsContainer.add(this.scene.add.text(0, 0, `Score: ${player.score}`, { fontSize: '32px', fill: '#fff' }));
-
-        // turn counter
         this.statsContainer.add(this.scene.add.text(0, 50, `Turn: ${turnCounter}`, { fontSize: '32px', fill: '#fff' }));
 
-        // players health bar
-        const playerHealthBarSize = this.calculateHealthBarSize(playerStartHP, player.health);
-        this.statsContainer.add(this.displayHealthBarBorder(400, 200, 500, 50));
-        this.statsContainer.add(this.scene.add.rectangle(400, 200, playerHealthBarSize.width, playerHealthBarSize.height, COLOR_CODES.GREEN).setOrigin(0));
-        this.statsContainer.add(this.scene.add.text(400, 100, `Class: ${player.class}`, { fontSize: '52px' }));
-        this.statsContainer.add(this.scene.add.text(400, 150, `Level: ${player.level}`, { fontSize: '52px' }));
-        this.statsContainer.add(this.scene.add.text(400, 200, `${player.name}: ${Math.max(0, player.health)} HP`, { fontSize: '52px' }));
+        // player unit frame
+        this.playerUnitFrame = this.scene.add.container(400, 175);
+        this.playerUnitFrame.add(this.scene.add.image(0, 0, 'warrior-unitframe-back'));
+        this.playerUnitFrame.add(this.scene.add.rectangle(-162, -116, playerHealthBarSize.width, playerHealthBarSize.height, COLOR_CODES.GREEN).setOrigin(0));
+        this.playerUnitFrame.add(this.scene.add.rectangle(-162, -32, playerEnergyBarSize.width, playerEnergyBarSize.height, COLOR_CODES.YELLOW).setOrigin(0));
+        this.playerUnitFrame.add(this.scene.add.text(0, -74, `${Math.max(0, player.health)}/${playerStartHP}`, { fontSize: '52px', fill: '#000' }).setOrigin(0.5));
+        this.playerUnitFrame.add(this.scene.add.text(200, -120, `${player.name}`, { fontSize: '40px' }));
+        this.playerUnitFrame.add(this.scene.add.text(200, -60, `Class: ${player.class}`, { fontSize: '40px' }));
+        this.playerUnitFrame.add(this.scene.add.text(200, 0, `Level: ${player.level}`, { fontSize: '40px' }));
+        this.playerUnitFrame.add(this.scene.add.image(0, 0, 'warrior-unitframe-front'));
 
-        // enemy health bar
-        const enemyHealthBarSize = this.calculateHealthBarSize(enemyStartHP, enemy.health);
-        this.statsContainer.add(this.displayHealthBarBorder(1220, 200, 500, 50));
-        this.statsContainer.add(this.scene.add.rectangle(1220, 200, enemyHealthBarSize.width, enemyHealthBarSize.height, COLOR_CODES.RED).setOrigin(0));
-        this.statsContainer.add(this.scene.add.text(1220, 200, `${enemy.name}: ${Math.max(0, enemy.health)} HP`, { fontSize: '52px' }));
+        // enemy unit frame
+        this.enemyUnitFrame = this.scene.add.container(1520, 175);
+        this.enemyUnitFrame.add(this.scene.add.image(0, 0, 'enemy-unitframe-back'));
+        this.enemyUnitFrame.add(this.scene.add.rectangle(-162, -116, enemyHealthBarSize.width, enemyHealthBarSize.height, COLOR_CODES.RED).setOrigin(0));
+        this.enemyUnitFrame.add(this.scene.add.rectangle(-162, -32, playerEnergyBarSize.width, playerEnergyBarSize.height, COLOR_CODES.YELLOW).setOrigin(0));
+        this.enemyUnitFrame.add(this.scene.add.text(0, -74, `${Math.max(0, enemy.health)}/${enemyStartHP}`, { fontSize: '52px', fill: '#000' }).setOrigin(0.5));
+        this.enemyUnitFrame.add(this.scene.add.text(-200, -120, `${enemy.name}`, { fontSize: '40px' }).setOrigin(1, 0));
+        this.enemyUnitFrame.add(this.scene.add.image(0, 0, 'enemy-unitframe-front'));
 
         // player stats
         this.statsContainer.add(this.scene.add.text(1100, 820, `Strength: ${player.stats.strength}`, { fontSize: '24px', fill: '#fff' }).setOrigin(0.5));
