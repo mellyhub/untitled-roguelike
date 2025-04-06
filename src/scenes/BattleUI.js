@@ -51,7 +51,7 @@ class BattleUI {
         const playerHealthBarSize = this.calculateHealthBarSize(playerStartHP, player.health);
         this.statsContainer.add(this.displayHealthBarBorder(400, 200, 500, 50));
         this.statsContainer.add(this.scene.add.rectangle(400, 200, playerHealthBarSize.width, playerHealthBarSize.height, COLOR_CODES.GREEN).setOrigin(0));
-        this.statsContainer.add(this.scene.add.text(400, 100, `Class: ${player.class.name}`, { fontSize: '52px' }));
+        this.statsContainer.add(this.scene.add.text(400, 100, `Class: ${player.class}`, { fontSize: '52px' }));
         this.statsContainer.add(this.scene.add.text(400, 150, `Level: ${player.level}`, { fontSize: '52px' }));
         this.statsContainer.add(this.scene.add.text(400, 200, `${player.name}: ${Math.max(0, player.health)} HP`, { fontSize: '52px' }));
 

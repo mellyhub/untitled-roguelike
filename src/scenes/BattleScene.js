@@ -2,6 +2,7 @@ import seedrandom from 'seedrandom';
 import BattleUI from './BattleUI';
 import { executeAttack, executeSpell, processActiveEffects } from './DamageCalc';
 import { setCookie, getCookie } from './cookieUtils.js';
+import { Goblin } from '../data/goblin.js';
 
 class BattleScene extends Phaser.Scene {
   constructor() {
@@ -27,7 +28,9 @@ class BattleScene extends Phaser.Scene {
 
     this.playerStartHP = this.player.health;
 
-    this.getEnemy();
+    //this.getEnemy();
+
+    this.enemy = new Goblin();
     this.enemyStartHP = this.enemy.health;
 
     this.turnCounter = 0;
@@ -117,32 +120,51 @@ class BattleScene extends Phaser.Scene {
   playerStartHP = 0;
   enemyStartHP = 0;
 
-  async executeTurn(action, selectedSpell = null) {
+  // Wait for player or enemy to finish attacking
+  resolveAfterTime(ms) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+          resolve();
+      }, ms);
+    })
+  }
+
+  displayAnimationText(name, action, selectedSpell) {
+    if (action == "attack") {
+      return this.add.text(700, 500, `${name} attacks...`, { fontSize: '52px', fill: '#fff' });
+    } else if (action == "cast") {
+      return this.add.text(700, 500, `${name} casts ${selectedSpell.name}...`, { fontSize: '52px', fill: '#fff' });
+    }
+  }
+
+  async executeTurn(action, selectedSpell) {
     this.inputLocked = true;
     processActiveEffects(this.player);
 
     if (action === 'attack') {
-      await executeAttack(this, this.player, this.enemy);
+      this.player.attack(this.enemy);
     }
     else if (action === 'cast') {
       if (selectedSpell) {
-        await executeSpell(this, this.player, selectedSpell, this.enemy);
+        this.player.cast(this.enemy, selectedSpell);
       }
       else {
         console.warn('No spell selected!');
       }
     }
 
+    const animationText = this.displayAnimationText(this.player.name, action, selectedSpell);
+    await this.resolveAfterTime(1000);
+    animationText.destroy();
+
+    this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP, this.turnCounter);
+
     if (this.enemy.health > 0) {
       processActiveEffects(this.enemy);
-
-      // ai for opponent
-      if(this.enemy.name === 'Megadraken') {
-        await executeSpell(this, this.enemy, this.enemy.spells[0], this.player);
-      }
-      else {
-        await executeAttack(this, this.enemy, this.player);
-      }
+      this.enemy.attack(this.player);
+      const animationText = this.displayAnimationText(this.enemy.name, "attack", selectedSpell);
+      await this.resolveAfterTime(1000);
+      animationText.destroy();
     }
     
     this.turnCounter++;
@@ -152,8 +174,6 @@ class BattleScene extends Phaser.Scene {
 
     this.checkRoundOutcome();
   }
-
-
 
   async switchScene() {
     await new Promise(resolve => this.time.delayedCall(3000, resolve));

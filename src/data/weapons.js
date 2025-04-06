@@ -55,6 +55,12 @@ const weapons = {
         description: "The dreaded bane of the snowman, a weapon forged in the darkest corners of winter’s wrath",
         icon: "snowmans-bane-icon",
         damage: 10,
+        effect() {
+            if (target.name === "Snowman") {
+                target.health = 0;
+                console.log("The Snowman’s Bane is mercilessly wielded to bring an end to the reign of the snowman, ensuring its icy demise.");
+            }
+        },
         spells:
         {
             heavy_swing: spells.heavy_swing,

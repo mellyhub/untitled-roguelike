@@ -1,3 +1,5 @@
+// ANVÄNDS INTE LÄNGRE, SKA IMPLEMENTERAS I KLASSER ISTÄLLET
+
 function isCrit(critChance) {
     const critRoll = Math.random();
     if (critChance > critRoll) {

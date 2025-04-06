@@ -1,6 +1,7 @@
 import classes from "../data/classes";
 import player from "../data/player";
 import { getCookie } from "./cookieUtils.js";
+import { Warrior } from "../data/Warrior.js";
 
 class MainMenuScene extends Phaser.Scene {
   constructor() {
@@ -14,7 +15,8 @@ class MainMenuScene extends Phaser.Scene {
   }
 
   create() {
-    this.player = player;
+    //this.player = player;
+    //this.player = new Player("Warrior");
     this.cursors = this.input.keyboard.createCursorKeys();
     this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
 
@@ -82,8 +84,13 @@ class MainMenuScene extends Phaser.Scene {
     // hämtar classen som är selectad
     const selectedClass = this.classArray[this.currentSelection];
     console.log(`Selected class: ${selectedClass.name}`);
-    this.player.class = selectedClass;
-    this.player.stats = selectedClass.stats;
+    //this.player.class = selectedClass;
+    //this.player.stats = selectedClass.stats;
+
+    //this.player = new Player(selectedClass.name, selectedClass.stats, selectedClass.resource);
+    
+    // just nu blir Taifun alltid vald
+    this.player = new Warrior();
 
     // setting the seed for the run
     const seed = String(Date.now());
