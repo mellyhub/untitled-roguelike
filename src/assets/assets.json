@@ -14,6 +14,11 @@
 			},
 			{
 				"type": "image",
+				"key": "ice-cave-background",
+				"url": "ice-cave-background.png"
+			},
+			{
+				"type": "image",
 				"key": "map",
 				"url": "map.png"
 			}
