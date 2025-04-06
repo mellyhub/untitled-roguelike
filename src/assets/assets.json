@@ -134,8 +134,43 @@
 			},
 			{
 				"type": "image",
+				"key": "common-item-frame",
+				"url": "common-item-frame.png"
+			},
+			{
+				"type": "image",
 				"key": "fight-ui-prototyp1",
 				"url": "fight-ui-prototyp1.png"
+			},
+			{
+				"type": "image",
+				"key": "mage-unitframe-back",
+				"url": "mage-unitframe-back.png"
+			},
+			{
+				"type": "image",
+				"key": "mage-unitframe-front",
+				"url": "mage-unitframe-front.png"
+			},
+			{
+				"type": "image",
+				"key": "rogue-unitframe-back",
+				"url": "rogue-unitframe-back.png"
+			},
+			{
+				"type": "image",
+				"key": "rogue-unitframe-front",
+				"url": "rogue-unitframe-front.png"
+			},
+			{
+				"type": "image",
+				"key": "warrior-unitframe-back",
+				"url": "warrior-unitframe-back.png"
+			},
+			{
+				"type": "image",
+				"key": "warrior-unitframe-front",
+				"url": "warrior-unitframe-front.png"
 			}
 		]
 	}
