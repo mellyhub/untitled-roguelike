@@ -34,7 +34,7 @@ class BattleScene extends Phaser.Scene {
 
     //this.getEnemy();
 
-    this.enemy = new Goblin();
+    this.enemy = new Goblin(this.player.level);
     this.enemyStartHP = this.enemy.health;
 
     this.turnCounter = 0;

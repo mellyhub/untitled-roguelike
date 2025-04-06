@@ -5,9 +5,9 @@ export class Goblin {
     health;
     strength;
 
-    constructor() {
-        this.health = this.getRandomStat(50 * 1, 100 * 1);
-        this.strength = this.getRandomStat(5 * 1, 15 * 1);
+    constructor(weight) {
+        this.health = this.getRandomStat(50, 50) + weight * 10;
+        this.strength = this.getRandomStat(5 , 5) + weight * 10;
     }
 
     getRandomStat(min, max) {
