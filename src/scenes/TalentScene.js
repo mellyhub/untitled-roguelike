@@ -20,20 +20,21 @@ class TalentScene extends Phaser.Scene {
       this.scene.switch('MapScene');
     });
 
-    // behöver hitta en mer dynamisk lösning på hur vi interagerar med spelare objektet
-
     this.talents = [];
     this.talentRows = 5;
     this.talentColumns = 5;
+
     for (let i = 0; i < this.talentRows; i++) {
+      const row = [];
       for (let j = 0; j < this.talentColumns; j++) {
-        this.talents.push({
+        row.push({
           x: i,
           y: j,
           name: `T ${i * this.talentColumns + j + 1}`,
           value: 0,
         });
       }
+      this.talents.push(row);
     }
     console.log(this.talents);
 
@@ -45,7 +46,11 @@ class TalentScene extends Phaser.Scene {
   renderUI() {
     // rensar gamla ui elements
     if (this.uiElements) {
-      this.uiElements.forEach(element => element.destroy());
+      this.uiElements.forEach(element => {
+        if(element) {
+          element.destroy();
+        }
+      });
     }
 
     // visa tillgängliga talent points
@@ -60,14 +65,19 @@ class TalentScene extends Phaser.Scene {
 
     for (let i = 0; i < this.talentRows; i++) {
       for (let j = 0; j < this.talentColumns; j++) {
-        talentText = this.add.text(100 + j * 200, 300 + i * 100, `${this.talents[i * this.talentColumns + j].name}: ${this.talents[i * this.talentColumns + j].value}`, {
-          fontSize: '32px',
-          fill: '#fff',
-        }).setOrigin(0.5);
+          const talent = this.talents[i][j];
+          const talentText = this.add.text(100 + j * 200, 300 + i * 100, `${talent.name}: ${talent.value}`, {
+              fontSize: '32px',
+              fill: '#fff',
+          }).setOrigin(0.5);
 
-        this.uiElements.push(talentText);
+          if (i === this.currentSelection.y && j === this.currentSelection.x) {
+              talentText.setColor('#ff0000');
+          }
+
+          this.uiElements.push(talentText);
       }
-    }
+  }
 
     if (this.talents.x === this.currentSelection.x && this.talents.y === this.currentSelection.y) {
       talentText.setColor('#ff0000');
@@ -84,7 +94,7 @@ class TalentScene extends Phaser.Scene {
     else if (Phaser.Input.Keyboard.JustDown(this.cursors.down)) {
       this.changeSelection(0, 1);
       console.log(this.currentSelection);
-      console.log(this.talents[0][0].y);
+      console.log(this.talents[0][0]);
     }
     else if (Phaser.Input.Keyboard.JustDown(this.cursors.left)) {
       this.changeSelection(-1, 0);
