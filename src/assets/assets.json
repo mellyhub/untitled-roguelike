@@ -243,5 +243,25 @@
 				"url": "weapon-card.png"
 			}
 		]
+	},
+	{
+		"path": "src/assets/sprite-sheets",
+		"assets": [
+			{
+				"type": "sheet",
+				"key": "mage-fire-spell-sheet",
+				"url": "mage-fire-spell-sheet.png"
+			},
+			{
+				"type": "sheet",
+				"key": "mage-idle-sheet",
+				"url": "mage-idle-sheet.png"
+			},
+			{
+				"type": "sheet",
+				"key": "pipeSlime-idle-sheet",
+				"url": "pipeSlime-idle-sheet.png"
+			}
+		]
 	}
 ]
