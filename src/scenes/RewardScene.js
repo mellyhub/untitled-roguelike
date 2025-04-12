@@ -3,75 +3,6 @@ import spells from '../data/spells.js';
 import seedrandom from 'seedrandom';
 import assets from '../assets/assets.json'; // Import the assets.json file
 
-function getRandomReward(seed, weaponKeys, statKeys, spellKeys, player) {
-    // not quite sure how to implement seeded randomness in this function
-    // have to work on this later
-    const rng = seedrandom(seed);
-    const rewards = ['weapon', 'stat', 'spell'];
-    const result = rewards[Math.floor(Math.random() * rewards.length)];
-
-    if (result === 'weapon') {
-        const randomKey = weaponKeys[Math.floor(Math.random() * weaponKeys.length)];
-        const randomWeapon = weapons[randomKey];
-        return {
-            name: randomWeapon.name,
-            description: "Equip a new weapon.",
-            effect: () => { player.weapon = randomWeapon }
-        }
-    }
-
-    else if (result === 'stat') {
-        const randomKey = statKeys[Math.floor(Math.random() * statKeys.length)];
-        console.log(`Random stat key: ${randomKey}`); // this shit bugged fr
-        return {
-            name: randomKey,
-            description: `Increase ${randomKey} by 5.`,
-            effect: () => {
-                if (player.stats[randomKey] !== undefined) {
-                    player.stats[randomKey] += 5;
-                } else {
-                    console.error(`Stat key "${randomKey}" does not exist in player.stats.`);
-                }
-            }
-        }
-    }
-
-    else if (result === 'spell') {
-        console.log(spellKeys);
-        const randomKey = spellKeys[Math.floor(Math.random() * spellKeys.length)];
-        const randomSpell = spells[randomKey];
-        return {
-            name: randomSpell.name,
-            description: `Learns the ${randomSpell.name} spell`,
-            effect: () => { player.spells.push(randomSpell) }
-        }
-    }
-}
-
-// helper function to format the reward name for getIconForReward()
-function formatRewardName(name) {
-    const formattedName = name
-        .toLowerCase()
-        .replace(/\s+/g, '-')     // replace spaces with dashes
-        .replace(/[^a-z-]/g, ''); // remove all non-letters except dashes
-    console.log(`Formatted reward name: ${name} -> ${formattedName}`);
-    return formattedName;
-}
-
-function getIconForReward(rewardType, rewardName) {
-    const formattedName = formatRewardName(rewardName);
-    const iconMapping = {
-        weapon: formattedName + '-icon',
-        stat: formattedName + '-icon',
-        spell: formattedName + '-icon',
-    };
-
-    const iconKey = iconMapping[rewardType];
-    console.log(iconKey)
-    console.log(`Icon key for ${rewardType} (${rewardName}): ${iconKey}`);
-    return iconKey;
-}
-
 class RewardScene extends Phaser.Scene {
     constructor() {
         super('RewardScene');
@@ -101,7 +32,7 @@ class RewardScene extends Phaser.Scene {
         // generate 3 random rewards
         this.rewards = [];
         for (let i = 0; i < 3; i++) {
-            const reward = getRandomReward(this.seed + Math.random(), this.weaponKeys, this.statKeys, this.spellKeys, this.player);
+            const reward = this.getRandomReward(this.seed + Math.random(), this.weaponKeys, this.statKeys, this.spellKeys, this.player);
             this.rewards.push(reward);
         }
 
@@ -119,13 +50,14 @@ class RewardScene extends Phaser.Scene {
             const rewardType = reward.name.includes('Weapon') ? 'weapon' : reward.name.includes('spell') ? 'spell' : 'stat';
             console.log(`Reward name: ${reward.name}, Reward type: ${rewardType}`);
 
-            const iconKey = getIconForReward(rewardType, reward.name);
+            const iconKey = this.getIconForReward(rewardType, reward.name);
 
             this.add.image(xPosition, yPosition - 100, 'common-item-frame'); // add icon border
 
             if (iconKey && this.textures.exists(iconKey)) {
                 this.add.image(xPosition, yPosition - 100, iconKey); // add icon if it exists
-            } else {
+            }
+            else {
                 console.warn(`Icon not found or not loaded: ${iconKey}`);
             }
 
@@ -164,6 +96,107 @@ class RewardScene extends Phaser.Scene {
             this.selectCard();
         }
     }
+
+    getRandomReward(seed, weaponKeys, statKeys, spellKeys, player) {
+       
+        // not quite sure how to implement seeded randomness in this function
+        // have to work on this later
+        //const rng = seedrandom(seed);
+
+        // all reward types are weighted equally for now
+        const rewardWeights = {
+            weapon: 50,
+            stat: 50,
+            spell: 50,
+        };
+
+        const result = this.getWeightedRandom(rewardWeights);
+        
+        if (result === 'weapon') {
+            const randomKey = weaponKeys[Math.floor(Math.random() * weaponKeys.length)];
+            const randomWeapon = weapons[randomKey];
+            return {
+                name: randomWeapon.name,
+                description: "Equip a new weapon.",
+                effect: () => { player.weapon = randomWeapon }
+            }
+        }
+    
+        else if (result === 'stat') {
+
+            // weights for individual stats
+            const statWeights = {
+                agility: 50,
+                strength: 50,
+                intelligence: 50,
+                critChance: 10,
+                critDamage: 10,
+            };
+            
+            const randomKey = this.getWeightedRandom(statWeights);
+
+            console.log(`Random stat key: ${randomKey}`); // this shit bugged fr
+            return {
+                name: randomKey,
+                description: `Increase ${randomKey} by 5.`,
+                effect: () => {
+                    if (player.stats[randomKey] !== undefined) {
+                        player.stats[randomKey] += 5;
+                    }
+                    else {
+                        console.error(`Stat key "${randomKey}" does not exist in player.stats.`);
+                    }
+                }
+            }
+        }
+    
+        else if (result === 'spell') {
+            console.log(spellKeys);
+            const randomKey = spellKeys[Math.floor(Math.random() * spellKeys.length)];
+            const randomSpell = spells[randomKey];
+            return {
+                name: randomSpell.name,
+                description: `Learns the ${randomSpell.name} spell`,
+                effect: () => { player.spells.push(randomSpell) }
+            }
+        }
+    }
+    
+    getWeightedRandom(weights) {
+        const totalWeight = Object.values(weights).reduce((sum, weight) => sum + weight, 0);
+        const random = Math.random() * totalWeight;
+    
+        let cumulativeWeight = 0;
+        for (const [key, weight] of Object.entries(weights)) {
+            cumulativeWeight += weight;
+            if (random < cumulativeWeight) {
+                return key;
+            }
+        }
+    }
+
+    // helper function to format the reward name for getIconForReward()
+    formatRewardName(name) {
+        const formattedName = name
+            .toLowerCase()
+            .replace(/\s+/g, '-')     // replace spaces with dashes
+            .replace(/[^a-z-]/g, ''); // remove all non-letters except dashes
+        return formattedName;
+    }
+    
+    getIconForReward(rewardType, rewardName) {
+        const formattedName = this.formatRewardName(rewardName);
+        const iconMapping = {
+            weapon: formattedName + '-icon',
+            stat: formattedName + '-icon',
+            spell: formattedName + '-icon',
+        };
+    
+        const iconKey = iconMapping[rewardType];
+        return iconKey;
+    }
+
+
 
     changeSelection(direction) {
         // update selection index
