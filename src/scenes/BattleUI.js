@@ -11,8 +11,6 @@ class BattleUI {
         this.statsContainer = null;
         this.playerUnitFrame = null;
         this.enemyUnitFrame = null;
-
-        
     }
 
     calculateHealthBarSize(maxUnitHealth, currentUnitHealth) {
