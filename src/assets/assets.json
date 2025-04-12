@@ -250,23 +250,28 @@
 			{
 				"type": "sheet",
 				"key": "mage-fire-spell-sheet",
-				"url": "mage-fire-spell-sheet.png",
+				"url": "mage-fire-spell-Sheet.png",
 				"frameWidth": 320,
 				"frameHeight": 320
 			},
 			{
 				"type": "sheet",
 				"key": "mage-idle-sheet",
-				"url": "mage-idle-sheet.png",
+				"url": "mage-idle-Sheet.png",
 				"frameWidth": 320,
 				"frameHeight": 320
 			},
 			{
 				"type": "sheet",
 				"key": "pipeSlime-idle-sheet",
-				"url": "pipeSlime-idle-sheet.png",
+				"url": "pipeSlime-idle-Sheet.png",
 				"frameWidth": 320,
 				"frameHeight": 320
+			},
+			{
+				"type": "sheet",
+				"key": "nightGlider-idle-sheet",
+				"url": "nightGlider-idle-Sheet.png"
 			}
 		]
 	}
