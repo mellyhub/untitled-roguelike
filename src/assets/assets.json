@@ -41,6 +41,11 @@
 				"type": "image",
 				"key": "night-glider",
 				"url": "night-glider.png"
+			},
+			{
+				"type": "image",
+				"key": "snowman",
+				"url": "snowman.png"
 			}
 		]
 	},
@@ -236,6 +241,32 @@
 				"type": "image",
 				"key": "weapon-card",
 				"url": "weapon-card.png"
+			}
+		]
+	},
+	{
+		"path": "src/assets/sprite-sheets",
+		"assets": [
+			{
+				"type": "sheet",
+				"key": "mage-fire-spell-sheet",
+				"url": "mage-fire-spell-sheet.png",
+				"frameWidth": 320,
+				"frameHeight": 320
+			},
+			{
+				"type": "sheet",
+				"key": "mage-idle-sheet",
+				"url": "mage-idle-sheet.png",
+				"frameWidth": 320,
+				"frameHeight": 320
+			},
+			{
+				"type": "sheet",
+				"key": "pipeSlime-idle-sheet",
+				"url": "pipeSlime-idle-sheet.png",
+				"frameWidth": 320,
+				"frameHeight": 320
 			}
 		]
 	}

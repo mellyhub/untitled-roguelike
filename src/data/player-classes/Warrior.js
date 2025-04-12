@@ -1,9 +1,11 @@
-import { Player } from "./player2";
-import weapons from "./weapons";
-import spells from "./spells";
+import { Player } from "../player";
+import weapons from "../weapons";
+import spells from "../spells";
 
 export class Warrior extends Player {
-    name = "Taifun"
+    name = "Taifun";
+    image = "warrior-prototyp1";
+
     health = 200;
     energy = 100;
     weapon = weapons.big_axe;
@@ -27,14 +29,7 @@ export class Warrior extends Player {
     score = 0;
 
     attack(target) {
-        let damage;
-
-        if (this.stats.critChance > Math.random()) {
-            console.log("Critical hit!");
-            damage = this.weapon.damage * this.stats.strength * 0.1 * this.stats.critDamage;
-        } else {
-            damage = this.weapon.damage * this.stats.strength * 0.1;
-        }
+        let damage = this.handleCrit(null);
 
         // handle warrior rage scaling
         const rageMultiplier = 1 + this.resource.rage * 0.002;
@@ -51,16 +46,10 @@ export class Warrior extends Player {
     }
 
     cast(target, spell) {
-        let damage;
+        
 
         if (spell.damage) {
-            // If the spell deals damage
-            if (this.stats.critChance > Math.random()) {
-                damage = spell.damage(this.stats) * this.stats.critDamage;
-            }
-            else {
-                damage = spell.damage(this.stats);
-            }
+            let damage = this.handleCrit(spell);
 
             // handle warrior rage scaling
             const rageMultiplier = 1 + this.resource.rage * 0.002;
@@ -78,7 +67,7 @@ export class Warrior extends Player {
         }
 
         if (spell.effect) {
-            //spell.effect(this, target, scene);
+            spell.effect(this, target);
             console.log(`${this.name} casts ${spell.name}.`);
         }
     }

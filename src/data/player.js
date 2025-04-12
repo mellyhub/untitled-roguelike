@@ -1,21 +1,66 @@
-import weapons from "./weapons.js"; // Import weapons from weapons.js
-import spells from "./spells.js"; // Import spells from spells.js
+// abstract class
+export class Player {
+    name;
+    health;
+    energy;
+    weapon;
+    inventory;
+    spells;
+    spellbook;
+    class;
+    stats;
+    resource;
+    lastAction;
+    talentPoints;
+    level;
+    score;
 
-const player = {
-    name: "Player",
-    health: 200,
-    energy: 200,
-    weapon: weapons.big_axe, // The player starts with big_axe
-    inventory: [],
-    // hardcoded spells for testing
-    spells: [spells.frostbolt, spells.aura_of_might, spells.rejuvenation, spells.ignite, spells.fireball], // Initialize an empty spells array
-    spellbook: [],
-    class: null,
-    stats: null,
-    lastAction: null,
-    talentPoints: 50,
-    level: 1,
-    score: 0,
-};
+    handleCrit(spell) {
+        if (this.stats.critChance > Math.random()) {
+            console.log("Critical hit!");
+            return spell ? 
+                spell.damage(this.stats) * this.stats.critDamage : 
+                this.weapon.damage * this.stats.strength * 0.1 * this.stats.critDamage;
+        } else {
+            return spell ?
+                spell.damage(this.stats) : 
+                this.weapon.damage * this.stats.strength * 0.1;
+        }
+    }
 
-export default player;
+    increaseHealth(amount) {
+        this.health += amount;
+    }
+
+    increaseEnergy(amount) {
+        this.energy += amount;
+    }
+
+    swapWeapon(newWeapon) {
+        this.weapon = newWeapon;
+    }
+
+    addItemToInventory(item) {
+        this.inventory.push(item);
+    }
+
+    addSpell(spell) {
+        this.spells.push(spell);
+    }
+
+    increaseStat(stat, amount) {
+        this.stats.stat += amount;
+    }
+
+    increaseTalentPoints(amount) {
+        this.talentPoints += amount;
+    }
+
+    increaseScore(amount) {
+        this.score =+ amount;
+    }
+
+    setLastAction(action) {
+        this.lastAction = action;
+    }
+}
