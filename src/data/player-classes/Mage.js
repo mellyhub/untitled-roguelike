@@ -8,6 +8,10 @@ export class Mage extends Player {
     animationSheetName = "mage-idle-sheet";
     animationFrameRate = 2;
 
+    castAnimationKey = "mage-fire-cast";
+    castAnimationSheetName = "mage-fire-spell";
+    castAnimationFrameRate = 6;
+
     health = 200;
     maxHealth = 200;
     energy = 100;

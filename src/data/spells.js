@@ -1,47 +1,55 @@
 const spells = {
     stab: {
+        type: "Placeholder",
         name: "Stab",
         damage(attackerStats) {
             return 25 + attackerStats.agility * 2 + attackerStats.strength * 2;
         }
     },
     frostbolt: {
+        type: "Frost",
         name: "Frostbolt",
         damage(attackerStats) {
             return 10 + attackerStats.intelligence * 3;
         }
     },
     fireball: {
+        type: "Fire",
         name: "Fireball",
         damage(attackerStats) {
             return 25 + attackerStats.strength * 2;
         }
     },
     fire_breath: {
+        type: "Fire",
         name: "Fire Breath",
         damage(attackerStats) {
             return 25 + attackerStats.strength * 2;
         }
     },
     tail_whip: {
+        type: "Placeholder",
         name: "Tail Whip",
         damage(attackerStats) {
             return 25 + attackerStats.strength * 2;
         }
     },
     bite: {
+        type: "Placeholder",
         name: "Bite",
         damage(attackerStats) {
             return 25 + attackerStats.strength * 2;
         }
     },
     heavy_swing: {
+        type: "Placeholder",
         name: "Heavy Swing",
         damage(attackerStats) {
             return 25 + attackerStats.strength * 2;
         }
     },
     aura_of_might: {
+        type: "Placeholder",
         name: "Aura of Might",
         turnDuration: 3,
         effect(attacker, target) {
@@ -65,6 +73,7 @@ const spells = {
         description: "Increases strength for 3 turns."
     },
     ignite: {
+        type: "Fire",
         name: "Ignite",
         damage() {
             return 10;
@@ -87,6 +96,7 @@ const spells = {
         }
     },
     rejuvenation: {
+        type: "Placeholder",
         name: "Rejuvenation",
         healPerTurn: 30,
         turnDuration: 3,

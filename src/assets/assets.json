@@ -288,6 +288,13 @@
 				"url": "pipeSlime-idle-sheet.png",
 				"frameWidth": 320,
 				"frameHeight": 320
+			},
+			{
+				"type": "sheet",
+				"key": "mage-fire-spell",
+				"url": "mage-fire-spell-Sheet.png",
+				"frameWidth": 320,
+				"frameHeight": 320
 			}
 
 		]

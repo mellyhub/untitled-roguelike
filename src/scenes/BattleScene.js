@@ -7,6 +7,7 @@ import { Goblin } from '../data/enemies/Goblin.js';
 import { Snowman } from '../data/enemies/Snowman.js';
 import { NightGlider } from '../data/enemies/NightGlider.js';
 import { PipeSlime } from '../data/enemies/PipeSlime.js';
+import { Mage } from '../data/player-classes/Mage.js';
 
 class BattleScene extends Phaser.Scene {
   constructor() {
@@ -46,8 +47,15 @@ class BattleScene extends Phaser.Scene {
       frameRate: this.player.animationFrameRate,
       repeat: -1,
     });
+
+    this.anims.create({
+      key: this.player.castAnimationKey,
+      frames: this.anims.generateFrameNumbers(this.player.castAnimationSheetName),
+      frameRate: this.player.castAnimationFrameRate,
+      repeat: 0,
+    });
     
-    return this.add.sprite(480, 540, this.player.animationSheetName).setScale(1.2);
+    return this.add.sprite(480, 540, this.player.castAnimationSheetName).setScale(1.2);
   }
 
   createEnemyAnimation() {
@@ -65,6 +73,8 @@ class BattleScene extends Phaser.Scene {
     this.player = data.player;
     this.levelData = data.level;
     this.seed = data.seed;
+
+    this.playerAnimation;
 
     this.playerStartHP = this.player.maxHealth;
 
@@ -94,8 +104,8 @@ class BattleScene extends Phaser.Scene {
     if (this.player.image) {
       this.add.image(480, 540, this.player.image).setScale(0.4);
     } else {
-      let playerAnimation = this.createPlayerAnimation();
-      playerAnimation.play(this.player.animationKey);
+      this.playerAnimation = this.createPlayerAnimation();
+      this.playerAnimation.play(this.player.animationKey);
     }
 
     // Add enemy image or animation
@@ -205,6 +215,13 @@ class BattleScene extends Phaser.Scene {
     }
     else if (action === 'cast') {
       if (selectedSpell) {
+        if (this.player instanceof Mage && selectedSpell.type === "Fire") {
+          this.playerAnimation
+            .play(this.player.castAnimationKey)
+            .once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+              this.playerAnimation.play(this.player.animationKey);
+            });
+        }
         this.player.cast(this.enemy, selectedSpell);
       }
       else {
