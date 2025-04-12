@@ -8,6 +8,7 @@ import { Snowman } from '../data/enemies/Snowman.js';
 import { NightGlider } from '../data/enemies/NightGlider.js';
 import { PipeSlime } from '../data/enemies/PipeSlime.js';
 import { Mage } from '../data/player-classes/Mage.js';
+import { Cat } from '../data/enemies/Cat.js';
 
 class BattleScene extends Phaser.Scene {
   constructor() {
@@ -78,7 +79,7 @@ class BattleScene extends Phaser.Scene {
 
     this.playerStartHP = this.player.maxHealth;
 
-    const enemyClasses = [Snowman, Goblin, NightGlider, PipeSlime];
+    const enemyClasses = [Snowman, Goblin, NightGlider, PipeSlime, Cat];
     const rng = seedrandom(this.seed);
     const EnemyClass = enemyClasses[Math.floor(rng() * enemyClasses.length)];
     
@@ -211,7 +212,7 @@ class BattleScene extends Phaser.Scene {
     processActiveEffects(this.player);
 
     if (action === 'attack') {
-      this.player.attack(this.enemy);
+      this.player.attack(this.enemy); 
     }
     else if (action === 'cast') {
       if (selectedSpell) {
