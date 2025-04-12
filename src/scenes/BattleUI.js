@@ -11,8 +11,6 @@ class BattleUI {
         this.statsContainer = null;
         this.playerUnitFrame = null;
         this.enemyUnitFrame = null;
-
-        
     }
 
     calculateHealthBarSize(maxUnitHealth, currentUnitHealth) {
@@ -185,6 +183,10 @@ class BattleUI {
             if (this.currentMenuType === 'main') {
                 if (selectedItem.text === 'Attack') {
                     console.log('Attack selected!');
+                    // plays attack after 1 second delay to match health bar animation
+                    setTimeout(() => {
+                        this.sfx.hit1.play();
+                      }, 1000);
                     executeTurn('attack');
                 }
                 else if (selectedItem.text === 'Bag') {
@@ -210,6 +212,9 @@ class BattleUI {
                     // check if selected item is a spell
                     const selectedSpell = player.spells.find(spell => spell.name === selectedItem.text);
                     if (selectedSpell) {
+                        setTimeout(() => {
+                            this.sfx.hit2.play();
+                          }, 1000);
                         console.log(`Cast ${selectedSpell.name} selected!`);
                         executeTurn('cast', selectedSpell);
 

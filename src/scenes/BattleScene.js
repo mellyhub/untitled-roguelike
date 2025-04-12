@@ -16,12 +16,14 @@ class BattleScene extends Phaser.Scene {
     this.load.audio("menu", "src/assets/audio/sfx/menu.ogg");
     this.load.audio("select", "src/assets/audio/sfx/select.ogg");
     this.load.audio("hit1", "src/assets/audio/sfx/hit1.ogg");
+    this.load.audio("hit2", "src/assets/audio/sfx/hit2.ogg");
     // iterate through assets
     assets.forEach(assetGroup => {
       assetGroup.assets.forEach(asset => {
         const assetPath = `${assetGroup.path}/${asset.url}`;
 
         if (asset.type === 'image') {
+          const assetPath = `${assetGroup.path}/${asset.url}`;
           // dynamically loads image asset
           this.load.image(asset.key, assetPath);
         }
@@ -70,7 +72,8 @@ class BattleScene extends Phaser.Scene {
     this.sfx = {
       menu: this.sound.add("menu", { volume: 0.1 }),
       select: this.sound.add("select", { volume: 0.1 }),
-      hit1: this.sound.add("hit1", { volume: 0.2 })
+      hit1: this.sound.add("hit1", { volume: 0.2 }),
+      hit2: this.sound.add("hit2", { volume: 0.2 }),
     }
 
     this.add.image(960, 540, 'ice-cave-background');
@@ -155,9 +158,6 @@ class BattleScene extends Phaser.Scene {
       this.scene.switch('MapScene');
     });
   }
-  // Array of rendered elements (healthbar, text, etc..), used for removing elements before rerendering
-  playerStartHP = 0;
-  enemyStartHP = 0;
 
   // Wait for player or enemy to finish attacking
   resolveAfterTime(ms) {
@@ -194,8 +194,6 @@ class BattleScene extends Phaser.Scene {
 
     const animationText = this.displayAnimationText(this.player.name, action, selectedSpell);
     await this.resolveAfterTime(1000);
-    // hardcoded to always play hit sound sound for now
-    this.sfx.hit1.play();
     animationText.destroy();
 
     this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP, this.turnCounter);
