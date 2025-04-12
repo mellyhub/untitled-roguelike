@@ -7,6 +7,7 @@ export class Warrior extends Player {
     image = "warrior-prototyp1";
 
     health = 200;
+    maxHealth = 200;
     energy = 100;
     weapon = weapons.big_axe;
     inventory = [];

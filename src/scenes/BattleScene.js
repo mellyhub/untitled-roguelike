@@ -54,7 +54,7 @@ class BattleScene extends Phaser.Scene {
     this.levelData = data.level;
     this.seed = data.seed;
 
-    this.playerStartHP = this.player.health;
+    this.playerStartHP = this.player.maxHealth;
 
     const enemyClasses = [Snowman, Goblin, NightGlider];
     const rng = seedrandom(this.seed);
@@ -225,7 +225,7 @@ class BattleScene extends Phaser.Scene {
     if (this.enemy.health <= 0) {
       this.add.text(960, 640, 'You win!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
       this.player.level++;
-      this.levelData.completed = true;
+      this.player.activeEffects =  []; // reset active effects after battle
 
       this.turnCounter = 0;
       this.player.score += 100; // example: add 100 points for defeating an enemy

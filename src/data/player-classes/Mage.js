@@ -8,6 +8,7 @@ export class Mage extends Player {
     animationSheetName = "mage-idle-sheet";
 
     health = 200;
+    maxHealth = 200;
     energy = 100;
     weapon = weapons.big_axe;
     inventory = [];
