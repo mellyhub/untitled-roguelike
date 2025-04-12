@@ -1,8 +1,7 @@
-import assets from '../assets/assets.json'; // Import the assets.json file
-
 class BattleUI {
-    constructor(scene) {
+    constructor(scene, sfx) {
         this.scene = scene;
+        this.sfx = sfx;
         this.menuItems = [];
         this.currentMenu = null;
         this.currentSelection = { x: 0, y: 0 };
@@ -12,6 +11,8 @@ class BattleUI {
         this.statsContainer = null;
         this.playerUnitFrame = null;
         this.enemyUnitFrame = null;
+
+        
     }
 
     calculateHealthBarSize(maxUnitHealth, currentUnitHealth) {
@@ -157,6 +158,7 @@ class BattleUI {
     }
 
     changeSelection(deltaX, deltaY) {
+        this.sfx.menu.play();
         const newX = this.currentSelection.x + deltaX;
         const newY = this.currentSelection.y + deltaY;
 
@@ -178,7 +180,7 @@ class BattleUI {
 
     selectMenuItem(player, executeTurn, switchMenu, bagMenu, mainMenu) {
         const selectedItem = this.getSelectedItem();
-
+        this.sfx.select.play();
         if (selectedItem) {
             if (this.currentMenuType === 'main') {
                 if (selectedItem.text === 'Attack') {

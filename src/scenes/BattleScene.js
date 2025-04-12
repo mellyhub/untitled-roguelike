@@ -1,7 +1,7 @@
 import seedrandom from 'seedrandom';
 import BattleUI from './BattleUI';
 import assets from '../assets/assets.json'; // Import the assets.json file
-import { executeAttack, executeSpell, processActiveEffects } from './DamageCalc';
+import { processActiveEffects } from './DamageCalc';
 import { setCookie, getCookie } from './cookieUtils.js';
 import { Goblin } from '../data/goblin.js';
 
@@ -11,7 +11,9 @@ class BattleScene extends Phaser.Scene {
   }
 
   preload() {
-    // Load assets (images, sounds, etc.)
+    this.load.audio("menu", "src/assets/audio/sfx/menu.ogg");
+    this.load.audio("select", "src/assets/audio/sfx/select.ogg");
+    this.load.audio("hit1", "src/assets/audio/sfx/hit1.ogg");
     // iterate through assets
     assets.forEach(assetGroup => {
       assetGroup.assets.forEach(asset => {
@@ -32,8 +34,6 @@ class BattleScene extends Phaser.Scene {
 
     this.playerStartHP = this.player.health;
 
-    //this.getEnemy();
-
     this.enemy = new Goblin(this.player.level);
     this.enemyStartHP = this.enemy.health;
 
@@ -43,12 +43,18 @@ class BattleScene extends Phaser.Scene {
     this.cursors = this.input.keyboard.createCursorKeys(); // lägger till arrow keys
     this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER); // lägger till enter key
 
+    this.sfx = {
+      menu: this.sound.add("menu", { volume: 0.1 }),
+      select: this.sound.add("select", { volume: 0.1 }),
+      hit1: this.sound.add("hit1", { volume: 0.2 })
+    }
+
     this.add.image(960, 540, 'ice-cave-background');
     this.add.image(480, 540, 'warrior-prototyp1').setScale(0.4);
     this.add.image(1440, 540, 'night-glider').setScale(0.7);
 
     // initialize battle ui
-    this.battleUI = new BattleUI(this);
+    this.battleUI = new BattleUI(this, this.sfx);
 
     this.mainMenu = [
       { x: 0, y: 0, text: 'Attack' },
@@ -158,6 +164,8 @@ class BattleScene extends Phaser.Scene {
 
     const animationText = this.displayAnimationText(this.player.name, action, selectedSpell);
     await this.resolveAfterTime(1000);
+    // hardcoded to always play hit sound sound for now
+    this.sfx.hit1.play();
     animationText.destroy();
 
     this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP, this.turnCounter);
@@ -176,7 +184,6 @@ class BattleScene extends Phaser.Scene {
 
     this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP, this.turnCounter);
     this.battleUI.renderMenu(this.currentMenu, this.currentSelection);
-
     this.checkRoundOutcome();
   }
 
