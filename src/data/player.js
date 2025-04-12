@@ -14,6 +14,7 @@ export class Player {
     talentPoints;
     level;
     score;
+    image;
 
     handleCrit(spell) {
         if (this.stats.critChance > Math.random()) {

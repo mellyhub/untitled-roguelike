@@ -6,6 +6,7 @@ import { setCookie, getCookie } from './cookieUtils.js';
 import { Goblin } from '../data/enemies/Goblin.js';
 import { Snowman } from '../data/enemies/Snowman.js';
 import { NightGlider } from '../data/enemies/NightGlider.js';
+import { PipeSlime } from '../data/enemies/PipeSlime.js';
 
 class BattleScene extends Phaser.Scene {
   constructor() {
@@ -42,11 +43,22 @@ class BattleScene extends Phaser.Scene {
     this.anims.create({
       key: this.player.animationKey,
       frames: this.anims.generateFrameNumbers(this.player.animationSheetName),
-      frameRate: 2,
+      frameRate: this.player.animationFrameRate,
       repeat: -1,
     });
     
     return this.add.sprite(480, 540, this.player.animationSheetName).setScale(1.2);
+  }
+
+  createEnemyAnimation() {
+    this.anims.create({
+      key: this.enemy.animationKey,
+      frames: this.anims.generateFrameNumbers(this.enemy.animationSheetName),
+      frameRate: this.enemy.animationFrameRate,
+      repeat: -1,
+    });
+    
+    return this.add.sprite(this.enemy.imageXPos, this.enemy.imageYPos, this.enemy.animationSheetName).setScale(this.enemy.imageScale);
   }
 
   create(data) {
@@ -56,7 +68,7 @@ class BattleScene extends Phaser.Scene {
 
     this.playerStartHP = this.player.maxHealth;
 
-    const enemyClasses = [Snowman, Goblin, NightGlider];
+    const enemyClasses = [Snowman, Goblin, NightGlider, PipeSlime];
     const rng = seedrandom(this.seed);
     const EnemyClass = enemyClasses[Math.floor(rng() * enemyClasses.length)];
     
@@ -78,13 +90,21 @@ class BattleScene extends Phaser.Scene {
 
     this.add.image(960, 540, 'ice-cave-background');
 
-    // Add player image
-    //this.add.image(480, 540, this.player.image).setScale(0.4);
-    let playerAnimation = this.createPlayerAnimation();
-    playerAnimation.play(this.player.animationKey);
+    // Add player image or animation
+    if (this.player.image) {
+      this.add.image(480, 540, this.player.image).setScale(0.4);
+    } else {
+      let playerAnimation = this.createPlayerAnimation();
+      playerAnimation.play(this.player.animationKey);
+    }
 
-    // Add enemy image
-    this.add.image(this.enemy.imageXPos, this.enemy.imageYPos, this.enemy.image).setScale(this.enemy.imageScale);
+    // Add enemy image or animation
+    if (this.enemy.image) {
+      this.add.image(this.enemy.imageXPos, this.enemy.imageYPos, this.enemy.image).setScale(this.enemy.imageScale);
+    } else {
+      let enemyAnimation = this.createEnemyAnimation();
+      enemyAnimation.play(this.enemy.animationKey);
+    }
 
     // initialize battle ui
     this.battleUI = new BattleUI(this, this.sfx);

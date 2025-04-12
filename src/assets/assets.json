@@ -275,11 +275,26 @@
 			},
 			{
 				"type": "sheet",
-				"key": "snowman-idle-sheet",
-				"url": "snowman-idle-Sheet.png",
+				"key": "nightGlider-idle-sheet",
+				"url": "nightGlider-idle-Sheet.png",
+				"frameWidth": 1090,
+				"frameHeight": 1100
+			},
+			{
+				"type": "sheet",
+				"key": "cat-fighter",
+				"url": "cat.png",
+				"frameWidth": 50,
+				"frameHeight": 50
+			},
+			{
+				"type": "sheet",
+				"key": "pipe-slime",
+				"url": "pipeSlime-idle-sheet.png",
 				"frameWidth": 320,
 				"frameHeight": 320
 			}
+
 		]
 	}
 ]

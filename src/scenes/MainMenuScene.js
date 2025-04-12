@@ -82,14 +82,10 @@ class MainMenuScene extends Phaser.Scene {
     // hämtar classen som är selectad
     const selectedClass = this.classArray[this.currentSelection];
     console.log(`Selected class: ${selectedClass.name}`);
-    //this.player.class = selectedClass;
-    //this.player.stats = selectedClass.stats;
-
-    //this.player = new Player(selectedClass.name, selectedClass.stats, selectedClass.resource);
     
-    // just nu blir Taifun alltid vald
-    //this.player = new Warrior();
-    this.player = new Mage();
+    const classes = [Warrior, Mage];
+    const PlayerClass = classes[this.currentSelection];
+    this.player = new PlayerClass();
 
     // setting the seed for the run
     const seed = String(Date.now());

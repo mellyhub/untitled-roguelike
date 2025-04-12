@@ -6,6 +6,7 @@ export class Mage extends Player {
     name = "Trollkarlen";
     animationKey = "mage-idle";
     animationSheetName = "mage-idle-sheet";
+    animationFrameRate = 2;
 
     health = 200;
     maxHealth = 200;
