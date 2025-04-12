@@ -4,6 +4,7 @@ export class Goblin {
     name = "Goblin";
     health;
     strength;
+    image = 'goblin-prototyp1';
 
     constructor(weight) {
         this.health = this.getRandomStat(50, 50) + weight * 10;

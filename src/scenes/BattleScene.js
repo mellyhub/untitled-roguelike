@@ -51,7 +51,8 @@ class BattleScene extends Phaser.Scene {
 
     this.add.image(960, 540, 'ice-cave-background');
     this.add.image(480, 540, 'warrior-prototyp1').setScale(0.4);
-    this.add.image(1440, 540, 'night-glider').setScale(0.7);
+    //this.add.image(1440, 540, 'night-glider').setScale(0.7);
+    this.add.image(1440, 540, this.enemy.image).setScale(0.7);
 
     // initialize battle ui
     this.battleUI = new BattleUI(this, this.sfx);

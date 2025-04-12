@@ -44,8 +44,9 @@ const spells = {
     aura_of_might: {
         name: "Aura of Might",
         turnDuration: 3,
-        effect(attacker) {
+        effect(attacker, target) {
             attacker.stats.strength += 10;
+            console.log(`Taifun strenght: ${attacker.stats.strength}`)
             console.log(`${attacker.name} is empowered, increasing their strength by 10.`);
             attacker.activeEffects = attacker.activeEffects || [];
             attacker.activeEffects.push({
@@ -70,7 +71,7 @@ const spells = {
         },
         damagePerTurn: 5,
         turnDuration: 3,
-        effect(attacker, target, battleScene) {
+        effect(attacker, target) {
             console.log(`${attacker.name} casts Ignite on ${target.name}, applying damage over ${this.turnDuration} turns.`);
 
             // should be made more modular
@@ -81,16 +82,15 @@ const spells = {
                 applyEffect: () => {
                     target.health -= this.damagePerTurn;
                     console.log(`${target.name} takes ${this.damagePerTurn} damage from Ignite.`);
-                    battleScene.battleUI.displayStats(battleScene.player, battleScene.enemy, battleScene.playerStartHP, battleScene.enemyStartHP);
                 }
             });
         }
     },
     rejuvenation: {
         name: "Rejuvenation",
-        healPerTurn: 10,
+        healPerTurn: 30,
         turnDuration: 3,
-        effect(attacker, target, battleScene) {
+        effect(attacker, target) {
             console.log(`${attacker.name} casts Rejuvenation, applying healing over ${this.turnDuration} turns.`);
 
             attacker.activeEffects = target.activeEffects || [];
@@ -105,7 +105,6 @@ const spells = {
                     }
                     attacker.health += this.healPerTurn;
                     console.log(`${attacker.name} heals ${this.healPerTurn} from Rejuvenation.`);
-                    battleScene.battleUI.displayStats(battleScene.player, battleScene.enemy, battleScene.playerStartHP, battleScene.enemyStartHP);
                 }
             });
         },

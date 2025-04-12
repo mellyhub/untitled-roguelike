@@ -1,5 +1,4 @@
 import classes from "../data/classes";
-import player from "../data/player";
 import { getCookie } from "./cookieUtils.js";
 import { Warrior } from "../data/Warrior.js";
 
@@ -15,8 +14,6 @@ class MainMenuScene extends Phaser.Scene {
   }
 
   create() {
-    //this.player = player;
-    //this.player = new Player("Warrior");
     this.cursors = this.input.keyboard.createCursorKeys();
     this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
 
