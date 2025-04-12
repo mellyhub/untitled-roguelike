@@ -2,9 +2,13 @@ import seedrandom from 'seedrandom';
 
 export class Goblin {
     name = "Goblin";
+    image = 'goblin-prototyp1';
+    imageScale = 1;
+    imageXPos = 1440;
+    imageYPos = 540;
+    
     health;
     strength;
-    image = 'goblin-prototyp1';
 
     constructor(weight) {
         this.health = this.getRandomStat(50, 50) + weight * 10;

@@ -1,6 +1,6 @@
-import { Player } from "./player";
-import weapons from "./weapons";
-import spells from "./spells";
+import { Player } from "../player";
+import weapons from "../weapons";
+import spells from "../spells";
 
 export class Warrior extends Player {
     name = "Taifun"

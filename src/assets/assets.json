@@ -41,6 +41,11 @@
 				"type": "image",
 				"key": "night-glider",
 				"url": "night-glider.png"
+			},
+			{
+				"type": "image",
+				"key": "snowman",
+				"url": "snowman.png"
 			}
 		]
 	},

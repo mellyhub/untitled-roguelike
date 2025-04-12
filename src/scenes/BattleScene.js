@@ -3,7 +3,9 @@ import BattleUI from './BattleUI';
 import assets from '../assets/assets.json'; // Import the assets.json file
 import { processActiveEffects } from './DamageCalc';
 import { setCookie, getCookie } from './cookieUtils.js';
-import { Goblin } from '../data/goblin.js';
+import { Goblin } from '../data/enemies/Goblin.js';
+import { Snowman } from '../data/enemies/Snowman.js';
+import { NightGlider } from '../data/enemies/NightGlider.js';
 
 class BattleScene extends Phaser.Scene {
   constructor() {
@@ -19,7 +21,6 @@ class BattleScene extends Phaser.Scene {
       assetGroup.assets.forEach(asset => {
         if (asset.type === 'image') {
           const assetPath = `${assetGroup.path}/${asset.url}`;
-          console.log(assetPath)
           // dynamically loads image asset
           this.load.image(asset.key, assetPath);
         }
@@ -34,8 +35,12 @@ class BattleScene extends Phaser.Scene {
 
     this.playerStartHP = this.player.health;
 
-    this.enemy = new Goblin(this.player.level);
-    this.enemyStartHP = this.enemy.health;
+    const enemyClasses = [Snowman, Goblin, NightGlider];
+    const rng = seedrandom(this.seed);
+    const EnemyClass = enemyClasses[Math.floor(rng() * enemyClasses.length)];
+    
+    this.enemy = new EnemyClass(this.player.level);
+    this.enemyStartHP = this.enemy.health;       
 
     this.turnCounter = 0;
     this.currentTurn = this.turnCounter % 2;
@@ -50,9 +55,12 @@ class BattleScene extends Phaser.Scene {
     }
 
     this.add.image(960, 540, 'ice-cave-background');
+
+    // Add player image
     this.add.image(480, 540, 'warrior-prototyp1').setScale(0.4);
-    //this.add.image(1440, 540, 'night-glider').setScale(0.7);
-    this.add.image(1440, 540, this.enemy.image).setScale(0.7);
+
+    // Add enemy image
+    this.add.image(this.enemy.imageXPos, this.enemy.imageYPos, this.enemy.image).setScale(this.enemy.imageScale);
 
     // initialize battle ui
     this.battleUI = new BattleUI(this, this.sfx);
