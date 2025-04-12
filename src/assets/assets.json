@@ -244,50 +244,36 @@
 		"assets": [
 			{
 				"type": "sheet",
-				"key": "mage-fire-spell-sheet",
-				"url": "mage-fire-spell-Sheet.png",
-				"frameWidth": 320,
-				"frameHeight": 320
-			},
-			{
-				"type": "sheet",
-				"key": "mage-idle-sheet",
-				"url": "mage-idle-Sheet.png",
-				"frameWidth": 320,
-				"frameHeight": 320
-			},
-			{
-				"type": "sheet",
-				"key": "pipeSlime-idle-sheet",
-				"url": "pipeSlime-idle-Sheet.png",
-				"frameWidth": 320,
-				"frameHeight": 320
-			},
-			{
-				"type": "sheet",
-				"key": "nightGlider-idle-sheet",
-				"url": "nightGlider-idle-Sheet.png",
-				"frameWidth": 1090,
-				"frameHeight": 1100
-			},
-			{
-				"type": "sheet",
-				"key": "cat-fighter",
+				"key": "cat fighter",
 				"url": "cat.png",
 				"frameWidth": 50,
 				"frameHeight": 50
 			},
 			{
 				"type": "sheet",
-				"key": "pipe-slime",
-				"url": "pipeSlime-idle-sheet.png",
+				"key": "mage fire spell",
+				"url": "mage-fire-spell-Sheet.png",
 				"frameWidth": 320,
 				"frameHeight": 320
 			},
 			{
 				"type": "sheet",
-				"key": "mage-fire-spell",
-				"url": "mage-fire-spell-Sheet.png",
+				"key": "mage idle",
+				"url": "mage-idle-Sheet.png",
+				"frameWidth": 320,
+				"frameHeight": 320
+			},
+			{
+				"type": "sheet",
+				"key": "night glider",
+				"url": "nightGlider-idle-Sheet.png",
+				"frameWidth": 1090,
+				"frameHeight": 1100
+			},
+			{
+				"type": "sheet",
+				"key": "pipe slime",
+				"url": "pipeSlime-idle-sheet.png",
 				"frameWidth": 320,
 				"frameHeight": 320
 			},
@@ -298,7 +284,6 @@
 				"frameWidth": 320,
 				"frameHeight": 640
 			}
-
 		]
 	}
 ]

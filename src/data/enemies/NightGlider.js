@@ -1,7 +1,7 @@
 export class NightGlider {
     name = "Night Glider";
     animationKey = "nightGlider-idle";
-    animationSheetName = "nightGlider-idle-sheet";
+    animationSheetName = "night glider";
     animationFrameRate = 3;
     imageScale = 0.9;
     imageXPos = 1440;

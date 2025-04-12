@@ -5,11 +5,11 @@ import spells from "../spells";
 export class Mage extends Player {
     name = "Trollkarlen";
     animationKey = "mage-idle";
-    animationSheetName = "mage-idle-sheet";
+    animationSheetName = "mage idle";
     animationFrameRate = 2;
 
     castAnimationKey = "mage-fire-cast";
-    castAnimationSheetName = "mage-fire-spell";
+    castAnimationSheetName = "mage fire spell";
     castAnimationFrameRate = 6;
 
     health = 200;

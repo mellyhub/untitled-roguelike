@@ -1,7 +1,7 @@
 export class PipeSlime {
-    name = "Pipe slime";
+    name = "Pipe Slime";
     animationKey = "pipe-slime-anim";
-    animationSheetName = "pipe-slime";
+    animationSheetName = "pipe slime";
     animationFrameRate = 6;
     imageScale = 1;
     imageXPos = 1440;
