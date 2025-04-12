@@ -41,11 +41,6 @@
 				"type": "image",
 				"key": "night-glider",
 				"url": "night-glider.png"
-			},
-			{
-				"type": "image",
-				"key": "snowman",
-				"url": "snowman.png"
 			}
 		]
 	},
@@ -263,11 +258,6 @@
 			},
 			{
 				"type": "sheet",
-				"key": "nightGlider-idle-sheet",
-				"url": "nightGlider-idle-Sheet.png"
-			},
-			{
-				"type": "sheet",
 				"key": "pipeSlime-idle-sheet",
 				"url": "pipeSlime-idle-Sheet.png",
 				"frameWidth": 320,
@@ -300,6 +290,13 @@
 				"url": "mage-fire-spell-Sheet.png",
 				"frameWidth": 320,
 				"frameHeight": 320
+			},
+			{
+				"type": "sheet",
+				"key": "snowman",
+				"url": "snowman-idle-Sheet.png",
+				"frameWidth": 320,
+				"frameHeight": 640
 			}
 
 		]

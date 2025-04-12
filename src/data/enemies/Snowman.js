@@ -1,9 +1,11 @@
 export class Snowman {
     name = "Snowman";
-    image = "snowman";
+    animationKey = "snowman-anim";
+    animationSheetName = "snowman";
+    animationFrameRate = 9;
     imageScale = 1;
     imageXPos = 1440;
-    imageYPos = 540;
+    imageYPos = 700;
 
     health;
     strength;
