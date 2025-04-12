@@ -1,6 +1,7 @@
 import classes from "../data/classes";
 import { getCookie } from "./cookieUtils.js";
 import { Warrior } from "../data/player-classes/Warrior.js";
+import { Mage } from "../data/player-classes/Mage.js";
 
 class MainMenuScene extends Phaser.Scene {
   constructor() {
@@ -87,7 +88,8 @@ class MainMenuScene extends Phaser.Scene {
     //this.player = new Player(selectedClass.name, selectedClass.stats, selectedClass.resource);
     
     // just nu blir Taifun alltid vald
-    this.player = new Warrior();
+    //this.player = new Warrior();
+    this.player = new Mage();
 
     // setting the seed for the run
     const seed = String(Date.now());

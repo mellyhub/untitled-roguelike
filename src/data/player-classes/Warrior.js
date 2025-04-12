@@ -3,7 +3,9 @@ import weapons from "../weapons";
 import spells from "../spells";
 
 export class Warrior extends Player {
-    name = "Taifun"
+    name = "Taifun";
+    image = "warrior-prototyp1";
+
     health = 200;
     energy = 100;
     weapon = weapons.big_axe;

@@ -19,13 +19,32 @@ class BattleScene extends Phaser.Scene {
     // iterate through assets
     assets.forEach(assetGroup => {
       assetGroup.assets.forEach(asset => {
+        const assetPath = `${assetGroup.path}/${asset.url}`;
+
         if (asset.type === 'image') {
-          const assetPath = `${assetGroup.path}/${asset.url}`;
           // dynamically loads image asset
           this.load.image(asset.key, assetPath);
         }
+
+        if (asset.type === 'sheet') {
+          this.load.spritesheet(asset.key, assetPath, {
+            frameWidth: asset.frameWidth,
+            frameHeight: asset.frameHeight,
+          });
+        }
       });
     });
+  }
+
+  createPlayerAnimation() {
+    this.anims.create({
+      key: this.player.animationKey,
+      frames: this.anims.generateFrameNumbers(this.player.animationSheetName),
+      frameRate: 2,
+      repeat: -1,
+    });
+    
+    return this.add.sprite(480, 540, this.player.animationSheetName).setScale(1.2);
   }
 
   create(data) {
@@ -57,7 +76,9 @@ class BattleScene extends Phaser.Scene {
     this.add.image(960, 540, 'ice-cave-background');
 
     // Add player image
-    this.add.image(480, 540, 'warrior-prototyp1').setScale(0.4);
+    //this.add.image(480, 540, this.player.image).setScale(0.4);
+    let playerAnimation = this.createPlayerAnimation();
+    playerAnimation.play(this.player.animationKey);
 
     // Add enemy image
     this.add.image(this.enemy.imageXPos, this.enemy.imageYPos, this.enemy.image).setScale(this.enemy.imageScale);
