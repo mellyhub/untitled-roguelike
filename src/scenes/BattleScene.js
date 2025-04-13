@@ -205,15 +205,6 @@ class BattleScene extends Phaser.Scene {
     processActiveEffects(this.player);
 
     if (action === 'attack') {
-      /*
-      if (this.player instanceof Warrior) {
-        this.playerAnimation
-          .play(this.player.attackAnimationKey)
-          .once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-            this.playerAnimation.play(this.player.animationKey);
-          });
-      }
-      */
       this.player.animations.playAttackAnimation();
       this.player.attack(this.enemy);
     }

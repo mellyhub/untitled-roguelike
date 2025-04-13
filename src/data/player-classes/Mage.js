@@ -5,7 +5,7 @@ import { Animations } from "../Animations";
 
 export class Mage extends Player {
     name = "Trollkarlen";
-    animations = new Animations("mage", "mage idle", null, "mage cast");
+    animations = new Animations("mage", "mage idle", "mage attack", "mage cast");
 
     health = 200;
     maxHealth = 200;

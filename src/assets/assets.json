@@ -253,8 +253,8 @@
 				"type": "sheet",
 				"key": "mage attack",
 				"url": "mage-attack-Sheet.png",
-				"frameWidth": 320,
-				"frameHeight": 320
+				"frameWidth": 900,
+				"frameHeight": 640
 			},
 			{
 				"type": "sheet",
