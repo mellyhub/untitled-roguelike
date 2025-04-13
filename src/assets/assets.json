@@ -288,8 +288,8 @@
 				"type": "sheet",
 				"key": "rogue attack",
 				"url": "rogue-attack-Sheet.png",
-				"frameWidth": 320,
-				"frameHeight": 320
+				"frameWidth": 900,
+				"frameHeight": 640
 			},
 			{
 				"type": "sheet",
