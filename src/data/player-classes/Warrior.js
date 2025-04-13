@@ -14,7 +14,7 @@ export class Warrior extends Player {
 
     health = 200;
     maxHealth = 200;
-    energy = 100;
+    energy = 0;
     weapon = weapons.big_axe;
     inventory = [];
     spells = [spells.frostbolt, spells.aura_of_might, spells.rejuvenation, spells.ignite, spells.fireball];
@@ -28,7 +28,7 @@ export class Warrior extends Player {
         critDamage: 1.5
     };
     resource = {
-        rage: 0
+        rage: 100
     }
     lastAction = null;
     talentPoints = 50;

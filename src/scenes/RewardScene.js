@@ -48,7 +48,6 @@ class RewardScene extends Phaser.Scene {
             const card = this.add.image(xPosition, yPosition, 'card').setScale(1.5);
 
             const rewardType = reward.name.includes('Weapon') ? 'weapon' : reward.name.includes('spell') ? 'spell' : 'stat';
-            console.log(`Reward name: ${reward.name}, Reward type: ${rewardType}`);
 
             const iconKey = this.getIconForReward(rewardType, reward.name);
 

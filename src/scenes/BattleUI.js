@@ -29,6 +29,14 @@ class BattleUI {
         return { width, height: 50 };
     }
 
+    calculateRageBarSize(maxUnitEnergy, currentUnitEnergy) {
+        const MAX_WIDTH = 302;
+        const clampedEnergy = Phaser.Math.Clamp(currentUnitEnergy, 0, maxUnitEnergy);
+        let width = (clampedEnergy / maxUnitEnergy) * MAX_WIDTH;
+
+        return { width, height: 40 };
+    }
+
     displayStats(player, enemy, playerStartHP, enemyStartHP, turnCounter) {
         const COLOR_CODES = {
             GREEN: Phaser.Display.Color.GetColor32(0, 255, 0, 255),
@@ -47,6 +55,7 @@ class BattleUI {
 
         const playerHealthBarSize = this.calculateHealthBarSize(playerStartHP, player.health);
         const playerEnergyBarSize = this.calculateEnergyBarSize(player.energy, player.energy);
+        const playerRageBarSize = this.calculateRageBarSize(100, player.resource.rage);
         const enemyHealthBarSize = this.calculateHealthBarSize(enemyStartHP, enemy.health);
         const enemyEnergyBarSize = this.calculateEnergyBarSize(enemyStartHP, enemy.energy);
 
@@ -58,6 +67,7 @@ class BattleUI {
         // player unit frame
         this.playerUnitFrame = this.scene.add.container(400, 175);
         this.playerUnitFrame.add(this.scene.add.image(0, 0, 'warrior-unitframe-back'));
+        this.playerUnitFrame.add(this.scene.add.rectangle(-153, 20, playerRageBarSize.width, playerRageBarSize.height, COLOR_CODES.RED).setOrigin(0));
         this.playerUnitFrame.add(this.scene.add.rectangle(-162, -116, playerHealthBarSize.width, playerHealthBarSize.height, COLOR_CODES.GREEN).setOrigin(0));
         this.playerUnitFrame.add(this.scene.add.rectangle(-162, -32, playerEnergyBarSize.width, playerEnergyBarSize.height, COLOR_CODES.YELLOW).setOrigin(0));
         this.playerUnitFrame.add(this.scene.add.text(0, -74, `${Math.max(0, player.health)}/${playerStartHP}`, { fontSize: '52px', fill: '#000' }).setOrigin(0.5));
