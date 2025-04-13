@@ -1,16 +1,11 @@
 import { Player } from "../player";
 import weapons from "../weapons";
 import spells from "../spells";
+import { Animations } from "../Animations";
 
 export class Warrior extends Player {
     name = "Taifun";
-    animationKey = "warrior-idle";
-    animationSheetName = "warrior idle";
-    animationFrameRate = 2;
-
-    attackAnimationKey = "warrior-attack";
-    attackAnimationSheetName = "warrior attack";
-    attackAnimationFrameRate = 10;
+    animations = new Animations("warrior", "warrior idle", "warrior attack", null);
 
     health = 200;
     maxHealth = 200;

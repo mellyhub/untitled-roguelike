@@ -47,31 +47,6 @@ class BattleScene extends Phaser.Scene {
     });
   }
 
-  createPlayerAnimation() {
-    this.anims.create({
-      key: this.player.animationKey,
-      frames: this.anims.generateFrameNumbers(this.player.animationSheetName),
-      frameRate: this.player.animationFrameRate,
-      repeat: -1,
-    });
-
-    this.anims.create({
-      key: this.player.attackAnimationKey,
-      frames: this.anims.generateFrameNumbers(this.player.attackAnimationSheetName),
-      frameRate: this.player.attackAnimationFrameRate,
-      repeat: 0,
-    });
-
-    this.anims.create({
-      key: this.player.castAnimationKey,
-      frames: this.anims.generateFrameNumbers(this.player.castAnimationSheetName),
-      frameRate: this.player.castAnimationFrameRate,
-      repeat: 0,
-    });
-
-    return this.add.sprite(480, 540, this.player.castAnimationSheetName).setScale(1.2);
-  }
-
   createEnemyAnimation() {
     this.anims.create({
       key: this.enemy.animationKey,
@@ -118,13 +93,9 @@ class BattleScene extends Phaser.Scene {
 
     this.add.image(960, 540, 'ice-cave-background');
 
-    // Add player image or animation
-    if (this.player.image) {
-      this.add.image(480, 540, this.player.image).setScale(0.4);
-    } else {
-      this.playerAnimation = this.createPlayerAnimation();
-      this.playerAnimation.play(this.player.animationKey);
-    }
+    // Add player animations
+    this.player.animations.createAnimations(this);
+    this.player.animations.playIdleAnimation();
 
     // Add enemy image or animation
     if (this.enemy.image) {
@@ -234,6 +205,7 @@ class BattleScene extends Phaser.Scene {
     processActiveEffects(this.player);
 
     if (action === 'attack') {
+      /*
       if (this.player instanceof Warrior) {
         this.playerAnimation
           .play(this.player.attackAnimationKey)
@@ -241,18 +213,13 @@ class BattleScene extends Phaser.Scene {
             this.playerAnimation.play(this.player.animationKey);
           });
       }
-
+      */
+      this.player.animations.playAttackAnimation();
       this.player.attack(this.enemy);
     }
     else if (action === 'cast') {
       if (selectedSpell) {
-        if (this.player instanceof Mage && selectedSpell.type === "Fire") {
-          this.playerAnimation
-            .play(this.player.castAnimationKey)
-            .once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-              this.playerAnimation.play(this.player.animationKey);
-            });
-        }
+        this.player.animations.playCastAnimation(selectedSpell);
         this.player.cast(this.enemy, selectedSpell);
       }
       else {

@@ -258,7 +258,7 @@
 			},
 			{
 				"type": "sheet",
-				"key": "mage fire spell",
+				"key": "mage cast",
 				"url": "mage-fire-spell-Sheet.png",
 				"frameWidth": 320,
 				"frameHeight": 320

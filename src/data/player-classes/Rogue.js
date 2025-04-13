@@ -1,12 +1,11 @@
 import { Player } from "../player";
 import weapons from "../weapons";
 import spells from "../spells";
+import { Animations } from "../Animations";
 
 export class Rogue extends Player {
     name = "Edwin";
-    animationKey = "rogue-idle";
-    animationSheetName = "rogue idle";
-    animationFrameRate = 2;
+    animations = new Animations("rogue", "rogue idle", "rogue attack", null);
 
     health = 200;
     maxHealth = 200;
@@ -33,21 +32,13 @@ export class Rogue extends Player {
 
     attack(target) {
         let damage = this.handleCrit(null);
-
-        
-
         target.health -= Math.round(damage);
 
     }
 
     cast(target, spell) {
-        
-
         if (spell.damage) {
             let damage = this.handleCrit(spell);
-
-            
-
             damage = Math.round(damage);
             target.health -= damage;
             console.log(`${this.name} casts ${spell.name} on ${target.name} for ${damage} damage.`);

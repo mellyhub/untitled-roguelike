@@ -1,16 +1,11 @@
 import { Player } from "../player";
 import weapons from "../weapons";
 import spells from "../spells";
+import { Animations } from "../Animations";
 
 export class Mage extends Player {
     name = "Trollkarlen";
-    animationKey = "mage-idle";
-    animationSheetName = "mage idle";
-    animationFrameRate = 2;
-
-    castAnimationKey = "mage-fire-cast";
-    castAnimationSheetName = "mage fire spell";
-    castAnimationFrameRate = 6;
+    animations = new Animations("mage", "mage idle", null, "mage cast");
 
     health = 200;
     maxHealth = 200;
