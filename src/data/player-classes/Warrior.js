@@ -8,6 +8,10 @@ export class Warrior extends Player {
     animationSheetName = "warrior idle";
     animationFrameRate = 2;
 
+    attackAnimationKey = "warrior-attack";
+    attackAnimationSheetName = "warrior attack";
+    attackAnimationFrameRate = 10;
+
     health = 200;
     maxHealth = 200;
     energy = 100;

@@ -293,6 +293,13 @@
 			},
 			{
 				"type": "sheet",
+				"key": "warrior attack",
+				"url": "warrior-attack-Sheet.png",
+				"frameWidth": 900,
+				"frameHeight": 640
+			},
+			{
+				"type": "sheet",
 				"key": "warrior idle",
 				"url": "warrior-idle-Sheet.png",
 				"frameWidth": 320,

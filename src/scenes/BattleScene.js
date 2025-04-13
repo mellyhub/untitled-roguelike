@@ -8,6 +8,8 @@ import { Snowman } from '../data/enemies/Snowman.js';
 import { NightGlider } from '../data/enemies/NightGlider.js';
 import { PipeSlime } from '../data/enemies/PipeSlime.js';
 import { Mage } from '../data/player-classes/Mage.js';
+import { Rogue } from '../data/player-classes/Rogue.js';
+import { Warrior } from '../data/player-classes/Warrior.js';
 import { Cat } from '../data/enemies/Cat.js';
 
 class BattleScene extends Phaser.Scene {
@@ -47,6 +49,13 @@ class BattleScene extends Phaser.Scene {
       frames: this.anims.generateFrameNumbers(this.player.animationSheetName),
       frameRate: this.player.animationFrameRate,
       repeat: -1,
+    });
+    
+    this.anims.create({
+      key: this.player.attackAnimationKey,
+      frames: this.anims.generateFrameNumbers(this.player.attackAnimationSheetName),
+      frameRate: this.player.attackAnimationFrameRate,
+      repeat: 0,
     });
 
     this.anims.create({
@@ -212,6 +221,14 @@ class BattleScene extends Phaser.Scene {
     processActiveEffects(this.player);
 
     if (action === 'attack') {
+      if (this.player instanceof Warrior) {
+        this.playerAnimation
+          .play(this.player.attackAnimationKey)
+          .once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+            this.playerAnimation.play(this.player.animationKey);
+          });
+      }
+
       this.player.attack(this.enemy); 
     }
     else if (action === 'cast') {
