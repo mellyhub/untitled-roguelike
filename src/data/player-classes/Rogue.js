@@ -2,10 +2,10 @@ import { Player } from "../player";
 import weapons from "../weapons";
 import spells from "../spells";
 
-export class Warrior extends Player {
-    name = "Taifun";
-    animationKey = "warrior-idle";
-    animationSheetName = "warrior idle";
+export class Rogue extends Player {
+    name = "Edwin";
+    animationKey = "rogue-idle";
+    animationSheetName = "rogue idle";
     animationFrameRate = 2;
 
     health = 200;
@@ -15,7 +15,7 @@ export class Warrior extends Player {
     inventory = [];
     spells = [spells.frostbolt, spells.aura_of_might, spells.rejuvenation, spells.ignite, spells.fireball];
     spellbook = [];
-    class = "Warrior";
+    class = "Rogue";
     stats = {
         strength: 10,
         agility: 5,
@@ -34,15 +34,7 @@ export class Warrior extends Player {
     attack(target) {
         let damage = this.handleCrit(null);
 
-        // handle warrior rage scaling
-        const rageMultiplier = 1 + this.resource.rage * 0.002;
-        console.log(`Rage multiplier: ${rageMultiplier}`);
-        damage *= rageMultiplier;
-
-        // warrior rage gain on hit
-        const rageAmount = 10; // amount of rage gained when hit
-        this.resource.rage = Math.min(this.resource.rage + rageAmount, 100); // cap rage at 100
-        console.log(`${this.name} gains ${rageAmount} rage. Total rage: ${this.resource.rage}`);
+        
 
         target.health -= Math.round(damage);
 
@@ -54,15 +46,7 @@ export class Warrior extends Player {
         if (spell.damage) {
             let damage = this.handleCrit(spell);
 
-            // handle warrior rage scaling
-            const rageMultiplier = 1 + this.resource.rage * 0.002;
-            console.log(`Rage multiplier: ${rageMultiplier}`);
-            damage *= rageMultiplier;
-
-            // warrior rage gain on hit
-            const rageAmount = 10; // amount of rage gained when hit
-            this.resource.rage = Math.min(this.resource.rage + rageAmount, 100); // cap rage at 100
-            console.log(`${this.name} gains ${rageAmount} rage. Total rage: ${this.resource.rage}`);
+            
 
             damage = Math.round(damage);
             target.health -= damage;

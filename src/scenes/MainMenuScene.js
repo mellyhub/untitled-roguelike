@@ -2,6 +2,7 @@ import classes from "../data/classes";
 import { getCookie } from "./cookieUtils.js";
 import { Warrior } from "../data/player-classes/Warrior.js";
 import { Mage } from "../data/player-classes/Mage.js";
+import { Rogue } from "../data/player-classes/Rogue.js";
 
 class MainMenuScene extends Phaser.Scene {
   constructor() {
@@ -83,7 +84,7 @@ class MainMenuScene extends Phaser.Scene {
     const selectedClass = this.classArray[this.currentSelection];
     console.log(`Selected class: ${selectedClass.name}`);
     
-    const classes = [Warrior, Mage];
+    const classes = [Warrior, Mage, Rogue];
     const PlayerClass = classes[this.currentSelection];
     this.player = new PlayerClass();
 

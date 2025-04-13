@@ -279,10 +279,24 @@
 			},
 			{
 				"type": "sheet",
+				"key": "rogue idle",
+				"url": "rogue-idle-Sheet.png",
+				"frameWidth": 320,
+				"frameHeight": 320
+			},
+			{
+				"type": "sheet",
 				"key": "snowman",
 				"url": "snowman-idle-Sheet.png",
 				"frameWidth": 320,
 				"frameHeight": 640
+			},
+			{
+				"type": "sheet",
+				"key": "warrior idle",
+				"url": "warrior-idle-Sheet.png",
+				"frameWidth": 320,
+				"frameHeight": 320
 			}
 		]
 	}
