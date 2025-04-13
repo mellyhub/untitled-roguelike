@@ -54,10 +54,10 @@ class BattleUI {
         }
 
         const playerHealthBarSize = this.calculateHealthBarSize(playerStartHP, player.health);
-        const playerEnergyBarSize = this.calculateEnergyBarSize(player.energy, player.energy);
+        const playerEnergyBarSize = this.calculateEnergyBarSize(player.maxEnergy, player.energy);
         const playerRageBarSize = this.calculateRageBarSize(100, player.resource.rage);
         const enemyHealthBarSize = this.calculateHealthBarSize(enemyStartHP, enemy.health);
-        const enemyEnergyBarSize = this.calculateEnergyBarSize(enemyStartHP, enemy.energy);
+        const enemyEnergyBarSize = this.calculateEnergyBarSize(enemy.maxEnergy, enemy.energy);
 
         // score and turn counter
         this.statsContainer = this.scene.add.container(0, 0);
@@ -80,7 +80,7 @@ class BattleUI {
         this.enemyUnitFrame = this.scene.add.container(1520, 175);
         this.enemyUnitFrame.add(this.scene.add.image(0, 0, 'enemy-unitframe-back'));
         this.enemyUnitFrame.add(this.scene.add.rectangle(-162, -116, enemyHealthBarSize.width, enemyHealthBarSize.height, COLOR_CODES.RED).setOrigin(0));
-        this.enemyUnitFrame.add(this.scene.add.rectangle(-162, -32, playerEnergyBarSize.width, playerEnergyBarSize.height, COLOR_CODES.YELLOW).setOrigin(0));
+        this.enemyUnitFrame.add(this.scene.add.rectangle(-162, -32, enemyEnergyBarSize.width, enemyEnergyBarSize.height, COLOR_CODES.YELLOW).setOrigin(0));
         this.enemyUnitFrame.add(this.scene.add.text(0, -74, `${Math.max(0, enemy.health)}/${enemyStartHP}`, { fontSize: '52px', fill: '#000' }).setOrigin(0.5));
         this.enemyUnitFrame.add(this.scene.add.text(-200, -120, `${enemy.name}`, { fontSize: '40px' }).setOrigin(1, 0));
         this.enemyUnitFrame.add(this.scene.add.image(0, 0, 'enemy-unitframe-front'));
