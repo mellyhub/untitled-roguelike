@@ -10,6 +10,7 @@ export class Mage extends Player {
     health = 200;
     maxHealth = 200;
     energy = 100;
+    maxEnergy = 100;
     weapon = weapons.big_axe;
     inventory = [];
     spells = [spells.frostbolt, spells.aura_of_might, spells.rejuvenation, spells.ignite, spells.fireball];
@@ -39,6 +40,9 @@ export class Mage extends Player {
     }
 
     cast(target, spell) {
+
+        this.energy -= 20;
+
         if (spell.damage) {
             let damage = this.handleCrit(spell);
             damage = Math.round(damage) + 10 * this.stats.intelligence;
