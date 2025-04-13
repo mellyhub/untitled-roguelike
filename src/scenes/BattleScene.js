@@ -22,6 +22,7 @@ class BattleScene extends Phaser.Scene {
     this.load.audio("select", "src/assets/audio/sfx/select.ogg");
     this.load.audio("hit1", "src/assets/audio/sfx/hit1.ogg");
     this.load.audio("hit2", "src/assets/audio/sfx/hit2.ogg");
+    this.load.audio("slime", "src/assets/audio/sfx/slime.ogg");
     // iterate through assets
     assets.forEach(assetGroup => {
       assetGroup.assets.forEach(asset => {
@@ -90,7 +91,8 @@ class BattleScene extends Phaser.Scene {
 
     const enemyClasses = [Snowman, Goblin, NightGlider, PipeSlime, Cat];
     const rng = seedrandom(this.seed);
-    const EnemyClass = enemyClasses[Math.floor(rng() * enemyClasses.length)];
+    //const EnemyClass = enemyClasses[Math.floor(rng() * enemyClasses.length)];
+    const EnemyClass = PipeSlime; // for testing
     
     this.enemy = new EnemyClass(this.player.level);
     this.enemyStartHP = this.enemy.health;       
@@ -101,11 +103,13 @@ class BattleScene extends Phaser.Scene {
     this.cursors = this.input.keyboard.createCursorKeys(); // lägger till arrow keys
     this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER); // lägger till enter key
 
+    console.log(this.enemy);
     this.sfx = {
       menu: this.sound.add("menu", { volume: 0.1 }),
       select: this.sound.add("select", { volume: 0.1 }),
       hit1: this.sound.add("hit1", { volume: 0.2 }),
       hit2: this.sound.add("hit2", { volume: 0.2 }),
+      battleCry: this.sound.add(this.enemy.battleCry, { volume: 0.2 }),
     }
 
     this.add.image(960, 540, 'ice-cave-background');
@@ -125,6 +129,8 @@ class BattleScene extends Phaser.Scene {
       let enemyAnimation = this.createEnemyAnimation();
       enemyAnimation.play(this.enemy.animationKey);
     }
+
+    this.sfx.battleCry.play(); // play enemy battle cry sound
 
     // initialize battle ui
     this.battleUI = new BattleUI(this, this.sfx);

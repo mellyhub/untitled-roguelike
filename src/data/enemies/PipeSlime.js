@@ -1,5 +1,6 @@
 export class PipeSlime {
     name = "Pipe Slime";
+    battleCry = "slime";
     animationKey = "pipe-slime-anim";
     animationSheetName = "pipe slime";
     animationFrameRate = 6;
