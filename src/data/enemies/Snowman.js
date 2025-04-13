@@ -1,5 +1,6 @@
 export class Snowman {
     name = "Snowman";
+    battleCry = "snow";
     animationKey = "snowman-anim";
     animationSheetName = "snowman";
     animationFrameRate = 9;

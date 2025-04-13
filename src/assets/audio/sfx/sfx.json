@@ -1,0 +1,14 @@
+{
+    "hit1": "src/assets/audio/sfx/hit1.ogg",
+    "hit2": "src/assets/audio/sfx/hit2.ogg",
+    "hit3": "src/assets/audio/sfx/hit3.ogg",
+    "hit4": "src/assets/audio/sfx/hit4.ogg",
+    "hit5": "src/assets/audio/sfx/hit5.ogg",
+    "menu": "src/assets/audio/sfx/menu.ogg",
+    "plingeling": "src/assets/audio/sfx/plingeling.ogg",
+    "rare": "src/assets/audio/sfx/rare.ogg",
+    "select": "src/assets/audio/sfx/select.ogg",
+    "slime": "src/assets/audio/sfx/slime.ogg",
+    "snow": "src/assets/audio/sfx/snow.ogg",
+    "thump": "src/assets/audio/sfx/thump.ogg"
+}

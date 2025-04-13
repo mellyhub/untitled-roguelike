@@ -1,5 +1,6 @@
 export class NightGlider {
     name = "Night Glider";
+    battleCry = null;
     animationKey = "nightGlider-idle";
     animationSheetName = "night glider";
     animationFrameRate = 3;

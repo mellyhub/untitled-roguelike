@@ -1,5 +1,6 @@
 export class Cat {
     name = "Cat";
+    battleCry = null;
     animationKey = "cat-animation";
     animationSheetName = "cat fighter";
     animationFrameRate = 15;

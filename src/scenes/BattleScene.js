@@ -18,11 +18,6 @@ class BattleScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.audio("menu", "src/assets/audio/sfx/menu.ogg");
-    this.load.audio("select", "src/assets/audio/sfx/select.ogg");
-    this.load.audio("hit1", "src/assets/audio/sfx/hit1.ogg");
-    this.load.audio("hit2", "src/assets/audio/sfx/hit2.ogg");
-    this.load.audio("slime", "src/assets/audio/sfx/slime.ogg");
     // iterate through assets
     assets.forEach(assetGroup => {
       assetGroup.assets.forEach(asset => {
@@ -41,6 +36,14 @@ class BattleScene extends Phaser.Scene {
           });
         }
       });
+
+      this.load.json("sfxConfig", "src/assets/audio/sfx/sfx.json");
+      this.load.on('filecomplete-json-sfxConfig', () => {
+        const sfxConfig = this.cache.json.get('sfxConfig');
+        for (const [key, path] of Object.entries(sfxConfig)) {
+          this.load.audio(key, path);
+        }
+      });
     });
   }
 
@@ -51,7 +54,7 @@ class BattleScene extends Phaser.Scene {
       frameRate: this.player.animationFrameRate,
       repeat: -1,
     });
-    
+
     this.anims.create({
       key: this.player.attackAnimationKey,
       frames: this.anims.generateFrameNumbers(this.player.attackAnimationSheetName),
@@ -65,7 +68,7 @@ class BattleScene extends Phaser.Scene {
       frameRate: this.player.castAnimationFrameRate,
       repeat: 0,
     });
-    
+
     return this.add.sprite(480, 540, this.player.castAnimationSheetName).setScale(1.2);
   }
 
@@ -76,7 +79,7 @@ class BattleScene extends Phaser.Scene {
       frameRate: this.enemy.animationFrameRate,
       repeat: -1,
     });
-    
+
     return this.add.sprite(this.enemy.imageXPos, this.enemy.imageYPos, this.enemy.animationSheetName).setScale(this.enemy.imageScale);
   }
 
@@ -91,11 +94,11 @@ class BattleScene extends Phaser.Scene {
 
     const enemyClasses = [Snowman, Goblin, NightGlider, PipeSlime, Cat];
     const rng = seedrandom(this.seed);
-    //const EnemyClass = enemyClasses[Math.floor(rng() * enemyClasses.length)];
-    const EnemyClass = PipeSlime; // for testing
-    
+    const EnemyClass = enemyClasses[Math.floor(rng() * enemyClasses.length)];
+    //const EnemyClass = PipeSlime; // for testing
+
     this.enemy = new EnemyClass(this.player.level);
-    this.enemyStartHP = this.enemy.health;       
+    this.enemyStartHP = this.enemy.health;
 
     this.turnCounter = 0;
     this.currentTurn = this.turnCounter % 2;
@@ -104,13 +107,14 @@ class BattleScene extends Phaser.Scene {
     this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER); // lägger till enter key
 
     console.log(this.enemy);
-    this.sfx = {
-      menu: this.sound.add("menu", { volume: 0.1 }),
-      select: this.sound.add("select", { volume: 0.1 }),
-      hit1: this.sound.add("hit1", { volume: 0.2 }),
-      hit2: this.sound.add("hit2", { volume: 0.2 }),
-      battleCry: this.sound.add(this.enemy.battleCry, { volume: 0.2 }),
+
+    const sfxConfig = this.cache.json.get('sfxConfig'); // Get the loaded SFX configuration
+    this.sfx = {};
+    for (const [key, path] of Object.entries(sfxConfig)) {
+      this.sfx[key] = this.sound.add(key, { volume: 0.2 });
     }
+
+    console.log(this.sfx);
 
     this.add.image(960, 540, 'ice-cave-background');
 
@@ -130,7 +134,10 @@ class BattleScene extends Phaser.Scene {
       enemyAnimation.play(this.enemy.animationKey);
     }
 
-    this.sfx.battleCry.play(); // play enemy battle cry sound
+    // play the enemy's battle cry
+    if (this.sfx[this.enemy.battleCry]) {
+      this.sfx[this.enemy.battleCry].play();
+    }
 
     // initialize battle ui
     this.battleUI = new BattleUI(this, this.sfx);
@@ -235,7 +242,7 @@ class BattleScene extends Phaser.Scene {
           });
       }
 
-      this.player.attack(this.enemy); 
+      this.player.attack(this.enemy);
     }
     else if (action === 'cast') {
       if (selectedSpell) {
@@ -286,7 +293,7 @@ class BattleScene extends Phaser.Scene {
     if (this.enemy.health <= 0) {
       this.add.text(960, 640, 'You win!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
       this.player.level++;
-      this.player.activeEffects =  []; // reset active effects after battle
+      this.player.activeEffects = []; // reset active effects after battle
 
       this.turnCounter = 0;
       this.player.score += 100; // example: add 100 points for defeating an enemy

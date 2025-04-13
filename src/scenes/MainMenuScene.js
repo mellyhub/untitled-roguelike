@@ -12,16 +12,15 @@ class MainMenuScene extends Phaser.Scene {
   preload() {
     // Load assets (images, sounds, etc.)
     this.load.image('background-img', 'src/assets/images/backgrounds/main-menu.png');
-    this.load.audio("background", "src/assets/audio/soundtest.mp3");
   }
 
   create() {
     this.cursors = this.input.keyboard.createCursorKeys();
     this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
 
-    const music = this.sound.add("background", { loop: true, volume: 0.1 });
+    //const music = this.sound.add("background", { loop: true, volume: 0.1 });
     this.add.image(960, 540, 'background-img').setScale(1);
-    //music.play();
+
 
     const highestScore = getCookie('highestScore') || 0; // get highscore
     this.add.text(960, 300, `Highest Score: ${highestScore}`, { fontSize: '32px', fill: '#fff' }).setOrigin(0.5);
