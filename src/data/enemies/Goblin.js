@@ -9,6 +9,8 @@ export class Goblin {
     imageYPos = 540;
     health;
     strength;
+    energy = 100;
+    maxEnergy = 100;
 
     constructor(weight) {
         this.health = this.getRandomStat(50, 50) + weight * 10;
