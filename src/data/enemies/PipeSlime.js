@@ -11,6 +11,7 @@ export class PipeSlime {
     health;
     strength;
     energy = 100;
+    maxEnergy = 100;
     spells = [];
 
     constructor(weight) {

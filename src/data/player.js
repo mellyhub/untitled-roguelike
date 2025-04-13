@@ -3,6 +3,7 @@ export class Player {
     name;
     health;
     energy;
+    maxEnergy;
     weapon;
     inventory;
     spells;

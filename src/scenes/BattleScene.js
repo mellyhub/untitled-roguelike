@@ -7,9 +7,6 @@ import { Goblin } from '../data/enemies/Goblin.js';
 import { Snowman } from '../data/enemies/Snowman.js';
 import { NightGlider } from '../data/enemies/NightGlider.js';
 import { PipeSlime } from '../data/enemies/PipeSlime.js';
-import { Mage } from '../data/player-classes/Mage.js';
-import { Rogue } from '../data/player-classes/Rogue.js';
-import { Warrior } from '../data/player-classes/Warrior.js';
 import { Cat } from '../data/enemies/Cat.js';
 
 class BattleScene extends Phaser.Scene {
