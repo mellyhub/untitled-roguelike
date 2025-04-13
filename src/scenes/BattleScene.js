@@ -293,6 +293,7 @@ class BattleScene extends Phaser.Scene {
     if (this.enemy.health <= 0) {
       this.add.text(960, 640, 'You win!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
       this.player.level++;
+      this.player.talentPoints++;
       this.player.activeEffects = []; // reset active effects after battle
 
       this.turnCounter = 0;

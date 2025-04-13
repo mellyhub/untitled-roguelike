@@ -32,9 +32,17 @@ class TalentScene extends Phaser.Scene {
           y: j,
           name: `T ${i * this.talentColumns + j + 1}`,
           value: 0,
+          description: null,
         });
       }
       this.talents.push(row);
+    }
+    this.talents[0][0] = {
+      x: 0,
+      y: 0,
+      name: "Max HP",
+      value: 0,
+      description: "Increases player's max HP by 10 per point."
     }
     console.log(this.talents);
 
@@ -47,7 +55,7 @@ class TalentScene extends Phaser.Scene {
     // rensar gamla ui elements
     if (this.uiElements) {
       this.uiElements.forEach(element => {
-        if(element) {
+        if (element) {
           element.destroy();
         }
       });
@@ -59,25 +67,30 @@ class TalentScene extends Phaser.Scene {
       fontSize: '48px',
       fill: '#fff',
     }).setOrigin(0.5);
+    const descriptionText = this.add.text(1100, 600, this.talents[this.currentSelection.y][this.currentSelection.x].description, {
+      fontSize: '32px',
+      fill: '#fff',
+    }).setOrigin(0,5);
     this.uiElements.push(talentPointsText);
+    this.uiElements.push(descriptionText);
 
     var talentText;
 
     for (let i = 0; i < this.talentRows; i++) {
       for (let j = 0; j < this.talentColumns; j++) {
-          const talent = this.talents[i][j];
-          const talentText = this.add.text(100 + j * 200, 300 + i * 100, `${talent.name}: ${talent.value}`, {
-              fontSize: '32px',
-              fill: '#fff',
-          }).setOrigin(0.5);
+        const talent = this.talents[i][j];
+        const talentText = this.add.text(100 + j * 200, 300 + i * 100, `${talent.name}: ${talent.value}`, {
+          fontSize: '32px',
+          fill: '#fff',
+        }).setOrigin(0.5);
 
-          if (i === this.currentSelection.y && j === this.currentSelection.x) {
-              talentText.setColor('#ff0000');
-          }
+        if (i === this.currentSelection.y && j === this.currentSelection.x) {
+          talentText.setColor('#ff0000');
+        }
 
-          this.uiElements.push(talentText);
+        this.uiElements.push(talentText);
       }
-  }
+    }
 
     if (this.talents.x === this.currentSelection.x && this.talents.y === this.currentSelection.y) {
       talentText.setColor('#ff0000');
@@ -94,7 +107,6 @@ class TalentScene extends Phaser.Scene {
     else if (Phaser.Input.Keyboard.JustDown(this.cursors.down)) {
       this.changeSelection(0, 1);
       console.log(this.currentSelection);
-      console.log(this.talents[0][0]);
     }
     else if (Phaser.Input.Keyboard.JustDown(this.cursors.left)) {
       this.changeSelection(-1, 0);
@@ -125,8 +137,13 @@ class TalentScene extends Phaser.Scene {
   allocatePoint(currentSelection) {
     // kolla ifall det finns tillgängliga poäng
     if (this.player.talentPoints > 0) {
+      const selectedTalent = this.talents[currentSelection.x][currentSelection.y]
       // ökar värde på valt attribut
-      this.talents[currentSelection.x][currentSelection.y].value += 1;
+      selectedTalent.value += 1;
+      if (selectedTalent.name === "Max HP") {
+        this.player.maxHealth += 10;
+        console.log(`Player's max HP increased to ${this.player.maxHealth}`);
+      }
 
       // spenderar en talent point
       this.player.talentPoints -= 1;
