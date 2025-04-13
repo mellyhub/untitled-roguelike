@@ -47,9 +47,9 @@ class TalentScene extends Phaser.Scene {
       this.talents[1][0] = {
         x: 1,
         y: 0,
-        name: "Energy on Attack",
+        name: "Energy",
         value: 0,
-        description: "Gain 5 energy when attacking"
+        description: "Gain 5 energy when attacking."
       }
     console.log(this.talents);
 
@@ -74,33 +74,28 @@ class TalentScene extends Phaser.Scene {
       fontSize: '48px',
       fill: '#fff',
     }).setOrigin(0.5);
-    const descriptionText = this.add.text(1100, 600, this.talents[this.currentSelection.y][this.currentSelection.x].description, {
+    const descriptionText = this.add.text(1100, 600, this.talents[this.currentSelection.x][this.currentSelection.y].description, {
       fontSize: '32px',
       fill: '#fff',
     }).setOrigin(0, 5);
     this.uiElements.push(talentPointsText);
     this.uiElements.push(descriptionText);
 
-    var talentText;
-
+    let talentText;
     for (let i = 0; i < this.talentRows; i++) {
       for (let j = 0; j < this.talentColumns; j++) {
         const talent = this.talents[i][j];
-        const talentText = this.add.text(100 + j * 200, 300 + i * 100, `${talent.name}: ${talent.value}`, {
+        const talentText = this.add.text(100 + i * 200, 300 + j * 100, `${talent.name}: ${talent.value}`, {
           fontSize: '32px',
           fill: '#fff',
         }).setOrigin(0.5);
 
-        if (i === this.currentSelection.y && j === this.currentSelection.x) {
+        if (i === this.currentSelection.x && j === this.currentSelection.y) {
           talentText.setColor('#ff0000');
         }
 
         this.uiElements.push(talentText);
       }
-    }
-
-    if (this.talents.x === this.currentSelection.x && this.talents.y === this.currentSelection.y) {
-      talentText.setColor('#ff0000');
     }
     this.uiElements.push(talentText);
   }
@@ -133,8 +128,8 @@ class TalentScene extends Phaser.Scene {
   changeSelection(xDirection, yDirection) {
     // uppdaterar vald selection
     this.currentSelection = {
-      x: (this.currentSelection.x + xDirection + this.talentColumns) % this.talentColumns,
-      y: (this.currentSelection.y + yDirection + this.talentRows) % this.talentRows,
+      x: (this.currentSelection.x + xDirection + this.talentRows) % this.talentRows,
+      y: (this.currentSelection.y + yDirection + this.talentColumns) % this.talentColumns,
     };
 
     // uppdaterar ui för att visa nya valet
@@ -161,12 +156,12 @@ class TalentScene extends Phaser.Scene {
                 }
             });
         }
-    }
+      }
     }
 
     // spenderar en talent point
     this.player.talentPoints -= 1;
-
+    console.log(this.player);
     // rendrar ui på nytt för att uppdatera ändringarna
     this.renderUI();
   }
