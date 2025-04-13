@@ -15,6 +15,7 @@ export class Player {
     level;
     score;
     image;
+    permanentEffects;
 
     handleCrit(spell) {
         if (this.stats.critChance > Math.random()) {

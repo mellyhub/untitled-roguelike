@@ -9,7 +9,7 @@ export class Warrior extends Player {
 
     health = 200;
     maxHealth = 200;
-    energy = 100;
+    energy = 0;
     weapon = weapons.big_axe;
     inventory = [];
     spells = [spells.frostbolt, spells.aura_of_might, spells.rejuvenation, spells.ignite, spells.fireball];
@@ -26,9 +26,10 @@ export class Warrior extends Player {
         rage: 0
     }
     lastAction = null;
-    talentPoints = 0;
+    talentPoints = 5;
     level = 1;
     score = 0;
+    permanentEffects = [];
 
     attack(target) {
         let damage = this.handleCrit(null);
@@ -45,10 +46,15 @@ export class Warrior extends Player {
 
         target.health -= Math.round(damage);
 
+        const restoreEnergy = this.permanentEffects.find(effect => effect.name === "Energy on Attack");
+        if (restoreEnergy) {
+            restoreEnergy.applyEffect(this);
+        }
+
     }
 
     cast(target, spell) {
-        
+
 
         if (spell.damage) {
             let damage = this.handleCrit(spell);

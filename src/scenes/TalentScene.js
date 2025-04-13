@@ -43,7 +43,14 @@ class TalentScene extends Phaser.Scene {
       name: "Max HP",
       value: 0,
       description: "Increases player's max HP by 10 per point."
-    }
+    },
+      this.talents[1][0] = {
+        x: 1,
+        y: 0,
+        name: "Energy on Attack",
+        value: 0,
+        description: "Gain 5 energy when attacking"
+      }
     console.log(this.talents);
 
     this.currentSelection = { x: 0, y: 0 };
@@ -70,7 +77,7 @@ class TalentScene extends Phaser.Scene {
     const descriptionText = this.add.text(1100, 600, this.talents[this.currentSelection.y][this.currentSelection.x].description, {
       fontSize: '32px',
       fill: '#fff',
-    }).setOrigin(0,5);
+    }).setOrigin(0, 5);
     this.uiElements.push(talentPointsText);
     this.uiElements.push(descriptionText);
 
@@ -144,16 +151,24 @@ class TalentScene extends Phaser.Scene {
         this.player.maxHealth += 10;
         console.log(`Player's max HP increased to ${this.player.maxHealth}`);
       }
-
-      // spenderar en talent point
-      this.player.talentPoints -= 1;
-
-      // rendrar ui på nytt för att uppdatera ändringarna
-      this.renderUI();
+      else if (selectedTalent.name === "Energy on Attack") {
+        if (!this.player.permanentEffects.some(effect => effect.name === "Energy on Attack")) {
+            this.player.permanentEffects.push({
+                name: "Energy on Attack",
+                applyEffect: (player) => {
+                    player.energy = Math.min(player.energy + 5, 100); // cap energy at 100
+                    console.log(`${player.name} gains 5 energy from "Energy on Attack". Current energy: ${player.energy}`);
+                }
+            });
+        }
     }
-    else {
-      console.log('No talent points available!');
     }
+
+    // spenderar en talent point
+    this.player.talentPoints -= 1;
+
+    // rendrar ui på nytt för att uppdatera ändringarna
+    this.renderUI();
   }
 }
 export default TalentScene;
