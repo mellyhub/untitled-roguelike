@@ -46,6 +46,9 @@ export class Mage extends Player {
     }
 
     cast(target, spell) {
+
+        this.energy -= 20;
+
         if (spell.damage) {
             let damage = this.handleCrit(spell);
             damage = Math.round(damage) + 10 * this.stats.intelligence;
