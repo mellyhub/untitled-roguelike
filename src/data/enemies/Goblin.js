@@ -3,10 +3,13 @@ import seedrandom from 'seedrandom';
 export class Goblin {
     name = "Goblin";
     battleCry = null;
-    image = "goblin-prototyp1";
+    animationKey = "goblin-anim";
+    animationSheetName = "goblin";
+    animationFrameRate = 6;
     imageScale = 1;
     imageXPos = 1440;
     imageYPos = 540;
+
     health;
     strength;
     energy = 100;

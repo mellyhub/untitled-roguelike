@@ -251,6 +251,13 @@
 			},
 			{
 				"type": "sheet",
+				"key": "goblin",
+				"url": "goblin-idle-Sheet.png",
+				"frameWidth": 320,
+				"frameHeight": 320
+			},
+			{
+				"type": "sheet",
 				"key": "mage attack",
 				"url": "mage-attack-Sheet.png",
 				"frameWidth": 900,
