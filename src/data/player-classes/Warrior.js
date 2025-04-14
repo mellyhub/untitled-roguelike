@@ -11,9 +11,9 @@ export class Warrior extends Player {
     maxHealth = 200;
     energy = 100;
     maxEnergy = 100;
-    weapon = weapons.big_axe;
+    weapon = [weapons.big_axe];
     inventory = [];
-    spells = [spells.frostbolt, spells.aura_of_might, spells.rejuvenation, spells.ignite, spells.fireball];
+    spells = [spells.frostbolt, spells.aura_of_might, spells.rejuvenation, spells.ignite, spells.fireball, spells.conjure_weapon];
     spellbook = [];
     class = "Warrior";
     stats = {

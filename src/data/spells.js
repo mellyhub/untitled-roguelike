@@ -118,6 +118,31 @@ const spells = {
                 }
             });
         },
-    }
+    },
+    conjure_weapon: {
+        type: "Placeholder",
+        name: "Conjure Weapon",
+        turnDuration: 3,
+        effect(attacker) {
+            attacker.weapon.push({
+                name: "Conjured weapon",
+                damage: 999,
+            })
+            attacker.activeEffects = attacker.activeEffects || [];
+            attacker.activeEffects.push({
+                name: this.name,
+                remainingTurns: this.turnDuration,
+                applyEffect: () => {
+                    console.log("jens123")
+                },
+                removeEffect: () => {
+                    attacker.weapon.pop();
+                    console.log("Conjured weapon has expired");
+                }
+            });
+            console.log(attacker);
+        },
+        description: "Conjure a temporary weapon"
+    },
 }
 export default spells;

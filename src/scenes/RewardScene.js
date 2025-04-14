@@ -117,7 +117,7 @@ class RewardScene extends Phaser.Scene {
             return {
                 name: randomWeapon.name,
                 description: "Equip a new weapon.",
-                effect: () => { player.weapon = randomWeapon }
+                effect: () => { player.weapon[0] = randomWeapon }
             }
         }
     

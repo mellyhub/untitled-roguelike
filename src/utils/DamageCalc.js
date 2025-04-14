@@ -30,6 +30,18 @@ export function processActiveEffects(unit) {
     });
 }
 
+export function removeAllActiveEffects(unit) {
+    if (!unit.activeEffects) return;
+
+    unit.activeEffects.forEach(effect => {
+        if (effect.removeEffect) {
+            effect.removeEffect();
+        }
+        console.log(`Removed effect: ${effect.name} from ${unit.name}`);
+    });
+    unit.activeEffects = [];
+}
+
 export function executeAttack(scene, attacker, target) {
     return new Promise((resolve) => {
         const animationText = scene.add.text(700, 500, `${attacker.name} attacks...`, { fontSize: '52px', fill: '#fff' });
@@ -39,16 +51,16 @@ export function executeAttack(scene, attacker, target) {
 
             let damage = 0;
 
-            if (attacker.weapon.name === "Snowman’s Bane" && target.name === "Snowman") {
-                target.health = 0;
-                console.log("The Snowman’s Bane is mercilessly wielded to bring an end to the reign of the snowman, ensuring its icy demise.");
-            }
+            //if (attacker.weapon.name === "Snowman’s Bane" && target.name === "Snowman") {
+            //    target.health = 0;
+            //    console.log("The Snowman’s Bane is mercilessly wielded to bring an end to the reign of the snowman, ensuring its icy demise.");
+            //}
 
             if (isCrit(attacker.stats.critChance)) {
-                damage = attacker.weapon.damage * attacker.stats.strength * 0.1 * attacker.stats.critDamage;
+                damage = attacker.weapon.at(-1).damage * attacker.stats.strength * 0.1 * attacker.stats.critDamage;
             }
             else {
-                damage = attacker.weapon.damage * attacker.stats.strength * 0.1;
+                damage = attacker.weapon.at(-1).damage * attacker.stats.strength * 0.1;
             }
 
             // handle rogue combo points scaling
@@ -85,7 +97,7 @@ export function executeAttack(scene, attacker, target) {
             // rounds to nearest integer
             damage = Math.round(damage);
             target.health -= damage;
-            console.log(`${attacker.name} attacks ${target.name} with ${attacker.weapon.name} for ${damage} damage.`);
+            console.log(`${attacker.name} attacks ${target.name} with ${attacker.weapon.at(-1).name} for ${damage} damage.`);
 
             // warrior rage gain on hit
             if (target.class && target.class.name === 'Warrior') {

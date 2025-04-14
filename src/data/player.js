@@ -23,11 +23,11 @@ export class Player {
             console.log("Critical hit!");
             return spell ? 
                 spell.damage(this.stats) * this.stats.critDamage : 
-                this.weapon.damage * this.stats.strength * 0.1 * this.stats.critDamage;
+                this.weapon.at(-1).damage * this.stats.strength * 0.1 * this.stats.critDamage;
         } else {
             return spell ?
                 spell.damage(this.stats) : 
-                this.weapon.damage * this.stats.strength * 0.1;
+                this.weapon.at(-1).damage * this.stats.strength * 0.1;
         }
     }
 

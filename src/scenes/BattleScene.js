@@ -1,7 +1,7 @@
 import seedrandom from 'seedrandom';
 import BattleUI from '../utils/BattleUI.js';
 import assets from '../assets/assets.json'; // Import the assets.json file
-import {processActiveEffects} from "../utils/DamageCalc.js";
+import {processActiveEffects, removeAllActiveEffects} from "../utils/DamageCalc.js";
 import { setCookie, getCookie } from '../utils/cookieUtils.js';
 import { get_random_enemy } from '../data/enemies.js';
 
@@ -241,7 +241,9 @@ class BattleScene extends Phaser.Scene {
       this.add.text(960, 640, 'You win!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
       this.player.level++;
       this.player.talentPoints++;
-      this.player.activeEffects = []; // reset active effects after battle
+
+      removeAllActiveEffects(this.player);
+      console.log("All active effects have been removed");
 
       this.turnCounter = 0;
       this.player.score += 100; // example: add 100 points for defeating an enemy
