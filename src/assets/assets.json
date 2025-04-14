@@ -287,7 +287,21 @@
 			{
 				"type": "sheet",
 				"key": "pipe slime",
-				"url": "pipeSlime-idle-sheet.png",
+				"url": "pipeSlime-idle-Sheet.png",
+				"frameWidth": 320,
+				"frameHeight": 320
+			},
+			{
+				"type": "sheet",
+				"key": "portal treader attack",
+				"url": "portalTreader-attack-Sheet.png",
+				"frameWidth": 900,
+				"frameHeight": 640
+			},
+			{
+				"type": "sheet",
+				"key": "portal treader idle",
+				"url": "portalTreader-idle-Sheet.png",
 				"frameWidth": 320,
 				"frameHeight": 320
 			},
