@@ -1,7 +1,6 @@
 import seedrandom from 'seedrandom';
 import BattleUI from '../utils/BattleUI.js';
 import assets from '../assets/assets.json'; // Import the assets.json file
-import { processActiveEffects } from '..utils/DamageCalc';
 import { setCookie, getCookie } from '..utils/cookieUtils.js';
 import { get_random_enemy } from '../data/enemies.js';
 
