@@ -303,7 +303,7 @@
 				"key": "snowman",
 				"url": "snowman-idle-Sheet.png",
 				"frameWidth": 320,
-				"frameHeight": 640
+				"frameHeight": 320
 			},
 			{
 				"type": "sheet",

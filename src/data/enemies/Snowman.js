@@ -3,10 +3,10 @@ export class Snowman {
     battleCry = "snow";
     animationKey = "snowman-anim";
     animationSheetName = "snowman";
-    animationFrameRate = 9;
+    animationFrameRate = 10;
     imageScale = 1;
     imageXPos = 1440;
-    imageYPos = 700;
+    imageYPos = 540;
 
     health;
     strength;
