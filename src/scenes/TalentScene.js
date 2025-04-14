@@ -1,3 +1,5 @@
+import talentConfig from '../data/talents.js';
+
 class TalentScene extends Phaser.Scene {
   constructor() {
     super('TalentScene');
@@ -21,52 +23,36 @@ class TalentScene extends Phaser.Scene {
     });
 
     this.talents = [];
+    let talentIndex = 0;
     this.talentRows = 5;
     this.talentColumns = 5;
 
     for (let i = 0; i < this.talentRows; i++) {
       const row = [];
       for (let j = 0; j < this.talentColumns; j++) {
+        const talent = talentConfig[talentIndex] || { name: `T ${talentIndex + 1}`, description: null, effect: null };
         row.push({
           x: i,
           y: j,
-          name: `T ${i * this.talentColumns + j + 1}`,
+          name: talent.name,
           value: 0,
-          description: null,
+          description: talent.description,
+          effect: talent.effect
         });
+        talentIndex++;
       }
       this.talents.push(row);
     }
-    this.talents[0][0] = {
-      x: 0,
-      y: 0,
-      name: "Max HP",
-      value: 0,
-      description: "Increases player's max HP by 10 per point."
-    },
-      this.talents[1][0] = {
-        x: 1,
-        y: 0,
-        name: "Energy",
-        value: 0,
-        description: "Gain 5 energy when attacking."
-      }
-    console.log(this.talents);
 
     this.currentSelection = { x: 0, y: 0 };
-
     this.renderUI();
   }
 
   renderUI() {
     // rensar gamla ui elements
     if (this.uiElements) {
-      this.uiElements.forEach(element => {
-        if (element) {
-          element.destroy();
-        }
-      });
-    }
+      this.uiElements.forEach(element => element.destroy());
+  }
 
     // visa tillgängliga talent points
     this.uiElements = [];
@@ -81,7 +67,6 @@ class TalentScene extends Phaser.Scene {
     this.uiElements.push(talentPointsText);
     this.uiElements.push(descriptionText);
 
-    let talentText;
     for (let i = 0; i < this.talentRows; i++) {
       for (let j = 0; j < this.talentColumns; j++) {
         const talent = this.talents[i][j];
@@ -97,7 +82,6 @@ class TalentScene extends Phaser.Scene {
         this.uiElements.push(talentText);
       }
     }
-    this.uiElements.push(talentText);
   }
 
   update() {
@@ -142,20 +126,8 @@ class TalentScene extends Phaser.Scene {
       const selectedTalent = this.talents[currentSelection.x][currentSelection.y]
       // ökar värde på valt attribut
       selectedTalent.value += 1;
-      if (selectedTalent.name === "Max HP") {
-        this.player.maxHealth += 10;
-        console.log(`Player's max HP increased to ${this.player.maxHealth}`);
-      }
-      else if (selectedTalent.name === "Energy on Attack") {
-        if (!this.player.permanentEffects.some(effect => effect.name === "Energy on Attack")) {
-            this.player.permanentEffects.push({
-                name: "Energy on Attack",
-                applyEffect: (player) => {
-                    player.energy = Math.min(player.energy + 5, 100); // cap energy at 100
-                    console.log(`${player.name} gains 5 energy from "Energy on Attack". Current energy: ${player.energy}`);
-                }
-            });
-        }
+      if (selectedTalent.effect) {
+        selectedTalent.effect(this.player);
       }
     }
 
