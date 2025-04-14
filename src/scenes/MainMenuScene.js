@@ -1,5 +1,5 @@
 import classes from "../data/classes";
-import { getCookie } from "./cookieUtils.js";
+import { getCookie } from "../utils/cookieUtils.js";
 import { Warrior } from "../data/player-classes/Warrior.js";
 import { Mage } from "../data/player-classes/Mage.js";
 import { Rogue } from "../data/player-classes/Rogue.js";

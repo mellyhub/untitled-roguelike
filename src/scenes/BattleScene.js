@@ -1,8 +1,8 @@
 import seedrandom from 'seedrandom';
-import BattleUI from './BattleUI';
+import BattleUI from '../utils/BattleUI.js';
 import assets from '../assets/assets.json'; // Import the assets.json file
-import { processActiveEffects } from './DamageCalc';
-import { setCookie, getCookie } from './cookieUtils.js';
+import { processActiveEffects } from '../utils/DamageCalc';
+import { setCookie, getCookie } from '../utils/cookieUtils.js';
 import { Goblin } from '../data/enemies/Goblin.js';
 import { Snowman } from '../data/enemies/Snowman.js';
 import { NightGlider } from '../data/enemies/NightGlider.js';
