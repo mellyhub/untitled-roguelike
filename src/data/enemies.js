@@ -2,6 +2,21 @@ import weapons from '../data/weapons.js';
 import spells from "./spells.js"; 
 import seedrandom from 'seedrandom';
 
+import { Goblin } from '../data/enemies/Goblin.js';
+import { Snowman } from '../data/enemies/Snowman.js';
+import { NightGlider } from '../data/enemies/NightGlider.js';
+import { PipeSlime } from '../data/enemies/PipeSlime.js';
+import { Cat } from '../data/enemies/Cat.js';
+import { PortalTreader } from './enemies/PortalTreader.js';
+
+// fienden för varje runda väljs här
+const enemies2 = [Snowman, Goblin, NightGlider, PipeSlime, Cat, PipeSlime, PortalTreader];
+
+export function get_random_enemy(seed) {
+    const rng = seedrandom(seed);
+    return enemies2[Math.floor(rng() * enemies2.length)];
+}
+
 // generating random health by using the seed
 function getRandomHealth(seed, min, max) {
     const rng = seedrandom(seed);

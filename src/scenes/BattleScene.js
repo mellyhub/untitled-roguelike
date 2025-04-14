@@ -3,11 +3,7 @@ import BattleUI from './BattleUI';
 import assets from '../assets/assets.json'; // Import the assets.json file
 import { processActiveEffects } from './DamageCalc';
 import { setCookie, getCookie } from './cookieUtils.js';
-import { Goblin } from '../data/enemies/Goblin.js';
-import { Snowman } from '../data/enemies/Snowman.js';
-import { NightGlider } from '../data/enemies/NightGlider.js';
-import { PipeSlime } from '../data/enemies/PipeSlime.js';
-import { Cat } from '../data/enemies/Cat.js';
+import { get_random_enemy } from '../data/enemies.js';
 
 class BattleScene extends Phaser.Scene {
   constructor() {
@@ -64,11 +60,7 @@ class BattleScene extends Phaser.Scene {
 
     this.playerStartHP = this.player.maxHealth;
 
-    const enemyClasses = [Snowman, Goblin, NightGlider, PipeSlime, Cat];
-    const rng = seedrandom(this.seed);
-    const EnemyClass = enemyClasses[Math.floor(rng() * enemyClasses.length)];
-    //const EnemyClass = PipeSlime; // for testing
-
+    const EnemyClass = get_random_enemy(this.seed);
     this.enemy = new EnemyClass(this.player.level);
     this.enemyStartHP = this.enemy.health;
 
