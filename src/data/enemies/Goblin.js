@@ -1,6 +1,7 @@
 import seedrandom from 'seedrandom';
+import { Enemy } from "./Enemy";
 
-export class Goblin {
+export class Goblin extends Enemy {
     name = "Goblin";
     battleCry = null;
     animationKey = "goblin-anim";
@@ -16,6 +17,7 @@ export class Goblin {
     maxEnergy = 100;
 
     constructor(weight) {
+        super();
         this.health = this.getRandomStat(50, 50) + weight * 10;
         this.strength = this.getRandomStat(5 , 5) + weight * 10;
     }

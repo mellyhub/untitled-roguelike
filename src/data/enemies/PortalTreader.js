@@ -1,4 +1,6 @@
-export class PortalTreader {
+import { Enemy } from "./Enemy";
+
+export class PortalTreader extends Enemy {
     name = "Portal Treader";
     battleCry = null;
     animationKey = "portal-treader-anim";
@@ -15,6 +17,7 @@ export class PortalTreader {
     spells = [];
 
     constructor(weight) {
+        super();
         this.health = 190 + weight * 10;
         this.strength = 100 + weight * 10;
     }
