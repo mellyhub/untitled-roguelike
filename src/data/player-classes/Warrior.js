@@ -5,7 +5,7 @@ import { Animations } from "../Animations";
 
 export class Warrior extends Player {
     name = "Taifun";
-    animations = new Animations("warrior", "warrior idle", "warrior attack", null);
+    animations = new Animations("warrior", "warrior idle", "warrior attack", "warrior cast");
 
     health = 200;
     maxHealth = 200;

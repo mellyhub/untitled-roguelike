@@ -335,6 +335,13 @@
 			},
 			{
 				"type": "sheet",
+				"key": "warrior cast",
+				"url": "warrior-conjuration-spell-Sheet.png",
+				"frameWidth": 320,
+				"frameHeight": 320
+			},
+			{
+				"type": "sheet",
 				"key": "warrior idle",
 				"url": "warrior-idle-Sheet.png",
 				"frameWidth": 320,

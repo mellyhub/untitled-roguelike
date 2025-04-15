@@ -120,7 +120,7 @@ const spells = {
         },
     },
     conjure_weapon: {
-        type: "Placeholder",
+        type: "Conjuration",
         name: "Conjure Weapon",
         turnDuration: 3,
         effect(attacker) {
