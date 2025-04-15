@@ -22,6 +22,31 @@ const talentConfig = [
             }
         }
     },
+    {
+        name: "Conjure+",
+        description: "Conjured weapons are 10% stronger.",
+        effect: (player) => {
+            console.log(player);
+            if (!player.permanentEffects.some(effect => effect.name === "Conjure+")) {
+                player.permanentEffects.push({
+                    name: "Conjure+",
+                    applyEffect: (player) => {
+                        if (player.weapon.at(-1).name === "Conjured weapon") {
+                            player.weapon.at(-1).damage *= 1.1;
+                            console.log(`Conjured weapon damage increased to ${player.weapon.at(-1).damage}`);
+                        }
+                    },
+                    removeEffect: (player) => {
+                        if (player.weapon.at(-1).name === "Conjured weapon") {
+                            player.weapon.at(-1).damage /= 1.1;
+                            console.log(`Conjured weapon damage reverted to ${player.weapon.at(-1).damage}`);
+                        }
+                    }
+                });
+            }
+        }
+
+    },
 ];
 
 export default talentConfig;

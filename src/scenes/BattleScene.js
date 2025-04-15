@@ -78,8 +78,6 @@ class BattleScene extends Phaser.Scene {
       this.sfx[key] = this.sound.add(key, { volume: 0.2 });
     }
 
-    console.log(this.sfx);
-
     this.add.image(960, 540, 'ice-cave-background');
 
     // Add player animations
@@ -223,7 +221,6 @@ class BattleScene extends Phaser.Scene {
     }
 
     this.turnCounter++;
-    console.log(this.turnCounter);
 
     this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP, this.turnCounter);
     this.battleUI.renderMenu(this.currentMenu, this.currentSelection);
@@ -252,7 +249,7 @@ class BattleScene extends Phaser.Scene {
       const highestScore = parseInt(getCookie('highestScore')) || 0;
       if (this.player.score > highestScore) {
         setCookie('highestScore', this.player.score, 365); // Save the new high score for 1 year
-        console.log(`New highest score: ${this.player.score}`);
+          (`New highest score: ${this.player.score}`);
       }
 
       await this.switchScene();

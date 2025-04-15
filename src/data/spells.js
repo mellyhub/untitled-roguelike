@@ -126,14 +126,20 @@ const spells = {
         effect(attacker) {
             attacker.weapon.push({
                 name: "Conjured weapon",
-                damage: 999,
-            })
+                damage: 100,
+            });
+
+            const effect = attacker.permanentEffects.find(effect => effect.name === "Conjure+");
+            if (effect) {
+                effect.applyEffect(attacker);
+            }
+
             attacker.activeEffects = attacker.activeEffects || [];
             attacker.activeEffects.push({
                 name: this.name,
                 remainingTurns: this.turnDuration,
                 applyEffect: () => {
-                    console.log("jens123")
+                    console.log(`${attacker.name} is using the conjured weapon.`);
                 },
                 removeEffect: () => {
                     attacker.weapon.pop();
