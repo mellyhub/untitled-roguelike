@@ -35,8 +35,10 @@ class TalentScene extends Phaser.Scene {
           y: j,
           name: talent.name,
           value: 0,
+          maxPoints: 5,
           description: talent.description,
-          effect: talent.effect
+          effect: talent.effect,
+          maxEffect: talent.maxEffect,
         });
         talentIndex++;
       }
@@ -136,6 +138,10 @@ class TalentScene extends Phaser.Scene {
       if (selectedTalent.effect) {
         selectedTalent.effect(this.player);
       }
+
+      if (selectedTalent.value === selectedTalent.maxPoints && selectedTalent.maxEffect) {
+        selectedTalent.maxEffect(this.player);
+      }
     }
 
     // spenderar en talent point
@@ -146,7 +152,6 @@ class TalentScene extends Phaser.Scene {
       console.log("No available talent points left!")
     }
 
-    console.log(this.player);
     // rendrar ui på nytt för att uppdatera ändringarna
     this.renderUI();
   }

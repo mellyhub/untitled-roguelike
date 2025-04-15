@@ -22,6 +22,7 @@ export class Player {
     talentPoints = 50;
     level = 1;
     score = 0;
+    talents = [];
 
     processActiveEffects() {
         this.activeEffects = this.activeEffects.filter(effect => {

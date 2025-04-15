@@ -52,10 +52,9 @@ const talentConfig = [
         maxPoints: 5,
         effect: (player) => {
             player.stats.omnivamp += 0.05;
-
-            if(player.talents[0][3].value === 5) {
-                console.log("its morbin time");
-            }
+        },
+        maxEffect: (player) => {
+            console.log(`${player.name}: ITS MORBIN TIME!`);
         }
     }
 ];
