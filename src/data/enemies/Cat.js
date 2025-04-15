@@ -1,4 +1,5 @@
-export class Cat {
+import { Enemy } from "./Enemy";
+export class Cat extends Enemy {
     name = "Cat";
     battleCry = null;
     animationKey = "cat-animation";
@@ -16,6 +17,7 @@ export class Cat {
     spells = [];
 
     constructor(weight) {
+        super();
         this.health = 590 + weight * 10;
         this.strength = 100 + weight * 10;
     }

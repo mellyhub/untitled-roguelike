@@ -1,4 +1,6 @@
-export class NightGlider {
+import { Enemy } from "./Enemy";
+
+export class NightGlider extends Enemy {
     name = "Night Glider";
     battleCry = null;
     animationKey = "nightGlider-idle";
@@ -16,6 +18,7 @@ export class NightGlider {
     spells = [];
 
     constructor(weight) {
+        super();
         this.health = 290 + weight * 10;
         this.strength = 50 + weight * 10;
     }

@@ -1,4 +1,6 @@
-export class Snowman {
+import { Enemy } from "./Enemy";
+
+export class Snowman extends Enemy {
     name = "Snowman";
     battleCry = "snow";
     animationKey = "snowman-anim";
@@ -16,6 +18,7 @@ export class Snowman {
     spells = [];
 
     constructor(weight) {
+        super();
         this.health = 190 + weight * 10;
         this.strength = 30 + weight * 10;
     }

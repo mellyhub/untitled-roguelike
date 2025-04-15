@@ -1,4 +1,6 @@
-export class PipeSlime {
+import { Enemy } from "./Enemy";
+
+export class PipeSlime extends Enemy {
     name = "Pipe Slime";
     battleCry = "slime";
     animationKey = "pipe-slime-anim";
@@ -16,6 +18,7 @@ export class PipeSlime {
     spells = [];
 
     constructor(weight) {
+        super();
         this.health = 190 + weight * 10;
         this.strength = 100 + weight * 10;
     }

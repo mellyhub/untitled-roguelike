@@ -212,7 +212,7 @@ class BattleScene extends Phaser.Scene {
     this.battleUI.renderMenu(this.currentMenu, this.currentSelection);
 
     if (this.enemy.health > 0) {
-      //this.processActiveEffects(this.enemy);
+      this.enemy.processActiveEffects();
       this.enemy.attack(this.player);
       const animationText = this.displayAnimationText(this.enemy.name, "attack", selectedSpell);
       await this.resolveAfterTime(1000);
