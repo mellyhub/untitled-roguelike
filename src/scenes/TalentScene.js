@@ -52,7 +52,7 @@ class TalentScene extends Phaser.Scene {
     // rensar gamla ui elements
     if (this.uiElements) {
       this.uiElements.forEach(element => element.destroy());
-  }
+    }
 
     // visa tillgängliga talent points
     this.uiElements = [];
@@ -70,7 +70,8 @@ class TalentScene extends Phaser.Scene {
     for (let i = 0; i < this.talentRows; i++) {
       for (let j = 0; j < this.talentColumns; j++) {
         const talent = this.talents[i][j];
-        const talentText = this.add.text(100 + i * 200, 300 + j * 100, `${talent.name}: ${talent.value}`, {
+        const maxPoints = talentConfig.find(t => t.name === talent.name)?.maxPoints || 0;
+        const talentText = this.add.text(100 + i * 200, 300 + j * 100, `${talent.name}: ${talent.value}/${maxPoints}`, {
           fontSize: '32px',
           fill: '#fff',
         }).setOrigin(0.5);
@@ -124,6 +125,13 @@ class TalentScene extends Phaser.Scene {
     // kolla ifall det finns tillgängliga poäng
     if (this.player.talentPoints > 0) {
       const selectedTalent = this.talents[currentSelection.x][currentSelection.y]
+
+      // check if talents has reached max value
+      if (selectedTalent.value >= talentConfig.find(t => t.name === selectedTalent.name).maxPoints) {
+        console.log(`Cannot allocate more points to ${selectedTalent.name}. Maximum points reached.`);
+        return;
+      }
+
       // ökar värde på valt attribut
       selectedTalent.value += 1;
       if (selectedTalent.effect) {
@@ -132,7 +140,13 @@ class TalentScene extends Phaser.Scene {
     }
 
     // spenderar en talent point
-    this.player.talentPoints -= 1;
+    if (this.player.talentPoints > 0) {
+      this.player.talentPoints -= 1;
+    }
+    else {
+      console.log("No available talent points left!")
+    }
+
     console.log(this.player);
     // rendrar ui på nytt för att uppdatera ändringarna
     this.renderUI();

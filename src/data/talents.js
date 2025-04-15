@@ -2,6 +2,7 @@ const talentConfig = [
     {
         name: "Max HP",
         description: "Increases player's max HP by 10 per point.",
+        maxPoints: 5,
         effect: (player) => {
             player.maxHealth += 10;
             console.log(`Player's max HP increased to ${player.maxHealth}`);
@@ -10,6 +11,7 @@ const talentConfig = [
     {
         name: "Energy",
         description: "Gain 5 energy when attacking.",
+        maxPoints: 1,
         effect: (player) => {
             if (!player.permanentEffects.some(effect => effect.name === "Energy on Attack")) {
                 player.permanentEffects.push({
@@ -25,6 +27,7 @@ const talentConfig = [
     {
         name: "Conjure+",
         description: "Conjured weapons are 10% stronger.",
+        maxPoints: 1,
         effect: (player) => {
             console.log(player);
             if (!player.permanentEffects.some(effect => effect.name === "Conjure+")) {
@@ -46,6 +49,7 @@ const talentConfig = [
     {
         name: "Morbious",
         description: "Morbs the user",
+        maxPoints: 5,
         effect: (player) => {
             console.log(player);
             if (!player.permanentEffects.some(effect => effect.name === "Morbious")) {
