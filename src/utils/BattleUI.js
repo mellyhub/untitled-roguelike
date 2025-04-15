@@ -102,6 +102,36 @@ class BattleUI {
         this.actionBarContainer.add(this.scene.add.text(550, 0, `Weapon:\n${player.weapon.at(-1).name}`, { fontSize: '40px' }));
     }
 
+    displayDamageText(target, damage) {
+        console.log(`Displaying damage: ${damage} to ${target}`); // debug
+    
+        let x;
+        if(target === "player") {
+            x = 400;
+        }
+        else if(target === "enemy") {
+            x = 1520;
+        }
+        let y = 500;
+        
+        const damageText = this.scene.add.text(x, y, `-${damage}`, {
+            fontSize: "72px",
+            fill: "#ffffff",
+        }).setOrigin(0.5);
+    
+        // animate the text to move upward and fade out
+        this.scene.tweens.add({
+            targets: damageText,
+            y: y - 50, // move upward
+            alpha: 0, // fade out
+            duration: 4000, // 4 seconds
+            ease: 'Power1',
+            onComplete: () => {
+                damageText.destroy(); // remove text after animation
+            },
+        });
+    }
+
     renderMenu(menu) {
         // clear previous menu items
         if (this.menuItems) {

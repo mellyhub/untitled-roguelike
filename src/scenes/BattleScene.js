@@ -39,17 +39,6 @@ class BattleScene extends Phaser.Scene {
     });
   }
 
-  createEnemyAnimation() {
-    this.anims.create({
-      key: this.enemy.animationKey,
-      frames: this.anims.generateFrameNumbers(this.enemy.animationSheetName),
-      frameRate: this.enemy.animationFrameRate,
-      repeat: -1,
-    });
-
-    return this.add.sprite(this.enemy.imageXPos, this.enemy.imageYPos, this.enemy.animationSheetName).setScale(this.enemy.imageScale);
-  }
-
   create(data) {
     this.player = data.player;
     this.levelData = data.level;
@@ -169,6 +158,17 @@ class BattleScene extends Phaser.Scene {
     });
   }
 
+  createEnemyAnimation() {
+    this.anims.create({
+      key: this.enemy.animationKey,
+      frames: this.anims.generateFrameNumbers(this.enemy.animationSheetName),
+      frameRate: this.enemy.animationFrameRate,
+      repeat: -1,
+    });
+
+    return this.add.sprite(this.enemy.imageXPos, this.enemy.imageYPos, this.enemy.animationSheetName).setScale(this.enemy.imageScale);
+  }
+
   // Wait for player or enemy to finish attacking
   resolveAfterTime(ms) {
     return new Promise((resolve) => {
@@ -192,12 +192,16 @@ class BattleScene extends Phaser.Scene {
 
     if (action === 'attack') {
       this.player.animations.playAttackAnimation();
-      this.player.attack(this.enemy);
+      const damage = this.player.attack(this.enemy);
+      this.battleUI.displayDamageText('enemy', damage);
     }
     else if (action === 'cast') {
       if (selectedSpell) {
         this.player.animations.playCastAnimation(selectedSpell);
-        this.player.cast(this.enemy, selectedSpell);
+        const damage = this.player.cast(this.enemy, selectedSpell);
+        if (damage) {
+          this.battleUI.displayDamageText('enemy', damage);
+        }
       }
       else {
         console.warn('No spell selected!');
@@ -213,7 +217,8 @@ class BattleScene extends Phaser.Scene {
 
     if (this.enemy.health > 0) {
       this.enemy.processActiveEffects();
-      this.enemy.attack(this.player);
+      const damage = this.enemy.attack(this.player);
+      this.battleUI.displayDamageText('player', damage);
       const animationText = this.displayAnimationText(this.enemy.name, "attack", selectedSpell);
       await this.resolveAfterTime(1000);
       animationText.destroy();
@@ -248,7 +253,7 @@ class BattleScene extends Phaser.Scene {
       const highestScore = parseInt(getCookie('highestScore')) || 0;
       if (this.player.score > highestScore) {
         setCookie('highestScore', this.player.score, 365); // Save the new high score for 1 year
-          (`New highest score: ${this.player.score}`);
+        (`New highest score: ${this.player.score}`);
       }
 
       await this.switchScene();

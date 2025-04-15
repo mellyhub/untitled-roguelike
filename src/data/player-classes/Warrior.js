@@ -49,7 +49,7 @@ export class Warrior extends Player {
         if (restoreEnergy) {
             restoreEnergy.applyEffect(this);
         }
-
+        return roundedDamage;
     }
 
     cast(target, spell) {
@@ -69,14 +69,18 @@ export class Warrior extends Player {
             this.resource.rage = Math.min(this.resource.rage + rageAmount, 100); // cap rage at 100
             console.log(`${this.name} gains ${rageAmount} rage. Total rage: ${this.resource.rage}`);
 
-            damage = Math.round(damage);
-            target.health -= damage;
+            const roundedDamage = Math.round(damage);
+            target.health -= roundedDamage;
             console.log(`${this.name} casts ${spell.name} on ${target.name} for ${damage} damage.`);
+        
+            return roundedDamage;
         }
 
         if (spell.effect) {
             spell.effect(this, target);
             console.log(`${this.name} casts ${spell.name}.`);
         }
+
+        return 0;
     }
 }
