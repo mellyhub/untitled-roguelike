@@ -28,7 +28,14 @@ export class Mage extends Player {
         focusPoints: 0
     }
 
-    // TODO: lägg in focus points grejerna från "DamageCalc.js"
+    handleFp(spell, damage) {
+        if (this.lastAction === spell.name) {
+            this.resource.focusPoints = Math.min(this.resource.focusPoints + 1, 3); // cap at 3 FP
+            console.log(`${this.name} gains 1 focus point. Total focus points: ${this.resource.focusPoints}`);
+            damage *= 1 + this.resource.focusPoints * 0.1; // increase by 10% per focus point
+        }
+        return damage;
+    }
 
     attack(target) {
         let damage = this.handleCrit(null);
@@ -46,15 +53,11 @@ export class Mage extends Player {
 
         if (spell.damage) {
             let damage = this.handleCrit(spell);
-            damage = Math.round(damage) + 10 * this.stats.intelligence;
+            damage += this.handleFp(spell, damage);
+            damage = Math.round(damage + 10 * this.stats.intelligence);
+            console.log(damage);
             target.health -= damage;
 
-            if (this.lastAction === spell.name) {
-                this.resource.focusPoints = Math.min(this.resource.focusPoints + 1, 3); // cap at 3 FP
-                console.log(`${this.name} gains 1 focus point. Total focus points: ${this.resource.focusPoints}`);
-                damage *= 1 + this.resource.focusPoints * 0.1; // increase by 10% per focus point
-                console.log(damage);
-            }
             this.lastAction = spell.name;
             console.log(`${this.name} casts ${spell.name} on ${target.name} for ${damage} damage.`);
         }

@@ -17,14 +17,14 @@ const spells = {
         type: "Fire",
         name: "Fireball",
         damage(attackerStats) {
-            return 25 + attackerStats.strength * 2;
+            return 25 + attackerStats.intelligence * 3;
         }
     },
     fire_breath: {
         type: "Fire",
         name: "Fire Breath",
         damage(attackerStats) {
-            return 25 + attackerStats.strength * 2;
+            return 25 + attackerStats.intelligence * 2;
         }
     },
     tail_whip: {
@@ -98,7 +98,7 @@ const spells = {
     rejuvenation: {
         type: "Placeholder",
         name: "Rejuvenation",
-        healPerTurn: 30,
+        healPerTurn: 50,
         turnDuration: 3,
         effect(attacker, target) {
             console.log(`${attacker.name} casts Rejuvenation, applying healing over ${this.turnDuration} turns.`);

@@ -8,7 +8,7 @@ export class Warrior extends Player {
     class = "Warrior";
     animations = new Animations("warrior", "warrior idle", "warrior attack", "warrior cast");
 
-    health = 10000;
+    health = 200;
     maxHealth = 200;
     energy = 100;
     maxEnergy = 100;
@@ -16,7 +16,7 @@ export class Warrior extends Player {
     spells = [spells.frostbolt, spells.aura_of_might, spells.rejuvenation, spells.ignite, spells.fireball, spells.conjure_weapon];
     
     stats = {
-        strength: 1,
+        strength: 10,
         agility: 5,
         intelligence: 2,
         critChance: 0.5,
@@ -28,22 +28,24 @@ export class Warrior extends Player {
         rage: 0
     }
 
-    attack(target) {
-        let damage = this.handleCrit(null);
-
-        // handle warrior rage scaling
+    handleRage(damage) {
         const rageMultiplier = 1 + this.resource.rage * 0.002;
         console.log(`Rage multiplier: ${rageMultiplier}`);
         damage *= rageMultiplier;
 
-        // warrior rage gain on hit
         const rageAmount = 10; // amount of rage gained when hit
         this.resource.rage = Math.min(this.resource.rage + rageAmount, 100); // cap rage at 100
         console.log(`${this.name} gains ${rageAmount} rage. Total rage: ${this.resource.rage}`);
+        return damage;
+    }
+
+    attack(target) {
+        let damage = this.handleCrit(null);
+        damage += this.handleRage(damage);
 
         this.health += Math.round(this.stats.omnivamp * damage);
-        const roundedDamage = Math.round(damage);
-        target.health -= roundedDamage;
+        damage = Math.round(damage);
+        target.health -= damage;
 
         const restoreEnergy = this.permanentEffects.find(effect => effect.name === "Energy on Attack");
         if (restoreEnergy) {
@@ -58,19 +60,10 @@ export class Warrior extends Player {
 
         if (spell.damage) {
             let damage = this.handleCrit(spell);
+            damage += this.handleRage(damage);
 
-            // handle warrior rage scaling
-            const rageMultiplier = 1 + this.resource.rage * 0.002;
-            console.log(`Rage multiplier: ${rageMultiplier}`);
-            damage *= rageMultiplier;
-
-            // warrior rage gain on hit
-            const rageAmount = 10; // amount of rage gained when hit
-            this.resource.rage = Math.min(this.resource.rage + rageAmount, 100); // cap rage at 100
-            console.log(`${this.name} gains ${rageAmount} rage. Total rage: ${this.resource.rage}`);
-
-            const roundedDamage = Math.round(damage);
-            target.health -= roundedDamage;
+            damage = Math.round(damage);
+            target.health -= damage;
             console.log(`${this.name} casts ${spell.name} on ${target.name} for ${damage} damage.`);
         
             return roundedDamage;
