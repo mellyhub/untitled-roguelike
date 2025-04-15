@@ -31,6 +31,7 @@ export function processActiveEffects(unit) {
 }
 
 export function removeAllActiveEffects(unit) {
+    console.log(unit);
     if (!unit.activeEffects) return;
 
     unit.activeEffects.forEach(effect => {

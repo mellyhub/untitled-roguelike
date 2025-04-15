@@ -31,22 +31,33 @@ const talentConfig = [
                 player.permanentEffects.push({
                     name: "Conjure+",
                     applyEffect: (player) => {
+
+                        // i think something is bugged here >:()
                         if (player.weapon.at(-1).name === "Conjured weapon") {
                             player.weapon.at(-1).damage *= 1.1;
                             console.log(`Conjured weapon damage increased to ${player.weapon.at(-1).damage}`);
+                            console.log(player);
                         }
                     },
-                    removeEffect: (player) => {
-                        if (player.weapon.at(-1).name === "Conjured weapon") {
-                            player.weapon.at(-1).damage /= 1.1;
-                            console.log(`Conjured weapon damage reverted to ${player.weapon.at(-1).damage}`);
-                        }
-                    }
                 });
             }
         }
-
     },
+    {
+        name: "Morbious",
+        description: "Morbs the user",
+        effect: (player) => {
+            console.log(player);
+            if (!player.permanentEffects.some(effect => effect.name === "Morbious")) {
+                player.permanentEffects.push({
+                    name: "Morbious",
+                    applyEffect: (player) => {
+                        // implement here
+                    },
+                });
+            }
+        }
+    }
 ];
 
 export default talentConfig;
