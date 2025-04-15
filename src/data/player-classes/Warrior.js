@@ -51,7 +51,7 @@ export class Warrior extends Player {
         if (restoreEnergy) {
             restoreEnergy.applyEffect(this);
         }
-        return roundedDamage;
+        return damage;
     }
 
     cast(target, spell) {
@@ -66,7 +66,7 @@ export class Warrior extends Player {
             target.health -= damage;
             console.log(`${this.name} casts ${spell.name} on ${target.name} for ${damage} damage.`);
         
-            return roundedDamage;
+            return damage;
         }
 
         if (spell.effect) {
