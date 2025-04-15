@@ -52,6 +52,15 @@ export class Animations {
                 }
             );
         }
+        if (this.castAnimationSheetKey && spell.type === "Conjuration") {
+            this.playAnimation(
+                this.castAnimation,
+                this.castAnimationKey,
+                () => {
+                    this.playAnimation(this.idleAnimation, this.idleAnimationKey);
+                }
+            );
+        }
     }
     
     playAnimation(sprite, key, onComplete) {
