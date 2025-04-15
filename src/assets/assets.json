@@ -335,8 +335,15 @@
 			},
 			{
 				"type": "sheet",
-				"key": "warrior idle",
-				"url": "warrior-idle-Sheet.png",
+				"key": "warrior attack",
+				"url": "warrior-attack-Sheet.png",
+				"frameWidth": 320,
+				"frameHeight": 320
+			},
+			{
+				"type": "sheet",
+				"key": "warrior conjuration spell",
+				"url": "warrior-conjuration-spell-Sheet.png",
 				"frameWidth": 320,
 				"frameHeight": 320
 			}
