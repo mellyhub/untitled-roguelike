@@ -14,6 +14,7 @@ export class Goblin {
     strength;
     energy = 100;
     maxEnergy = 100;
+    omnivamp = 0;
 
     constructor(weight) {
         this.health = this.getRandomStat(50, 50) + weight * 10;

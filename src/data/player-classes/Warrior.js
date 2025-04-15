@@ -20,7 +20,8 @@ export class Warrior extends Player {
         agility: 5,
         intelligence: 2,
         critChance: 0.5,
-        critDamage: 1.5
+        critDamage: 1.5,
+        omnivamp: 0,
     };
 
     resource = {
@@ -40,7 +41,9 @@ export class Warrior extends Player {
         this.resource.rage = Math.min(this.resource.rage + rageAmount, 100); // cap rage at 100
         console.log(`${this.name} gains ${rageAmount} rage. Total rage: ${this.resource.rage}`);
 
-        target.health -= Math.round(damage);
+        this.health += Math.round(this.stats.omnivamp * damage);
+        const roundedDamage = Math.round(damage);
+        target.health -= roundedDamage;
 
         const restoreEnergy = this.permanentEffects.find(effect => effect.name === "Energy on Attack");
         if (restoreEnergy) {

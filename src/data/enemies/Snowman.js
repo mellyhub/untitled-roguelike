@@ -12,6 +12,7 @@ export class Snowman {
     strength;
     energy = 100;
     maxEnergy = 100;
+    omnivamp = 0;
     spells = [];
 
     constructor(weight) {
