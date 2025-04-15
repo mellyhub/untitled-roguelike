@@ -196,7 +196,6 @@ class BattleUI {
             if (this.currentMenuType === 'main') {
                 if (selectedItem.text === 'Attack') {
                     console.log('Attack selected!');
-                    console.log(player.weapon);
                     // plays attack after 1 second delay to match health bar animation
                     setTimeout(() => {
                         this.sfx.hit1.play();
