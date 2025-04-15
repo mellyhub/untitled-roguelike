@@ -5,17 +5,17 @@ import { Animations } from "../Animations";
 
 export class Rogue extends Player {
     name = "Edwin";
+    class = "Rogue";
     animations = new Animations("rogue", "rogue idle", "rogue attack", null);
 
     health = 200;
     maxHealth = 200;
     energy = 100;
     maxEnergy = 100;
-    weapon = weapons.big_axe;
-    inventory = [];
+
+    weapon = [weapons.big_axe];
     spells = [spells.frostbolt, spells.aura_of_might, spells.rejuvenation, spells.ignite, spells.fireball];
-    spellbook = [];
-    class = "Rogue";
+    
     stats = {
         strength: 10,
         agility: 5,
@@ -23,18 +23,14 @@ export class Rogue extends Player {
         critChance: 0.5,
         critDamage: 1.5
     };
+
     resource = {
         rage: 0
     }
-    lastAction = null;
-    talentPoints = 50;
-    level = 1;
-    score = 0;
 
     attack(target) {
         let damage = this.handleCrit(null);
         target.health -= Math.round(damage);
-
     }
 
     cast(target, spell) {

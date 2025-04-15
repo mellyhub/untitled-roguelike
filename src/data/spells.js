@@ -56,7 +56,7 @@ const spells = {
             attacker.stats.strength += 10;
             console.log(`Taifun strenght: ${attacker.stats.strength}`)
             console.log(`${attacker.name} is empowered, increasing their strength by 10.`);
-            attacker.activeEffects = attacker.activeEffects || [];
+            //attacker.activeEffects = attacker.activeEffects || [];
             attacker.activeEffects.push({
                 name: this.name,
                 remainingTurns: this.turnDuration,
@@ -103,7 +103,6 @@ const spells = {
         effect(attacker, target) {
             console.log(`${attacker.name} casts Rejuvenation, applying healing over ${this.turnDuration} turns.`);
 
-            attacker.activeEffects = target.activeEffects || [];
             attacker.activeEffects.push({
                 name: this.name,
                 remainingTurns: this.turnDuration,
@@ -143,6 +142,7 @@ const spells = {
                 },
                 removeEffect: () => {
                     attacker.weapon.pop();
+                    console.log(attacker.weapon);
                     console.log("Conjured weapon has expired");
                 }
             });

@@ -95,6 +95,7 @@ class BattleUI {
         this.actionBarContainer.add(this.scene.add.image(400, 0, 'uncommon-item-frame').setScale(0.4));
         this.actionBarContainer.add(this.scene.add.text(450, 0, `${player.stats.agility}`, { fontSize: '32px', fill: '#fff' }).setOrigin(0.5));
         this.actionBarContainer.add(this.scene.add.image(400, 70, 'intelligence-icon').setScale(0.4));
+        this.actionBarContainer.add(this.scene.add.text(450, 70, `${player.stats.intelligence}`, { fontSize: '32px', fill: '#fff' }).setOrigin(0.5));
         this.actionBarContainer.add(this.scene.add.image(400, 70, 'uncommon-item-frame').setScale(0.4));
         
         // for debugging

@@ -1,7 +1,6 @@
 import seedrandom from 'seedrandom';
 import BattleUI from '../utils/BattleUI.js';
 import assets from '../assets/assets.json'; // Import the assets.json file
-import {processActiveEffects, removeAllActiveEffects} from "../utils/DamageCalc.js";
 import { setCookie, getCookie } from '../utils/cookieUtils.js';
 import { get_random_enemy } from '../data/enemies.js';
 
@@ -189,7 +188,7 @@ class BattleScene extends Phaser.Scene {
 
   async executeTurn(action, selectedSpell) {
     this.inputLocked = true;
-    processActiveEffects(this.player);
+    this.player.processActiveEffects();
 
     if (action === 'attack') {
       this.player.animations.playAttackAnimation();
@@ -213,7 +212,7 @@ class BattleScene extends Phaser.Scene {
     this.battleUI.renderMenu(this.currentMenu, this.currentSelection);
 
     if (this.enemy.health > 0) {
-      processActiveEffects(this.enemy);
+      //this.processActiveEffects(this.enemy);
       this.enemy.attack(this.player);
       const animationText = this.displayAnimationText(this.enemy.name, "attack", selectedSpell);
       await this.resolveAfterTime(1000);
@@ -236,10 +235,10 @@ class BattleScene extends Phaser.Scene {
   async checkRoundOutcome() {
     if (this.enemy.health <= 0) {
       this.add.text(960, 640, 'You win!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
-      this.player.level++;
-      this.player.talentPoints++;
+      this.player.increaseLevel(1);
+      this.player.increaseTalentPoints(1);
 
-      removeAllActiveEffects(this.player);
+      this.player.removeAllActiveEffects();
       console.log("All active effects have been removed");
 
       this.turnCounter = 0;

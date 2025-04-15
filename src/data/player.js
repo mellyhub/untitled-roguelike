@@ -5,9 +5,9 @@ export class Player {
     energy;
     maxEnergy;
     weapon;
-    inventory;
+    inventory = [];
     spells;
-    spellbook;
+    spellbook = [];
     class;
     stats;
     resource;
@@ -16,7 +16,40 @@ export class Player {
     level;
     score;
     image;
-    permanentEffects;
+    permanentEffects = [];
+    activeEffects = [];
+    lastAction = null;
+    talentPoints = 50;
+    level = 1;
+    score = 0;
+
+    processActiveEffects() {
+        this.activeEffects = this.activeEffects.filter(effect => {
+            effect.applyEffect();
+            effect.remainingTurns--;
+    
+            // remove effect if expired
+            if (effect.remainingTurns <= 0) {
+                if (effect.removeEffect) {
+                    effect.removeEffect(); // call the removeEffect function if it exists
+                }
+                console.log(`${effect.name} effect on ${this.name} has expired.`);
+                return false; // remove effect
+            }
+    
+            return true; // keep effect
+        });
+    }
+
+    removeAllActiveEffects() {
+        this.activeEffects.forEach(effect => {
+            if (effect.removeEffect) {
+                effect.removeEffect();
+            }
+            console.log(`Removed effect: ${effect.name} from ${this.name}`);
+        });
+        this.activeEffects = [];
+    }
 
     handleCrit(spell) {
         if (this.stats.critChance > Math.random()) {
@@ -53,6 +86,10 @@ export class Player {
 
     increaseStat(stat, amount) {
         this.stats.stat += amount;
+    }
+
+    increaseLevel(amount) {
+        this.level += amount;
     }
 
     increaseTalentPoints(amount) {

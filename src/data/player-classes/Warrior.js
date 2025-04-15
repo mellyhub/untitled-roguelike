@@ -5,32 +5,27 @@ import { Animations } from "../Animations";
 
 export class Warrior extends Player {
     name = "Taifun";
+    class = "Warrior";
     animations = new Animations("warrior", "warrior idle", "warrior attack", "warrior cast");
 
-    health = 200;
+    health = 10000;
     maxHealth = 200;
     energy = 100;
     maxEnergy = 100;
     weapon = [weapons.big_axe];
-    inventory = [];
     spells = [spells.frostbolt, spells.aura_of_might, spells.rejuvenation, spells.ignite, spells.fireball, spells.conjure_weapon];
-    spellbook = [];
-    class = "Warrior";
+    
     stats = {
-        strength: 10,
+        strength: 1,
         agility: 5,
         intelligence: 2,
         critChance: 0.5,
         critDamage: 1.5
     };
+
     resource = {
         rage: 0
     }
-    lastAction = null;
-    talentPoints = 5;
-    level = 1;
-    score = 0;
-    permanentEffects = [];
 
     attack(target) {
         let damage = this.handleCrit(null);
