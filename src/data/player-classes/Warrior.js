@@ -15,6 +15,8 @@ export class Warrior extends Player {
     weapon = [weapons.big_axe];
     spells = [spells.frostbolt, spells.aura_of_might, spells.rejuvenation, spells.ignite, spells.fireball, spells.conjure_weapon];
     
+    talents = [];
+    
     stats = {
         strength: 1,
         agility: 5,

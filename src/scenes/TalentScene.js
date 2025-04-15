@@ -22,7 +22,6 @@ class TalentScene extends Phaser.Scene {
       this.scene.switch('MapScene');
     });
 
-    this.talents = [];
     let talentIndex = 0;
     this.talentRows = 5;
     this.talentColumns = 5;
@@ -41,7 +40,7 @@ class TalentScene extends Phaser.Scene {
         });
         talentIndex++;
       }
-      this.talents.push(row);
+      this.player.talents.push(row);
     }
 
     this.currentSelection = { x: 0, y: 0 };
@@ -60,7 +59,7 @@ class TalentScene extends Phaser.Scene {
       fontSize: '48px',
       fill: '#fff',
     }).setOrigin(0.5);
-    const descriptionText = this.add.text(1100, 600, this.talents[this.currentSelection.x][this.currentSelection.y].description, {
+    const descriptionText = this.add.text(1100, 600, this.player.talents[this.currentSelection.x][this.currentSelection.y].description, {
       fontSize: '32px',
       fill: '#fff',
     }).setOrigin(0, 5);
@@ -69,7 +68,7 @@ class TalentScene extends Phaser.Scene {
 
     for (let i = 0; i < this.talentRows; i++) {
       for (let j = 0; j < this.talentColumns; j++) {
-        const talent = this.talents[i][j];
+        const talent = this.player.talents[i][j];
         const maxPoints = talentConfig.find(t => t.name === talent.name)?.maxPoints || 0;
         const talentText = this.add.text(100 + i * 200, 300 + j * 100, `${talent.name}: ${talent.value}/${maxPoints}`, {
           fontSize: '32px',
@@ -124,7 +123,7 @@ class TalentScene extends Phaser.Scene {
   allocatePoint(currentSelection) {
     // kolla ifall det finns tillgängliga poäng
     if (this.player.talentPoints > 0) {
-      const selectedTalent = this.talents[currentSelection.x][currentSelection.y]
+      const selectedTalent = this.player.talents[currentSelection.x][currentSelection.y]
 
       // check if talents has reached max value
       if (selectedTalent.value >= talentConfig.find(t => t.name === selectedTalent.name).maxPoints) {

@@ -51,14 +51,10 @@ const talentConfig = [
         description: "Morbs the user",
         maxPoints: 5,
         effect: (player) => {
-            console.log(player);
-            if (!player.permanentEffects.some(effect => effect.name === "Morbious")) {
-                player.permanentEffects.push({
-                    name: "Morbious",
-                    applyEffect: (player) => {
-                        // implement here
-                    },
-                });
+            player.stats.omnivamp += 0.05;
+
+            if(player.talents[0][3].value === 5) {
+                console.log("its morbin time");
             }
         }
     }
