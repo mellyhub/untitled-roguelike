@@ -51,6 +51,15 @@ const talentConfig = {
                 console.log(`Player's max HP increased to ${player.maxHealth}`);
             }
         },
+        {
+            name: "Energy Shield",
+            description: "Adds defense scaling with intelligence.",
+            maxPoints: 5,
+            effect: (player) => {
+                player.stats.defense += player.stats.intelligence;
+                console.log(player.stats);
+            }
+        }
     ],
     utility: [
         {
