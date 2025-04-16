@@ -39,6 +39,24 @@ const talentConfig = {
                     });
                 }
             }
+        },
+        {
+            name: "Blademaster",
+            description: "Increases damage dealt by swords by 5% per point.",
+            maxPoints: 5,
+            effect: (player) => {
+                if (!player.permanentEffects.some(effect => effect.name === "Blademaster")) {
+                    player.permanentEffects.push({
+                        name: "Blademaster",
+                        applyEffect: (player) => {
+                            if (player.weapon.at(-1).type === "Sword") {
+                                player.weapon.at(-1).damage *= 1.05;
+                                console.log(`Sword damage is increased`);
+                            }
+                        },
+                    });
+                }
+            }
         }
     ],
     defense: [

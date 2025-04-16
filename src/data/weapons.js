@@ -4,10 +4,12 @@ import spells from '../data/spells.js';
 const weapons = {
     dagger: {
         name: "Dagger",
+        type: "Dagger",
         damage: 10,
     },
     staff: {
         name: "Staff",
+        type: "Staff",
         damage: 5,
         spells:
         {
@@ -17,10 +19,12 @@ const weapons = {
     },
     dragon: {
         name: "Dragon",
+        type: "?",
         damage: 30,
     },
     big_axe: {
         name: "Big Axe",
+        type: "Axe",
         damage: 60,
         stats: {
             strength: 2,
@@ -34,6 +38,7 @@ const weapons = {
     },
     jens_sword: {
         name: "Jens Sword",
+        type: "Sword",
         damage: 100,
         stats: {
             strength: 1000,
@@ -47,6 +52,7 @@ const weapons = {
     },
     snowmans_bane: {
         name: "Snowman’s Bane",
+        type: "Sword",
         description: "The dreaded bane of the snowman, a weapon forged in the darkest corners of winter’s wrath",
         damage: 10,
         effect() {

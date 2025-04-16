@@ -20,6 +20,7 @@ export class Warrior extends Player {
         agility: 5,
         intelligence: 2,
         defense: 10,
+        evasion: 0,
         critChance: 0.5,
         critDamage: 1.5,
         omnivamp: 0,
@@ -41,6 +42,10 @@ export class Warrior extends Player {
     }
 
     attack(target) {
+        if(Math.random() < target.stats.evasion) {
+            console.log(`${target.name} evaded the attack!`);
+            return "Missed!";
+        }
         let damage = this.handleCrit(null);
         damage += this.handleRage(damage);
 

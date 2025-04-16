@@ -3,6 +3,8 @@ import BattleUI from '../utils/BattleUI.js';
 import assets from '../assets/assets.json'; // Import the assets.json file
 import { setCookie, getCookie } from '../utils/cookieUtils.js';
 import { get_random_enemy } from '../data/enemies.js';
+import { Snowman } from '../data/enemies/Snowman.js';
+import { PipeSlime } from '../data/enemies/PipeSlime.js';
 
 class BattleScene extends Phaser.Scene {
   constructor() {
@@ -48,7 +50,8 @@ class BattleScene extends Phaser.Scene {
 
     this.playerStartHP = this.player.maxHealth;
 
-    const EnemyClass = get_random_enemy(this.seed);
+    //const EnemyClass = get_random_enemy(this.seed);
+    const EnemyClass = PipeSlime;
     this.enemy = new EnemyClass(this.player.level);
     this.enemyStartHP = this.enemy.health;
 

@@ -17,6 +17,17 @@ export class PipeSlime extends Enemy {
     omnivamp = 0;
     spells = [];
 
+    stats = {
+        strength: 10,
+        agility: 5,
+        intelligence: 2,
+        defense: 10,
+        evasion: 0.5,
+        critChance: 0.5,
+        critDamage: 1.5,
+        omnivamp: 0,
+    };
+
     constructor(weight) {
         super();
         this.health = 190 + weight * 10;
