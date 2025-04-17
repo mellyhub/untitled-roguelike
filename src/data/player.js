@@ -28,8 +28,7 @@ export class Player {
     processActiveEffects() {
         this.activeEffects = this.activeEffects.filter(effect => {
             effect.applyEffect();
-            effect.remainingTurns--;
-    
+                
             // remove effect if expired
             if (effect.remainingTurns <= 0) {
                 if (effect.removeEffect) {
@@ -39,6 +38,7 @@ export class Player {
                 return false; // remove effect
             }
     
+            effect.remainingTurns--;
             return true; // keep effect
         });
     }

@@ -153,7 +153,7 @@ const spells = {
     thunderclap: {
         type: "Placeholder",
         name: "Thunderclap",
-        turnDuration: 2, // stun lasts for 1 turn
+        turnDuration: 1, // stun lasts for 1 turn
         effect(attacker, target) {
             console.log(`${attacker.name} casts Thunderclap on ${target.name}, stunning them for ${this.turnDuration} turn(s).`);
 
@@ -172,11 +172,6 @@ const spells = {
                 }
             });
 
-            // immediately apply the stun
-            const stunEffect = target.activeEffects.find(effect => effect.name === "Stunned");
-            if (stunEffect) {
-                stunEffect.applyEffect();
-            }
             console.log(target);
         },
         description: "Causes a shockwave, stunning the target for 1 turn."
