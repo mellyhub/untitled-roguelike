@@ -46,6 +46,12 @@ class BattleScene extends Phaser.Scene {
     this.levelData = data.level;
     this.seed = data.seed;
 
+    // reset rebirth effect at start of combat
+    const rebirthEffect = this.player.permanentEffects.find(effect => effect.name === "Rebirth");
+    if (rebirthEffect && rebirthEffect.removeEffect) {
+        rebirthEffect.removeEffect();
+    }
+
     this.playerAnimation;
 
     this.playerStartHP = this.player.maxHealth;
@@ -265,6 +271,17 @@ class BattleScene extends Phaser.Scene {
     }
 
     if (this.player.health <= 0) {
+
+      // check for rebirth talent
+      const rebirthEffect = this.player.permanentEffects.find(effect => effect.name === "Rebirth");
+      if (rebirthEffect && !rebirthEffect.hasRevived) {
+          rebirthEffect.applyEffect(this.player); // trigger revive
+          this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP, this.turnCounter);
+          
+          // this causes a bug that makes the menu not render after revived
+          return this.checkRoundOutcome();
+      }
+
       this.add.text(960, 540, 'You lose!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
       this.scene.pause();
     }

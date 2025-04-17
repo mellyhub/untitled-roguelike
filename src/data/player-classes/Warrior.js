@@ -8,7 +8,7 @@ export class Warrior extends Player {
     class = "Warrior";
     animations = new Animations("warrior", "warrior idle", "warrior attack", "warrior cast");
 
-    health = 200;
+    health = 50;
     maxHealth = 200;
     energy = 100;
     maxEnergy = 100;

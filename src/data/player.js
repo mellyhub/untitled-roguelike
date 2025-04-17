@@ -23,6 +23,7 @@ export class Player {
     level = 1;
     score = 0;
     talents = {};
+    hasRevived = false;
 
     processActiveEffects() {
         this.activeEffects = this.activeEffects.filter(effect => {

@@ -22,7 +22,7 @@ export class PipeSlime extends Enemy {
         agility: 5,
         intelligence: 2,
         defense: 10,
-        evasion: 0.5,
+        evasion: 0.1,
         critChance: 0.5,
         critDamage: 1.5,
         omnivamp: 0,

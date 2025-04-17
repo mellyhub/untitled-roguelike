@@ -45,19 +45,25 @@ const talentConfig = {
             description: "Increases damage dealt by swords by 5% per point.",
             maxPoints: 5,
             effect: (player) => {
+                if (!player.weapon || player.weapon.length === 0) {
+                    console.error("Player has no weapon equipped!");
+                    return;
+                }
                 if (!player.permanentEffects.some(effect => effect.name === "Blademaster")) {
                     player.permanentEffects.push({
                         name: "Blademaster",
                         applyEffect: (player) => {
-                            if (player.weapon.at(-1).type === "Sword") {
-                                player.weapon.at(-1).damage *= 1.05;
-                                console.log(`Sword damage is increased`);
+                            const weapon = player.weapon.at(-1);
+                            if (weapon && weapon.type === "Sword") {
+                                weapon.damage *= 1.05;
+                                console.log(`Sword damage is increased to ${weapon.damage}`);
                             }
                         },
                     });
                 }
             }
-        }
+        },
+
     ],
     defense: [
         {
@@ -77,7 +83,29 @@ const talentConfig = {
                 player.stats.defense += player.stats.intelligence;
                 console.log(player.stats);
             }
-        }
+        },
+        {
+            name: "Rebirth",
+            description: "Grants 1 revive per combat.",
+            maxPoints: 1,
+            effect: (player) => {
+                if (!player.permanentEffects.some(effect => effect.name === "Rebirth")) {
+                    player.permanentEffects.push({
+                        name: "Rebirth",
+                        applyEffect: (player) => {
+                            if (player.health <= 0 && !player.hasRevived) {
+                                player.hasRevived = true; // mark the revive as used
+                                player.health = Math.round(player.maxHealth * 0.3); // restore 30% of max health
+                                console.log(`${player.name} has been revived by Rebirth! Health restored to ${player.health}.`);
+                            }
+                        },
+                        removeEffect: () => {
+                            player.hasRevived = false; // reset revive for next combat
+                        }
+                    });
+                }
+            }
+        },
     ],
     utility: [
         {
