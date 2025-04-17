@@ -8,12 +8,12 @@ export class Warrior extends Player {
     class = "Warrior";
     animations = new Animations("warrior", "warrior idle", "warrior attack", "warrior cast");
 
-    health = 50;
+    health = 200;
     maxHealth = 200;
     energy = 100;
     maxEnergy = 100;
     weapon = [weapons.big_axe];
-    spells = [spells.frostbolt, spells.aura_of_might, spells.rejuvenation, spells.ignite, spells.fireball, spells.conjure_weapon];
+    spells = [spells.thunderclap, spells.conjure_weapon];
     
     stats = {
         strength: 10,
@@ -21,7 +21,7 @@ export class Warrior extends Player {
         intelligence: 2,
         defense: 10,
         evasion: 0,
-        critChance: 0.5,
+        critChance: 0.1,
         critDamage: 1.5,
         omnivamp: 0,
     };

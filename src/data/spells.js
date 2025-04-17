@@ -48,7 +48,7 @@ const spells = {
             return 25 + attackerStats.strength * 2;
         }
     },
-    aura_of_might: {
+    /* aura_of_might: {
         type: "Placeholder",
         name: "Aura of Might",
         turnDuration: 3,
@@ -117,7 +117,7 @@ const spells = {
                 }
             });
         },
-    },
+    }, */
     conjure_weapon: {
         type: "Conjuration",
         name: "Conjure Weapon",
@@ -150,5 +150,36 @@ const spells = {
         },
         description: "Conjure a temporary weapon"
     },
+    thunderclap: {
+        type: "Placeholder",
+        name: "Thunderclap",
+        turnDuration: 2, // stun lasts for 1 turn
+        effect(attacker, target) {
+            console.log(`${attacker.name} casts Thunderclap on ${target.name}, stunning them for ${this.turnDuration} turn(s).`);
+
+            // add the stun effect to the target's active effects
+            // (maybe status effects should be stored differently?)
+            target.activeEffects.push({
+                name: "Stunned",
+                remainingTurns: this.turnDuration,
+                applyEffect: () => {
+                    target.stunned = true; // mark target as stunned
+                    console.log(`${target.name} is stunned and cannot act.`);
+                },
+                removeEffect: () => {
+                    target.stunned = false; // remove stun after duration
+                    console.log(`${target.name} is no longer stunned.`);
+                }
+            });
+
+            // immediately apply the stun
+            const stunEffect = target.activeEffects.find(effect => effect.name === "Stunned");
+            if (stunEffect) {
+                stunEffect.applyEffect();
+            }
+            console.log(target);
+        },
+        description: "Causes a shockwave, stunning the target for 1 turn."
+    }
 }
 export default spells;

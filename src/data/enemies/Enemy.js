@@ -12,10 +12,11 @@ export class Enemy {
     strength;
     energy;
     maxEnergy;
-    spells;
-
+    spells = [];
     activeEffects = [];
 
+    stunned = false;
+    
     constructor(weight) {}
 
     processActiveEffects() {

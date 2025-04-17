@@ -14,8 +14,6 @@ export class PipeSlime extends Enemy {
     strength;
     energy = 100;
     maxEnergy = 100;
-    omnivamp = 0;
-    spells = [];
 
     stats = {
         strength: 10,
@@ -34,9 +32,15 @@ export class PipeSlime extends Enemy {
         this.strength = 100 + weight * 10;
     }
 
-    attack(target) {
+    attack(target) { 
+
         // enemy damage handling needs to be rewritten
-        target.health -= 50;
-        return 50;
+        if (this.stunned === true) {
+            console.log(`${this.name} is stunned and cannot attack.`);
+        }
+        else {
+            target.health -= 50;
+            return 50;
+        }
     }
 }

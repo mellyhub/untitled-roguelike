@@ -63,6 +63,15 @@ const talentConfig = {
                 }
             }
         },
+        {
+            name: "Battle Trance",
+            description: "Puts the player into a hightened state of awareness, increasing critical hit chance.",
+            maxPoints: 5,
+            effect: (player) => {
+                player.stats.critChance += 0.1;
+                console.log(`Player's critical chanse incresed to ${player.stats.critChance}`);
+            }
+        },
 
     ],
     defense: [
@@ -118,7 +127,7 @@ const talentConfig = {
             maxEffect: (player) => {
                 console.log(`${player.name}: ITS MORBIN TIME!`);
             }
-        }
+        },
     ]
 };
 
