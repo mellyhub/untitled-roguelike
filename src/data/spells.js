@@ -155,7 +155,7 @@ const spells = {
         name: "Thunderclap",
         turnDuration: 1, // stun lasts for 1 turn
         effect(attacker, target) {
-            console.log(`${attacker.name} casts Thunderclap on ${target.name}, stunning them for ${this.turnDuration} turn(s).`);
+            console.log(`${attacker.name} casts Thunderclap on ${target.name}, stunning them for ${this.turnDuration} turns.`);
 
             // add the stun effect to the target's active effects
             // (maybe status effects should be stored differently?)
@@ -175,6 +175,28 @@ const spells = {
             console.log(target);
         },
         description: "Causes a shockwave, stunning the target for 1 turn."
-    }
+    },
+    arcane_surge: {
+        type: "Placeholder",
+        name: "Arcane Surge",
+        turnDuration: 3,
+        effect(attacker, target) {
+            console.log(`${attacker.name} casts Arcane Surge, increasing intellect for ${this.turnDuration} turns.`);
+            attacker.stats.intelligence += 10;
+            target.activeEffects.push({
+                name: "Arcane Surge",
+                remainingTurns: this.turnDuration,
+                applyEffect: () => {
+                    console.log(`${attacker.name} is empowered by Arcane Surge`);
+                },
+                removeEffect: () => {
+                    attacker.stats.intelligence -= 10;
+                }
+            });
+
+            console.log(attacker);
+        },
+        description: "Temporarly increases intellect."
+    },
 }
 export default spells;

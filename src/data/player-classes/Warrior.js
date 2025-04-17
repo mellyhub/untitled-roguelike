@@ -13,7 +13,7 @@ export class Warrior extends Player {
     energy = 100;
     maxEnergy = 100;
     weapon = [weapons.big_axe];
-    spells = [spells.thunderclap, spells.conjure_weapon];
+    spells = [spells.thunderclap, spells.conjure_weapon, spells.arcane_surge];
     
     stats = {
         strength: 10,
