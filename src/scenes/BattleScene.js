@@ -160,11 +160,6 @@ class BattleScene extends Phaser.Scene {
         );
       }
     }
-
-    // "M" byter mellan kartan och BattleScene
-    this.input.keyboard.on('keydown-M', () => {
-      this.scene.switch('MapScene');
-    });
   }
 
   createEnemyAnimation() {

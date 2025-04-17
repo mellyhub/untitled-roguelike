@@ -13,8 +13,8 @@ export class Warrior extends Player {
     energy = 100;
     maxEnergy = 100;
     weapon = [weapons.big_axe];
-    spells = [spells.thunderclap, spells.conjure_weapon, spells.arcane_surge];
-    
+    spells = [spells.thunderclap, spells.conjure_weapon, spells.arcane_surge, spells.phantom_strike];
+
     stats = {
         strength: 10,
         agility: 5,
@@ -44,13 +44,13 @@ export class Warrior extends Player {
     attack(target) {
 
         // check evasion
-        if(Math.random() < target.stats.evasion) {
+        if (Math.random() < target.stats.evasion) {
             console.log(`${target.name} evaded the attack!`);
             return "Missed!";
         }
 
         let damage = this.handleCrit(null);
-        
+
         // apply rage muiltiplier
         damage += this.handleRage(damage);
 
@@ -61,7 +61,7 @@ export class Warrior extends Player {
 
         // apply omnivamp
         this.health += Math.round(this.stats.omnivamp * damage);
-        
+
         // round and apply damage
         damage = Math.round(damage);
         target.health -= damage;
@@ -77,18 +77,34 @@ export class Warrior extends Player {
         this.energy -= 20;
 
         if (spell.damage) {
+
             // check evasion
-            if(Math.random() < target.stats.evasion) {
+            if (Math.random() < target.stats.evasion) {
                 console.log(`${target.name} evaded the attack!`);
                 return "Missed!";
             }
-            let damage = this.handleCrit(spell);
+
+            let damage = this.handleCrit(null);
+
+            // apply rage muiltiplier
             damage += this.handleRage(damage);
 
+            // apply defense
+            if(spell.name === "Phantom Strike") {
+                console.log(`${target.name}'s defense is ignored`);
+            }
+            else {
+                const defenseReduction = target.stats.defense / (target.stats.defense + 100);
+                damage *= 1 - defenseReduction;
+                console.log(`${target.name} reduced damage by ${Math.round(defenseReduction * 100)}%`);
+            }
+
+            // round and apply damage
             damage = Math.round(damage);
             target.health -= damage;
+
             console.log(`${this.name} casts ${spell.name} on ${target.name} for ${damage} damage.`);
-        
+
             return damage;
         }
 

@@ -198,5 +198,13 @@ const spells = {
         },
         description: "Temporarly increases intellect."
     },
+    phantom_strike: {
+        type: "Placeholder",
+        name: "Phantom Strike",
+        damage(attackerStats) {
+            return 50 + attackerStats.strength * 2;
+        },
+        description: "Ignores enemy defense stat"
+    },
 }
 export default spells;

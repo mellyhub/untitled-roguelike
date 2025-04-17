@@ -109,7 +109,7 @@ class TalentScene extends Phaser.Scene {
         const talentY = y + Math.floor(index / 2) * 100; // rows for talents
 
         const talentText = this.add.text(talentX, talentY, `${talent.name}: ${talent.value}/${talent.maxPoints}`, {
-          fontSize: '24px',
+          fontSize: '20px',
           fill: '#fff',
         }).setOrigin(0.5);
 
