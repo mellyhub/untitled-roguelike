@@ -42,14 +42,27 @@ export class Warrior extends Player {
     }
 
     attack(target) {
+
+        // check evasion
         if(Math.random() < target.stats.evasion) {
             console.log(`${target.name} evaded the attack!`);
             return "Missed!";
         }
+
         let damage = this.handleCrit(null);
+        
+        // apply rage muiltiplier
         damage += this.handleRage(damage);
 
+        // apply defense
+        const defenseReduction = target.stats.defense / (target.stats.defense + 100);
+        damage *= 1 - defenseReduction;
+        console.log(`${target.name} reduced damage by ${Math.round(defenseReduction * 100)}%`);
+
+        // apply omnivamp
         this.health += Math.round(this.stats.omnivamp * damage);
+        
+        // round and apply damage
         damage = Math.round(damage);
         target.health -= damage;
 
@@ -61,10 +74,14 @@ export class Warrior extends Player {
     }
 
     cast(target, spell) {
-
         this.energy -= 20;
 
         if (spell.damage) {
+            // check evasion
+            if(Math.random() < target.stats.evasion) {
+                console.log(`${target.name} evaded the attack!`);
+                return "Missed!";
+            }
             let damage = this.handleCrit(spell);
             damage += this.handleRage(damage);
 

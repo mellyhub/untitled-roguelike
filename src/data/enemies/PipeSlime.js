@@ -35,6 +35,8 @@ export class PipeSlime extends Enemy {
     }
 
     attack(target) {
+        // enemy damage handling needs to be rewritten
         target.health -= 50;
+        return 50;
     }
 }
