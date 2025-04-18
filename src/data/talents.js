@@ -30,8 +30,10 @@ const talentConfig = {
                 if (!player.permanentEffects.some(effect => effect.name === "Mirror Shield")) {
                     player.permanentEffects.push({
                         name: "Mirror Shield",
-                        applyEffect: (player) => {
-                            // to be implemented
+                        applyEffect: (player, attacker, damage) => {
+                            const reflectedDamage = Math.round(damage * 0.1); // reflects 10% of incoming damage
+                            attacker.health -= reflectedDamage; // apply reflected damage to the attacker
+                            console.log(`${attacker.name} takes ${reflectedDamage} reflected damage from Mirror Shield.`);
                         },
                     });
                 }
@@ -97,7 +99,7 @@ const talentConfig = {
             maxPoints: 5,
             effect: (player) => {
                 player.maxHealth = Math.round(player.maxHealth * 0.9);
-                if(player.health > player.maxHealth) {  // making sure you dont have more health than max health
+                if (player.health > player.maxHealth) {  // making sure you dont have more health than max health
                     player.health = player.maxHealth;
                 }
                 player.damageMultiplier += 0.0025;

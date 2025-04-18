@@ -8,6 +8,7 @@ class BattleUI {
         this.currentMenuType = 'main';
         this.spellMenuBackground = null;
         this.bagMenuBackground = null;
+        this.statsMenuBackground = null;
         this.actionBarContainer = null;
         this.statsContainer = null;
         this.playerUnitFrame = null;
@@ -148,6 +149,7 @@ class BattleUI {
 
         // render menu items
         this.menuItems = menu.map(menuItem => {
+
             // check if the menu is the spell menu
             const isSpellMenu = menuItem.x === 0 && this.currentMenu.some(item => item.text === 'Back');
             const xPosition = isSpellMenu ? 960 : 300 + menuItem.x * 200; // center horizontally for spell menu, original position for main menu
@@ -162,6 +164,69 @@ class BattleUI {
 
             return text;
         });
+    }
+
+    renderStatsMenu(player) {
+        // clear current menu
+        this.currentMenu = [];
+        this.currentMenuType = 'stats'; // set menu type to "stats"
+
+        // reset selection
+        this.currentSelection = { x: 0, y: 0 };
+
+        // adding player stats to the menu
+        this.currentMenu.push({ x: 0, y: 0, text: `Name: ${player.name}` });
+        this.currentMenu.push({ x: 0, y: 1, text: `Class: ${player.class}` });
+        this.currentMenu.push({ x: 0, y: 2, text: `Level: ${player.level}` });
+        this.currentMenu.push({ x: 0, y: 3, text: `Health: ${player.health}/${player.maxHealth}` });
+        this.currentMenu.push({ x: 0, y: 4, text: `Energy: ${player.energy}/${player.maxEnergy}` });
+        this.currentMenu.push({ x: 0, y: 5, text: `Strength: ${player.stats.strength}` });
+        this.currentMenu.push({ x: 0, y: 6, text: `Agility: ${player.stats.agility}` });
+        this.currentMenu.push({ x: 0, y: 7, text: `Intelligence: ${player.stats.intelligence}` });
+        this.currentMenu.push({ x: 0, y: 8, text: `Defense: ${player.stats.defense}` });
+        this.currentMenu.push({ x: 0, y: 9, text: `Crit Chance: ${(player.stats.critChance * 100).toFixed(1)}%` });
+        this.currentMenu.push({ x: 0, y: 10, text: `Crit Damage: ${player.stats.critDamage}x` });
+        this.currentMenu.push({ x: 0, y: 11, text: `Evasion: ${(player.stats.evasion * 100).toFixed(1)}%` });
+
+        // adding weapon information
+        const weapon = player.weapon.at(-1);
+        if (weapon) {
+            this.currentMenu.push({ x: 0, y: 12, text: `Weapon: ${weapon.name}` });
+            this.currentMenu.push({ x: 0, y: 13, text: `Damage: ${weapon.damage}` });
+
+            // display weapon coatings if any
+            if (weapon.coatings.length > 0) {
+                weapon.coatings.forEach((coating, index) => {
+                    this.currentMenu.push({ x: 0, y: 14 + index, text: `Coating: ${coating.name} (${(coating.chance * 100).toFixed(1)}% chance)` });
+                });
+            }
+        }
+        else {
+            this.currentMenu.push({ x: 0, y: 12, text: `Weapon: None` });
+        }
+
+        this.currentMenu.push({ x: 0, y: this.currentMenu.length, text: 'Back' });
+
+        const backgroundWidth = 400;
+        const backgroundHeight = 50 * this.currentMenu.length + 20; // adjust height based on number of items
+        const backgroundX = 960 - backgroundWidth / 2; // center horizontally
+        const backgroundY = 400 - 25; // start slightly above the first item
+
+        if (this.statsMenuBackground) {
+            this.statsMenuBackground.destroy();
+        }
+
+        this.statsMenuBackground = this.scene.add.rectangle(
+            backgroundX,
+            backgroundY,
+            backgroundWidth,
+            backgroundHeight,
+            Phaser.Display.Color.GetColor(100, 100, 100)
+        ).setOrigin(0);
+
+        this.statsMenuBackground.setAlpha(0.8);
+
+        this.renderMenu(this.currentMenu);
     }
 
     renderBagMenu(player) {
@@ -260,7 +325,7 @@ class BattleUI {
         );
     }
 
-    selectMenuItem(player, executeTurn, switchMenu, bagMenu, mainMenu) {
+    selectMenuItem(player, executeTurn, switchMenu, bagMenu, mainMenu, statsMenu) {
         const selectedItem = this.getSelectedItem();
         this.sfx.select.play();
         if (selectedItem) {
@@ -308,7 +373,14 @@ class BattleUI {
                     }
                 }
             }
-            else if(this.currentMenuType === "bag") {
+            else if (this.currentMenuType === "bag") {
+                if (selectedItem.text === 'Back') {
+                    console.log('Back selected!');
+                    switchMenu(mainMenu);
+                    this.currentMenuType = 'main'; // return to main menu
+                }
+            }
+            else if (this.currentMenuType === "stats") {
                 if (selectedItem.text === 'Back') {
                     console.log('Back selected!');
                     switchMenu(mainMenu);
@@ -327,7 +399,10 @@ class BattleUI {
         if (this.bagMenuBackground) {
             this.bagMenuBackground.destroy();
             this.bagMenuBackground = null;
-
+        }
+        if (this.statsMenuBackground) {
+            this.statsMenuBackground.destroy();
+            this.statsMenuBackground = null;
         }
 
         this.currentMenu = menu;

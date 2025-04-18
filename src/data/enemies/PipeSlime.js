@@ -32,17 +32,30 @@ export class PipeSlime extends Enemy {
         this.strength = 100 + weight * 10;
     }
 
-    attack(target) { 
+    attack(target) {
 
         // stun and paralysis currently do the same thing
-        if (this.statusEffects.stunned || this.statusEffects.paralysed  === true) {
+        if (this.statusEffects.stunned || this.statusEffects.paralysed === true) {
             console.log(`${this.name} is incapacitated and cannot attack.`);
             return "";
         }
-        else {
-            // enemy damage handling needs to be rewritten
-            target.health -= 50;
-            return 50;
+
+        let damage = 50;
+
+        // check for mirror shield talent
+        const mirrorShieldEffect = target.permanentEffects.find(effect => effect.name === "Mirror Shield");
+        if (mirrorShieldEffect) {
+            mirrorShieldEffect.applyEffect(target, this, damage); // reflect damage back to the attacker
+            damage *= 0.9; // mitigate damage
         }
+
+        // enemy damage handling needs to be rewritten
+        
+        target.health -= damage;
+        console.log(`${this.name} attacks ${target.name} for ${damage} damage.`);
+
+
+
+        return damage;
     }
 }

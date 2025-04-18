@@ -150,6 +150,14 @@ class BattleScene extends Phaser.Scene {
           this.mainMenu
         );
       }
+      else if(this.battleUI.currentMenuType === 'main' && selectedItem.text === 'Stats') {
+        // opens bag menu
+        this.battleUI.renderStatsMenu(
+          this.player,
+          this.battleUI.switchMenu.bind(this.battleUI),
+          this.mainMenu
+        );
+      }
       else {
         // handle other menu actions
         this.battleUI.selectMenuItem(
