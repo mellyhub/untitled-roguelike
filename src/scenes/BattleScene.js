@@ -182,13 +182,19 @@ class BattleScene extends Phaser.Scene {
     return this.add.sprite(this.enemy.imageXPos, this.enemy.imageYPos, this.enemy.animationSheetName).setScale(this.enemy.imageScale);
   }
 
-  // Wait for player or enemy to finish attacking
+  // Resolve a promise after some time, used to implement delay
   resolveAfterTime(ms) {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve();
       }, ms);
     })
+  }
+
+  // Call a function after a delay
+  async delayedCall(fn, delay) {
+    await this.resolveAfterTime(delay);
+    fn?.();
   }
 
   displayAnimationText(name, action, selectedSpell) {
@@ -203,46 +209,47 @@ class BattleScene extends Phaser.Scene {
     this.inputLocked = true;
     this.player.processActiveEffects();
 
+    const animationText = this.displayAnimationText(this.player.name, action, selectedSpell);
+    let damage = null;
+
     if (action === 'attack') {
       this.player.animations.playAttackAnimation();
-      const damage = this.player.attack(this.enemy);
-      this.battleUI.displayDamageText('enemy', damage);
+      damage = this.player.attack(this.enemy);
     }
     else if (action === 'cast') {
       if (selectedSpell) {
         this.player.animations.playCastAnimation(selectedSpell);
-        const damage = this.player.cast(this.enemy, selectedSpell);
-        console.log(damage);
-        if (damage) {
-          this.battleUI.displayDamageText('enemy', damage);
-        }
+        damage = this.player.cast(this.enemy, selectedSpell);
       }
       else {
         console.warn('No spell selected!');
       }
     }
 
-    const animationText = this.displayAnimationText(this.player.name, action, selectedSpell);
+    if (damage) {
+      this.delayedCall(() => this.battleUI.displayDamageText('enemy', damage), 1000);
+    }
+    
     await this.resolveAfterTime(1000);
     animationText.destroy();
 
     this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP, this.turnCounter);
     this.battleUI.renderMenu(this.currentMenu, this.currentSelection);
+    await this.resolveAfterTime(1000);
 
     // process active effects for the enemy
     console.log("Processing active effects for the enemy.");
     this.enemy.processActiveEffects();
 
     if (this.enemy.health > 0) {
-      const damage = this.enemy.attack(this.player);
-      this.battleUI.displayDamageText('player', damage);
       const animationText = this.displayAnimationText(this.enemy.name, "attack", selectedSpell);
-      await this.resolveAfterTime(1000);
-      animationText.destroy();
+      const damage = this.enemy.attack(this.player);
+      this.delayedCall(() => animationText.destroy(), 1000);
+      this.delayedCall(() => this.battleUI.displayDamageText('player', damage), 1000)
     }
 
+    await this.resolveAfterTime(1000);
     this.turnCounter++;
-
     this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP, this.turnCounter);
     this.battleUI.renderMenu(this.currentMenu, this.currentSelection);
     this.checkRoundOutcome();

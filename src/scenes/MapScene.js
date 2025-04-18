@@ -107,7 +107,7 @@ class MapScene extends Phaser.Scene {
     highlightNode(index) {
         const node = this.levelNodes[index];
         if (!node.completed) {
-            node.render.setFillStyle(0xffff00, 0.7); // highlightar vald node
+            node.render.setFillStyle(0x008000, 0.7); // highlightar vald node
         }
     }
 
