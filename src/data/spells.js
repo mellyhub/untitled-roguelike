@@ -173,8 +173,6 @@ const spells = {
                     console.log(`${target.name} is no longer stunned.`);
                 }
             });
-
-            console.log(target);
         },
         description: "Causes a shockwave, stunning the target for 1 turn."
     },
@@ -196,8 +194,6 @@ const spells = {
                     attacker.stats.intelligence -= 10;
                 }
             });
-
-            console.log(attacker);
         },
         description: "Temporarly increases intellect."
     },
@@ -242,7 +238,6 @@ const spells = {
                     console.log(`${target.name}'s stats have been restored after Soul Shatter.`);
                 }
             });
-            console.log(target);
         },
         description: "Reduces the target's main stats by 3 for the rest of the combat."
     }

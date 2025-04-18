@@ -62,6 +62,17 @@ export class Warrior extends Player {
         // apply omnivamp
         this.health += Math.round(this.stats.omnivamp * damage);
 
+        // process weapon coatings
+        const weapon = this.weapon.at(-1);
+        if (weapon && weapon.coatings) {
+            weapon.coatings.forEach(coating => {
+                if (Math.random() < coating.chance) {
+                    console.log(`Coating triggered: ${coating.name}`);
+                    coating.effect(this, target); // process the coating's effect
+                }
+            });
+        }
+
         // round and apply damage
         damage = Math.round(damage);
         target.health -= damage;
@@ -81,7 +92,7 @@ export class Warrior extends Player {
                 spell.effect(this, target);
                 console.log(`${this.name} casts ${spell.name}.`);
             }
-            
+
             if (spell.damage) {
 
                 // check evasion

@@ -133,12 +133,42 @@ const talentConfig = {
             description: "Applies paralysis coating to your weapon.",
             maxPoints: 1,
             effect: (player) => {
-                player.permanentEffects.push({
+                const weapon = player.weapon.at(-1);
+                if (!weapon) {
+                    console.error("No weapon equipped to apply Paralysis Coating!");
+                    return;
+                }
+
+                // check if coating is already applied
+                if (weapon.coatings.some(coating => coating.name === "Paralysis Coating")) {
+                    console.log("Paralysis Coating is already applied to the weapon.");
+                    return;
+                }
+
+                weapon.coatings.push({
                     name: "Paralysis Coating",
-                    applyEffect: (player) => {
-                        
-                    },
-                })
+                    chance: 0.2, // 20% chance to trigger
+                    effect: (attacker, target) => {
+                        console.log(`${target.name} is paralyzed by ${attacker.name}'s Paralysis Coating!`);
+                        target.activeEffects.push({
+                            name: "Paralyzed",
+                            remainingTurns: 3,
+                            applyEffect: () => {
+                                target.statusEffects.paralysed = true;
+                            },
+                            removeEffect: () => {
+                                target.statusEffects.paralysed = false;
+
+                            }
+                        });
+        
+                        // immediately apply the paralysis effect
+                        const paralysisEffect = target.activeEffects.find(effect => effect.name === "Paralyzed");
+                        if (paralysisEffect) {
+                            paralysisEffect.applyEffect();
+                        }
+                    }
+                });
             }
         }
     ]
