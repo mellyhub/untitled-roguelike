@@ -48,7 +48,7 @@ const spells = {
             return 25 + attackerStats.strength * 2;
         }
     },
-    /* aura_of_might: {
+    aura_of_might: {
         type: "Placeholder",
         name: "Aura of Might",
         turnDuration: 3,
@@ -117,7 +117,7 @@ const spells = {
                 }
             });
         },
-    }, */
+    },
     conjure_weapon: {
         type: "Conjuration",
         name: "Conjure Weapon",

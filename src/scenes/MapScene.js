@@ -16,15 +16,27 @@ class MapScene extends Phaser.Scene {
         this.levels = generateLevels(this.seed);
         this.add.image(0, 0, 'map').setOrigin(0);
 
-        // dynamically generates level nodes
-        const xPos = 800;
-        const yPos = 600;
-        this.levelNodes = this.levels.map((level, index) => ({
-            level: level,
-            render: this.add.rectangle(xPos + index * 300, yPos, 200, 200, 0x000000, 0.7),
-            text: this.add.text(xPos + index * 300, yPos, `${index + 1}`, { fontSize: '20px' }),
-            completed: level.completed,
-        }));
+        
+        const LEVELS = {
+            Portal: { level: this.levels[0], xPos: 1500, yPos: 715 },
+            Town: { level: this.levels[1],  xPos: 200, yPos: 650}
+        };
+
+        // Render the level nodes
+        this.levelNodes = [
+            {
+                level: LEVELS.Portal.level,
+                render: this.add.circle(LEVELS.Portal.xPos, LEVELS.Portal.yPos, 70, 0x000000, 0.7),
+                text: this.add.text(LEVELS.Portal.xPos - 50, LEVELS.Portal.yPos - 10, `${LEVELS.Portal.level.name}`, { fontSize: '30px' }),
+                completed: LEVELS.Portal.completed,
+            },
+            {
+                level: LEVELS.Town.level,
+                render: this.add.circle(LEVELS.Town.xPos, LEVELS.Town.yPos, 70, 0x000000, 0.7),
+                text: this.add.text(LEVELS.Town.xPos - 35, LEVELS.Town.yPos - 10, `${LEVELS.Town.level.name}`, { fontSize: '30px' }),
+                completed: LEVELS.Town.completed,
+            }
+        ];
 
         // Update the appearance of all nodes based on their completion status
         this.levelNodes.forEach((node, index) => {

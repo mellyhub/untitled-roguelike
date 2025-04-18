@@ -7,7 +7,7 @@ function generateLevels(seed) {
             level: 0
         },
         {
-            name: "test",
+            name: "Town",
             completed: false,
             level: 0
         },
