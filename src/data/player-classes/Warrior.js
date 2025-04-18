@@ -77,6 +77,11 @@ export class Warrior extends Player {
         if (this.energy >= spell.energyCost) {
             this.energy -= 20;
 
+            if (spell.effect) {
+                spell.effect(this, target);
+                console.log(`${this.name} casts ${spell.name}.`);
+            }
+            
             if (spell.damage) {
 
                 // check evasion
@@ -90,11 +95,11 @@ export class Warrior extends Player {
                 // apply rage muiltiplier
                 damage += this.handleRage(damage);
 
-                // apply defense
                 if (spell.name === "Phantom Strike") {
                     console.log(`${target.name}'s defense is ignored`);
                 }
                 else {
+                    // apply defense
                     const defenseReduction = target.stats.defense / (target.stats.defense + 100);
                     damage *= 1 - defenseReduction;
                     console.log(`${target.name} reduced damage by ${Math.round(defenseReduction * 100)}%`);
@@ -109,15 +114,12 @@ export class Warrior extends Player {
                 return damage;
             }
 
-            if (spell.effect) {
-                spell.effect(this, target);
-                console.log(`${this.name} casts ${spell.name}.`);
-            }
-
             return 0;
         }
         else {
-            console.log("Not enough energy to cast!")
+            console.log("Not enough energy to cast!");
+            // currently, your turn is "skipped" if you try to cast without having enough energy
+            // this behavior should probably be changed
         }
     }
 }

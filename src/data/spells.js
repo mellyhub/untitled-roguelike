@@ -123,7 +123,7 @@ const spells = {
         name: "Conjure Weapon",
         energyCost: 25,
         turnDuration: 3,
-        effect(attacker) {
+        effect(attacker, target) {
             attacker.weapon.push({
                 name: "Conjured weapon",
                 damage: 100,
@@ -186,7 +186,7 @@ const spells = {
         effect(attacker, target) {
             console.log(`${attacker.name} casts Arcane Surge, increasing intellect for ${this.turnDuration} turns.`);
             attacker.stats.intelligence += 10;
-            target.activeEffects.push({
+            attacker.activeEffects.push({
                 name: "Arcane Surge",
                 remainingTurns: this.turnDuration,
                 applyEffect: () => {
@@ -217,13 +217,34 @@ const spells = {
         damage(attackerStats) {
             return 20 + attackerStats.strength * 2;
         },
-        effect(target) {
+        effect(attacker, target) {
+            console.log(`${target.name} is affected by Soul Shatter, reducing their stats for the rest of the combat.`);
+            
+            if (!target.stats) {
+                console.error("Target stats are undefined!");
+                return;
+            }
+
             target.stats.strength -= 3;
             target.stats.agility -= 3;
             target.stats.intelligence -= 3;
-            console.log(target.stats);
+
+            target.activeEffects.push({
+                name: "Soul Shatter",
+                remainingTurns: Infinity, // effect lasts for the rest of combat
+                applyEffect: () => {
+                    console.log(`${target.name}'s stats are reduced by Soul Shatter.`);
+                },
+                removeEffect: () => {
+                    target.stats.strength += 3;
+                    target.stats.agility += 3;
+                    target.stats.intelligence += 3;
+                    console.log(`${target.name}'s stats have been restored after Soul Shatter.`);
+                }
+            });
+            console.log(target);
         },
-        description: "Reduces targets main stats by 3."
+        description: "Reduces the target's main stats by 3 for the rest of the combat."
     }
 }
 export default spells;

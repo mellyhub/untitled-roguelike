@@ -128,6 +128,19 @@ const talentConfig = {
                 console.log(`${player.name}: ITS MORBIN TIME!`);
             }
         },
+        {
+            name: "Paralysis Coating",
+            description: "Applies paralysis coating to your weapon.",
+            maxPoints: 1,
+            effect: (player) => {
+                player.permanentEffects.push({
+                    name: "Paralysis Coating",
+                    applyEffect: (player) => {
+                        
+                    },
+                })
+            }
+        }
     ]
 };
 

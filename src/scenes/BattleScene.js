@@ -203,6 +203,7 @@ class BattleScene extends Phaser.Scene {
       if (selectedSpell) {
         this.player.animations.playCastAnimation(selectedSpell);
         const damage = this.player.cast(this.enemy, selectedSpell);
+        console.log(damage);
         if (damage) {
           this.battleUI.displayDamageText('enemy', damage);
         }
@@ -218,9 +219,12 @@ class BattleScene extends Phaser.Scene {
 
     this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP, this.turnCounter);
     this.battleUI.renderMenu(this.currentMenu, this.currentSelection);
+    
+    // process active effects for the enemy
+    console.log("Processing active effects for the enemy.");
+    this.enemy.processActiveEffects();
 
     if (this.enemy.health > 0) {
-      this.enemy.processActiveEffects();
       const damage = this.enemy.attack(this.player);
       this.battleUI.displayDamageText('player', damage);
       const animationText = this.displayAnimationText(this.enemy.name, "attack", selectedSpell);

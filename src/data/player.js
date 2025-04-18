@@ -32,7 +32,7 @@ export class Player {
     processActiveEffects() {
         this.activeEffects = this.activeEffects.filter(effect => {
             effect.applyEffect();
-
+            console.log(this.activeEffects);
             // remove effect if expired
             if (effect.remainingTurns <= 0) {
                 if (effect.removeEffect) {
