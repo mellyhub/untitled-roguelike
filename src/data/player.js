@@ -18,6 +18,10 @@ export class Player {
     image;
     permanentEffects = [];
     activeEffects = [];
+    statusEffects = [{
+        stunned: false,
+        paralysed: false
+    }]
     lastAction = null;
     talentPoints = 50;
     level = 1;
@@ -28,7 +32,7 @@ export class Player {
     processActiveEffects() {
         this.activeEffects = this.activeEffects.filter(effect => {
             effect.applyEffect();
-                
+
             // remove effect if expired
             if (effect.remainingTurns <= 0) {
                 if (effect.removeEffect) {
@@ -37,7 +41,7 @@ export class Player {
                 console.log(`${effect.name} effect on ${this.name} has expired.`);
                 return false; // remove effect
             }
-    
+
             effect.remainingTurns--;
             return true; // keep effect
         });
@@ -56,12 +60,12 @@ export class Player {
     handleCrit(spell) {
         if (this.stats.critChance > Math.random()) {
             console.log("Critical hit!");
-            return spell ? 
-                spell.damage(this.stats) * this.stats.critDamage : 
+            return spell ?
+                spell.damage(this.stats) * this.stats.critDamage :
                 this.weapon.at(-1).damage * this.stats.strength * 0.1 * this.stats.critDamage;
         } else {
             return spell ?
-                spell.damage(this.stats) : 
+                spell.damage(this.stats) :
                 this.weapon.at(-1).damage * this.stats.strength * 0.1;
         }
     }
@@ -99,7 +103,7 @@ export class Player {
     }
 
     increaseScore(amount) {
-        this.score =+ amount;
+        this.score = + amount;
     }
 
     setLastAction(action) {

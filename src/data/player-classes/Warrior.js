@@ -13,7 +13,7 @@ export class Warrior extends Player {
     energy = 100;
     maxEnergy = 100;
     weapon = [weapons.big_axe];
-    spells = [spells.thunderclap, spells.conjure_weapon, spells.arcane_surge, spells.phantom_strike];
+    spells = [spells.thunderclap, spells.conjure_weapon, spells.arcane_surge, spells.phantom_strike, spells.soul_shatter];
 
     stats = {
         strength: 10,
@@ -74,45 +74,50 @@ export class Warrior extends Player {
     }
 
     cast(target, spell) {
-        this.energy -= 20;
+        if (this.energy >= spell.energyCost) {
+            this.energy -= 20;
 
-        if (spell.damage) {
+            if (spell.damage) {
 
-            // check evasion
-            if (Math.random() < target.stats.evasion) {
-                console.log(`${target.name} evaded the attack!`);
-                return "Missed!";
+                // check evasion
+                if (Math.random() < target.stats.evasion) {
+                    console.log(`${target.name} evaded the attack!`);
+                    return "Missed!";
+                }
+
+                let damage = this.handleCrit(null);
+
+                // apply rage muiltiplier
+                damage += this.handleRage(damage);
+
+                // apply defense
+                if (spell.name === "Phantom Strike") {
+                    console.log(`${target.name}'s defense is ignored`);
+                }
+                else {
+                    const defenseReduction = target.stats.defense / (target.stats.defense + 100);
+                    damage *= 1 - defenseReduction;
+                    console.log(`${target.name} reduced damage by ${Math.round(defenseReduction * 100)}%`);
+                }
+
+                // round and apply damage
+                damage = Math.round(damage);
+                target.health -= damage;
+
+                console.log(`${this.name} casts ${spell.name} on ${target.name} for ${damage} damage.`);
+
+                return damage;
             }
 
-            let damage = this.handleCrit(null);
-
-            // apply rage muiltiplier
-            damage += this.handleRage(damage);
-
-            // apply defense
-            if(spell.name === "Phantom Strike") {
-                console.log(`${target.name}'s defense is ignored`);
-            }
-            else {
-                const defenseReduction = target.stats.defense / (target.stats.defense + 100);
-                damage *= 1 - defenseReduction;
-                console.log(`${target.name} reduced damage by ${Math.round(defenseReduction * 100)}%`);
+            if (spell.effect) {
+                spell.effect(this, target);
+                console.log(`${this.name} casts ${spell.name}.`);
             }
 
-            // round and apply damage
-            damage = Math.round(damage);
-            target.health -= damage;
-
-            console.log(`${this.name} casts ${spell.name} on ${target.name} for ${damage} damage.`);
-
-            return damage;
+            return 0;
         }
-
-        if (spell.effect) {
-            spell.effect(this, target);
-            console.log(`${this.name} casts ${spell.name}.`);
+        else {
+            console.log("Not enough energy to cast!")
         }
-
-        return 0;
     }
 }

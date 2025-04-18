@@ -121,6 +121,7 @@ const spells = {
     conjure_weapon: {
         type: "Conjuration",
         name: "Conjure Weapon",
+        energyCost: 25,
         turnDuration: 3,
         effect(attacker) {
             attacker.weapon.push({
@@ -153,6 +154,7 @@ const spells = {
     thunderclap: {
         type: "Placeholder",
         name: "Thunderclap",
+        energyCost: 25,
         turnDuration: 1, // stun lasts for 1 turn
         effect(attacker, target) {
             console.log(`${attacker.name} casts Thunderclap on ${target.name}, stunning them for ${this.turnDuration} turns.`);
@@ -163,11 +165,11 @@ const spells = {
                 name: "Stunned",
                 remainingTurns: this.turnDuration,
                 applyEffect: () => {
-                    target.stunned = true; // mark target as stunned
+                    target.statusEffects.stunned = true; // mark target as stunned
                     console.log(`${target.name} is stunned and cannot act.`);
                 },
                 removeEffect: () => {
-                    target.stunned = false; // remove stun after duration
+                    target.statusEffects.stunned = false; // remove stun after duration
                     console.log(`${target.name} is no longer stunned.`);
                 }
             });
@@ -179,6 +181,7 @@ const spells = {
     arcane_surge: {
         type: "Placeholder",
         name: "Arcane Surge",
+        energyCost: 25,
         turnDuration: 3,
         effect(attacker, target) {
             console.log(`${attacker.name} casts Arcane Surge, increasing intellect for ${this.turnDuration} turns.`);
@@ -201,10 +204,26 @@ const spells = {
     phantom_strike: {
         type: "Placeholder",
         name: "Phantom Strike",
+        energyCost: 50,
         damage(attackerStats) {
             return 50 + attackerStats.strength * 2;
         },
-        description: "Ignores enemy defense stat"
+        description: "Ignores enemy defense stat."
     },
+    soul_shatter: {
+        type: "Placeholder",
+        name: "Soul Shatter",
+        energyCost: 50,
+        damage(attackerStats) {
+            return 20 + attackerStats.strength * 2;
+        },
+        effect(target) {
+            target.stats.strength -= 3;
+            target.stats.agility -= 3;
+            target.stats.intelligence -= 3;
+            console.log(target.stats);
+        },
+        description: "Reduces targets main stats by 3."
+    }
 }
 export default spells;

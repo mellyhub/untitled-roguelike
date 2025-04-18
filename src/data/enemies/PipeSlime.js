@@ -35,7 +35,7 @@ export class PipeSlime extends Enemy {
     attack(target) { 
 
         // enemy damage handling needs to be rewritten
-        if (this.stunned === true) {
+        if (this.statusEffects.stunned === true) {
             console.log(`${this.name} is stunned and cannot attack.`);
         }
         else {

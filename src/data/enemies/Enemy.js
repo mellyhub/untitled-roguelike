@@ -15,7 +15,10 @@ export class Enemy {
     spells = [];
     activeEffects = [];
 
-    stunned = false;
+    statusEffects = [{
+        stunned: false,
+        paralysed: false
+    }]
     
     constructor(weight) {}
 
