@@ -127,6 +127,7 @@ const spells = {
             attacker.weapon.push({
                 name: "Conjured weapon",
                 damage: 100,
+                coatings: []
             });
 
             const effect = attacker.permanentEffects.find(effect => effect.name === "Conjure+");
@@ -251,11 +252,20 @@ const spells = {
         name: "Heal",
         energyCost: 25,
         effect(attacker, target) {
-            const healAmount = 50 * healMultiplier;
+            const healAmount = Math.round(50 * attacker.healMultiplier);
             attacker.health += healAmount;
             console.log(`${attacker.name} heals for ${healAmount}`);
         },
         description: "used for testing"
     },
+
+    geomancy: {
+        type: "Geomancy",
+        name: "Geomancy",
+        energyCost: 100,
+        damage(attackerStats) {
+            return 200 + attackerStats.intelligence * 2;
+        },
+    }
 }
 export default spells;

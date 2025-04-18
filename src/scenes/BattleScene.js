@@ -101,14 +101,7 @@ class BattleScene extends Phaser.Scene {
       { x: 0, y: 0, text: 'Attack' },
       { x: 1, y: 0, text: 'Cast' },
       { x: 0, y: 1, text: 'Bag' },
-      { x: 1, y: 1, text: 'Menu4' },
-    ];
-
-    this.bagMenu = [
-      { x: 0, y: 0, text: 'Potion' },
-      { x: 1, y: 0, text: 'Elixir' },
-      { x: 0, y: 1, text: 'Bomb' },
-      { x: 1, y: 1, text: 'Back' },
+      { x: 1, y: 1, text: 'Stats' },
     ];
 
     this.hitAnimation;
@@ -144,6 +137,14 @@ class BattleScene extends Phaser.Scene {
       if (this.battleUI.currentMenuType === 'main' && selectedItem.text === 'Cast') {
         // opens spell menu
         this.battleUI.renderSpellMenu(
+          this.player,
+          this.battleUI.switchMenu.bind(this.battleUI),
+          this.mainMenu
+        );
+      }
+      else if(this.battleUI.currentMenuType === 'main' && selectedItem.text === 'Bag') {
+        // opens bag menu
+        this.battleUI.renderBagMenu(
           this.player,
           this.battleUI.switchMenu.bind(this.battleUI),
           this.mainMenu

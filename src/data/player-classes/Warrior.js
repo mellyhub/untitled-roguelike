@@ -13,7 +13,15 @@ export class Warrior extends Player {
     energy = 100;
     maxEnergy = 100;
     weapon = [weapons.big_axe];
-    spells = [spells.thunderclap, spells.conjure_weapon, spells.arcane_surge, spells.phantom_strike, spells.soul_shatter, spells.heal];
+    spells = [
+        spells.thunderclap,
+        spells.conjure_weapon,
+        spells.arcane_surge,
+        spells.phantom_strike,
+        spells.soul_shatter,
+        spells.heal,
+        spells.geomancy
+    ];
 
     stats = {
         strength: 10,
@@ -90,7 +98,7 @@ export class Warrior extends Player {
 
     cast(target, spell) {
         if (this.energy >= spell.energyCost) {
-            this.energy -= 20;
+            this.energy -= spell.energyCost;
 
             if (spell.effect) {
                 spell.effect(this, target);
@@ -107,8 +115,12 @@ export class Warrior extends Player {
 
                 let damage = this.handleCrit(null);
 
+                console.log(damage);
+                
                 // apply rage muiltiplier
                 damage += this.handleRage(damage);
+
+                console.log(damage);
 
                 if (spell.name === "Phantom Strike") {
                     console.log(`${target.name}'s defense is ignored`);

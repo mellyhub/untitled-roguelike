@@ -7,6 +7,7 @@ class BattleUI {
         this.currentSelection = { x: 0, y: 0 };
         this.currentMenuType = 'main';
         this.spellMenuBackground = null;
+        this.bagMenuBackground = null;
         this.actionBarContainer = null;
         this.statsContainer = null;
         this.playerUnitFrame = null;
@@ -97,33 +98,33 @@ class BattleUI {
         this.actionBarContainer.add(this.scene.add.image(400, 70, 'intelligence-icon').setScale(0.4));
         this.actionBarContainer.add(this.scene.add.text(450, 70, `${player.stats.intelligence}`, { fontSize: '32px', fill: '#fff' }).setOrigin(0.5));
         this.actionBarContainer.add(this.scene.add.image(400, 70, 'uncommon-item-frame').setScale(0.4));
-        
+
         // for debugging
         const weapon = player.weapon.at(-1);
         this.actionBarContainer.add(this.scene.add.text(500, -100, `Weapon:\n${weapon.name}`, { fontSize: '40px' }));
-        
-        if(weapon.coatings.length > 0) {
+
+        if (weapon.coatings.length > 0) {
             this.actionBarContainer.add(this.scene.add.text(500, 0, `Coating:\n${weapon.coatings[0].name}`, { fontSize: '40px' }));
         }
     }
 
     displayDamageText(target, damage) {
         console.log(`Displaying damage: ${damage} to ${target}`); // debug
-    
+
         let x;
-        if(target === "player") {
+        if (target === "player") {
             x = 400;
         }
-        else if(target === "enemy") {
+        else if (target === "enemy") {
             x = 1520;
         }
         let y = 500;
-        
-        const damageText = this.scene.add.text(x, y, `-${damage}`, {
+
+        const damageText = this.scene.add.text(x, y, `${damage}`, {
             fontSize: "72px",
             fill: "#ffffff",
         }).setOrigin(0.5);
-    
+
         // animate the text to move upward and fade out
         this.scene.tweens.add({
             targets: damageText,
@@ -161,6 +162,41 @@ class BattleUI {
 
             return text;
         });
+    }
+
+    renderBagMenu(player) {
+        // clear current menu
+        this.currentMenu = [];
+        this.currentMenuType = 'bag'; // set menu type to "bag"
+
+        // hardcoded back button
+        this.currentMenu.push({ x: 0, y: 0, text: 'Alchemy' });
+        this.currentMenu.push({ x: 0, y: 1, text: 'Runes' });
+        this.currentMenu.push({ x: 0, y: 2, text: 'Back' });
+
+        // reset selection
+        this.currentSelection = { x: 0, y: 0 };
+
+        const backgroundWidth = 400;
+        const backgroundHeight = 50 * this.currentMenu.length + 20; // adjust height based on number of items
+        const backgroundX = 960 - backgroundWidth / 2; // center horizontally
+        const backgroundY = 400 - 25; // start slightly above the first item
+
+        if (this.bagMenuBackground) {
+            this.bagMenuBackground.destroy();
+        }
+
+        this.bagMenuBackground = this.scene.add.rectangle(
+            backgroundX,
+            backgroundY,
+            backgroundWidth,
+            backgroundHeight,
+            Phaser.Display.Color.GetColor(100, 100, 100)
+        ).setOrigin(0);
+
+        this.bagMenuBackground.setAlpha(0.8);
+
+        this.renderMenu(this.currentMenu);
     }
 
     renderSpellMenu(player) {
@@ -234,22 +270,22 @@ class BattleUI {
                     // plays attack after 1 second delay to match health bar animation
                     setTimeout(() => {
                         this.sfx.hit1.play();
-                      }, 1000);
+                    }, 1000);
                     executeTurn('attack');
-                }
-                else if (selectedItem.text === 'Bag') {
-                    console.log('Bag selected!');
-                    switchMenu(bagMenu);
-                }
-                else if (selectedItem.text === 'Back') {
-                    console.log('Back selected!');
-                    switchMenu(mainMenu);
                 }
                 else if (selectedItem.text === 'Cast') {
                     console.log('Cast selected!');
                     this.renderSpellMenu(player, switchMenu, mainMenu);
                 }
-            } 
+                else if (selectedItem.text === 'Bag') {
+                    console.log('Bag selected!');
+                    this.renderBagMenu(player, switchMenu, mainMenu);
+                }
+                else if (selectedItem.text === 'Back') {
+                    console.log('Back selected!');
+                    switchMenu(mainMenu);
+                }
+            }
             else if (this.currentMenuType === 'spell') {
                 if (selectedItem.text === 'Back') {
                     console.log('Back selected!');
@@ -262,7 +298,7 @@ class BattleUI {
                     if (selectedSpell) {
                         setTimeout(() => {
                             this.sfx.hit2.play();
-                          }, 1000);
+                        }, 1000);
                         console.log(`Cast ${selectedSpell.name} selected!`);
                         executeTurn('cast', selectedSpell);
 
@@ -270,6 +306,13 @@ class BattleUI {
                         switchMenu(mainMenu);
                         this.currentMenuType = 'main';
                     }
+                }
+            }
+            else if(this.currentMenuType === "bag") {
+                if (selectedItem.text === 'Back') {
+                    console.log('Back selected!');
+                    switchMenu(mainMenu);
+                    this.currentMenuType = 'main'; // return to main menu
                 }
             }
         }
@@ -280,6 +323,11 @@ class BattleUI {
         if (this.spellMenuBackground) {
             this.spellMenuBackground.destroy();
             this.spellMenuBackground = null;
+        }
+        if (this.bagMenuBackground) {
+            this.bagMenuBackground.destroy();
+            this.bagMenuBackground = null;
+
         }
 
         this.currentMenu = menu;

@@ -11,13 +11,27 @@ const talentConfig = {
                     player.permanentEffects.push({
                         name: "Conjure+",
                         applyEffect: (player) => {
-
-                            // i think something is bugged here >:()
                             if (player.weapon.at(-1).name === "Conjured weapon") {
                                 player.weapon.at(-1).damage *= 1.1;
                                 console.log(`Conjured weapon damage increased to ${player.weapon.at(-1).damage}`);
                                 console.log(player);
                             }
+                        },
+                    });
+                }
+            }
+        },
+        {
+            name: "Mirror Shield",
+            description: "Reflects a portion of incoming damage back at attackers.",
+            maxPoints: 1,
+            effect: (player) => {
+                console.log(player);
+                if (!player.permanentEffects.some(effect => effect.name === "Mirror Shield")) {
+                    player.permanentEffects.push({
+                        name: "Mirror Shield",
+                        applyEffect: (player) => {
+                            // to be implemented
                         },
                     });
                 }
@@ -99,7 +113,7 @@ const talentConfig = {
             maxPoints: 5,
             effect: (player) => {
                 player.stats.defense += 3;
-                player.healMultiplier -= 0.3;
+                player.healMultiplier *= 0.8;
             }
         },
 

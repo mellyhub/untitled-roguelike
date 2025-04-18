@@ -30,7 +30,7 @@ export class Player {
     talents = {};
     hasRevived = false;
     damageMultiplier = 1;
-    healMultiplier = 1;
+    healingMultiplier = 1;
 
     processActiveEffects() {
         this.activeEffects = this.activeEffects.filter(effect => {
@@ -63,6 +63,7 @@ export class Player {
     handleCrit(spell) {
         if (this.stats.critChance > Math.random()) {
             console.log("Critical hit!");
+            // what the flip is this?
             return spell ?
                 spell.damage(this.stats) * this.stats.critDamage :
                 this.weapon.at(-1).damage * this.stats.strength * 0.1 * this.stats.critDamage;
