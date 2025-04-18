@@ -99,7 +99,12 @@ class BattleUI {
         this.actionBarContainer.add(this.scene.add.image(400, 70, 'uncommon-item-frame').setScale(0.4));
         
         // for debugging
-        this.actionBarContainer.add(this.scene.add.text(550, 0, `Weapon:\n${player.weapon.at(-1).name}`, { fontSize: '40px' }));
+        const weapon = player.weapon.at(-1);
+        this.actionBarContainer.add(this.scene.add.text(500, -100, `Weapon:\n${weapon.name}`, { fontSize: '40px' }));
+        
+        if(weapon.coatings.length > 0) {
+            this.actionBarContainer.add(this.scene.add.text(500, 0, `Coating:\n${weapon.coatings[0].name}`, { fontSize: '40px' }));
+        }
     }
 
     displayDamageText(target, damage) {
