@@ -151,6 +151,7 @@ const spells = {
         },
         description: "Conjure a temporary weapon"
     },
+
     thunderclap: {
         type: "Placeholder",
         name: "Thunderclap",
@@ -176,6 +177,7 @@ const spells = {
         },
         description: "Causes a shockwave, stunning the target for 1 turn."
     },
+
     arcane_surge: {
         type: "Placeholder",
         name: "Arcane Surge",
@@ -197,6 +199,7 @@ const spells = {
         },
         description: "Temporarly increases intellect."
     },
+
     phantom_strike: {
         type: "Placeholder",
         name: "Phantom Strike",
@@ -206,6 +209,7 @@ const spells = {
         },
         description: "Ignores enemy defense stat."
     },
+
     soul_shatter: {
         type: "Placeholder",
         name: "Soul Shatter",
@@ -240,6 +244,18 @@ const spells = {
             });
         },
         description: "Reduces the target's main stats by 3 for the rest of the combat."
-    }
+    },
+
+    heal: {
+        type: "Placeholder",
+        name: "Heal",
+        energyCost: 25,
+        effect(attacker, target) {
+            const healAmount = 50 * healMultiplier;
+            attacker.health += healAmount;
+            console.log(`${attacker.name} heals for ${healAmount}`);
+        },
+        description: "used for testing"
+    },
 }
 export default spells;

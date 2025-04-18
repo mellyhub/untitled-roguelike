@@ -13,7 +13,7 @@ export class Warrior extends Player {
     energy = 100;
     maxEnergy = 100;
     weapon = [weapons.big_axe];
-    spells = [spells.thunderclap, spells.conjure_weapon, spells.arcane_surge, spells.phantom_strike, spells.soul_shatter];
+    spells = [spells.thunderclap, spells.conjure_weapon, spells.arcane_surge, spells.phantom_strike, spells.soul_shatter, spells.heal];
 
     stats = {
         strength: 10,
@@ -51,17 +51,6 @@ export class Warrior extends Player {
 
         let damage = this.handleCrit(null);
 
-        // apply rage muiltiplier
-        damage += this.handleRage(damage);
-
-        // apply defense
-        const defenseReduction = target.stats.defense / (target.stats.defense + 100);
-        damage *= 1 - defenseReduction;
-        console.log(`${target.name} reduced damage by ${Math.round(defenseReduction * 100)}%`);
-
-        // apply omnivamp
-        this.health += Math.round(this.stats.omnivamp * damage);
-
         // process weapon coatings
         const weapon = this.weapon.at(-1);
         if (weapon && weapon.coatings) {
@@ -73,8 +62,23 @@ export class Warrior extends Player {
             });
         }
 
-        // round and apply damage
+        damage *= this.damageMultiplier;
+        
+        // apply rage muiltiplier
+        damage += this.handleRage(damage);
+        
+        // apply defense
+        const defenseReduction = target.stats.defense / (target.stats.defense + 100);
+        damage *= 1 - defenseReduction;
+        console.log(`${target.name} reduced damage by ${Math.round(defenseReduction * 100)}%`);
+
+        // rounding damage
         damage = Math.round(damage);
+
+        // apply omnivamp
+        this.health += Math.round(this.stats.omnivamp * damage);
+
+        // apply damage to enemy
         target.health -= damage;
 
         const restoreEnergy = this.permanentEffects.find(effect => effect.name === "Energy on Attack");

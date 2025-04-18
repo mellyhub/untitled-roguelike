@@ -1,4 +1,5 @@
 const talentConfig = {
+
     magic: [
         {
             name: "Conjure+",
@@ -23,6 +24,7 @@ const talentConfig = {
             }
         }
     ],
+
     physical: [
         {
             name: "Energy",
@@ -40,6 +42,7 @@ const talentConfig = {
                 }
             }
         },
+
         {
             name: "Blademaster",
             description: "Increases damage dealt by swords by 5% per point.",
@@ -63,6 +66,7 @@ const talentConfig = {
                 }
             }
         },
+
         {
             name: "Battle Trance",
             description: "Puts the player into a hightened state of awareness, increasing critical hit chance.",
@@ -73,7 +77,34 @@ const talentConfig = {
             }
         },
 
+        {
+            name: "Pact of Power",
+            description: "Boosts your stats for the cost of max health.",
+            maxPoints: 5,
+            effect: (player) => {
+                player.maxHealth = Math.round(player.maxHealth * 0.9);
+                if(player.health > player.maxHealth) {  // making sure you dont have more health than max health
+                    player.health = player.maxHealth;
+                }
+                player.damageMultiplier += 0.0025;
+                player.stats.strength++;
+                player.stats.agility++;
+                player.stats.intelligence++;
+            }
+        },
+
+        {
+            name: "Pact of Resillience",
+            description: "Increases defense but reduces effectiveness of healing.",
+            maxPoints: 5,
+            effect: (player) => {
+                player.stats.defense += 3;
+                player.healMultiplier -= 0.3;
+            }
+        },
+
     ],
+
     defense: [
         {
             name: "Max HP",
@@ -84,6 +115,7 @@ const talentConfig = {
                 console.log(`Player's max HP increased to ${player.maxHealth}`);
             }
         },
+
         {
             name: "Energy Shield",
             description: "Adds defense scaling with intelligence.",
@@ -93,6 +125,7 @@ const talentConfig = {
                 console.log(player.stats);
             }
         },
+
         {
             name: "Rebirth",
             description: "Grants 1 revive per combat.",
@@ -116,6 +149,7 @@ const talentConfig = {
             }
         },
     ],
+
     utility: [
         {
             name: "Morbious",
@@ -128,6 +162,7 @@ const talentConfig = {
                 console.log(`${player.name}: ITS MORBIN TIME!`);
             }
         },
+
         {
             name: "Paralysis Coating",
             description: "Applies paralysis coating to your weapon.",
@@ -170,6 +205,7 @@ const talentConfig = {
                 });
             }
         },
+
         {
             name: "Toxic Coating",
             description: "Applies toxic coating to your weapon.",
@@ -195,7 +231,6 @@ const talentConfig = {
                             name: "Poisoned",
                             remainingTurns: 5,
                             applyEffect: () => {
-                                console.log("hora")
                                 target.statusEffects.poisoned = true;
                                 target.health -= 20;
                             },

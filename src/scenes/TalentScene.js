@@ -105,8 +105,10 @@ class TalentScene extends Phaser.Scene {
 
       // render talents
       talents.forEach((talent, index) => {
-        const talentX = x + (index % 2) * 200; // two columns per tree
-        const talentY = y + Math.floor(index / 2) * 100; // rows for talents
+        //const talentX = x + (index % 2) * 200; // two columns per tree
+        //const talentY = y + Math.floor(index / 2) * 100; // rows for talents
+        const talentX = x + (index % 1) * 200; // two columns per tree
+        const talentY = y + Math.floor(index / 1) * 100; // rows for talents
 
         const talentText = this.add.text(talentX, talentY, `${talent.name}: ${talent.value}/${talent.maxPoints}`, {
           fontSize: '20px',
