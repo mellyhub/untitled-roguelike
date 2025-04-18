@@ -45,6 +45,7 @@ export class Mage extends Player {
         if (restoreEnergy) {
             restoreEnergy.applyEffect(this);
         }
+        return damage;
     }
 
     cast(target, spell) {
@@ -60,11 +61,13 @@ export class Mage extends Player {
 
             this.lastAction = spell.name;
             console.log(`${this.name} casts ${spell.name} on ${target.name} for ${damage} damage.`);
+            return damage;
         }
 
         if (spell.effect) {
             spell.effect(this, target);
             console.log(`${this.name} casts ${spell.name}.`);
+            return null;
         }
     }
 }

@@ -31,6 +31,7 @@ export class Rogue extends Player {
     attack(target) {
         let damage = this.handleCrit(null);
         target.health -= Math.round(damage);
+        return damage;
     }
 
     cast(target, spell) {
@@ -42,11 +43,13 @@ export class Rogue extends Player {
             damage = Math.round(damage);
             target.health -= damage;
             console.log(`${this.name} casts ${spell.name} on ${target.name} for ${damage} damage.`);
+            return damage;
         }
 
         if (spell.effect) {
             spell.effect(this, target);
             console.log(`${this.name} casts ${spell.name}.`);
+            return null;
         }
     }
 }
