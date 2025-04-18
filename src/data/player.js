@@ -20,7 +20,8 @@ export class Player {
     activeEffects = [];
     statusEffects = [{
         stunned: false,
-        paralysed: false
+        paralysed: false,
+        poisoned: false,
     }]
     lastAction = null;
     talentPoints = 50;

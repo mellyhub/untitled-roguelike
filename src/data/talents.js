@@ -147,7 +147,7 @@ const talentConfig = {
 
                 weapon.coatings.push({
                     name: "Paralysis Coating",
-                    chance: 0.2, // 20% chance to trigger
+                    chance: 0.2, // 20% chance to trigger on attack
                     effect: (attacker, target) => {
                         console.log(`${target.name} is paralyzed by ${attacker.name}'s Paralysis Coating!`);
                         target.activeEffects.push({
@@ -158,14 +158,56 @@ const talentConfig = {
                             },
                             removeEffect: () => {
                                 target.statusEffects.paralysed = false;
-
                             }
                         });
-        
-                        // immediately apply the paralysis effect
+
+                        // immediately apply the effect
                         const paralysisEffect = target.activeEffects.find(effect => effect.name === "Paralyzed");
                         if (paralysisEffect) {
                             paralysisEffect.applyEffect();
+                        }
+                    }
+                });
+            }
+        },
+        {
+            name: "Toxic Coating",
+            description: "Applies toxic coating to your weapon.",
+            maxPoints: 1,
+            effect: (player) => {
+                const weapon = player.weapon.at(-1);
+                if (!weapon) {
+                    console.error("No weapon equipped to apply Toxic Coating!");
+                    return;
+                }
+
+                // check if coating is already applied
+                if (weapon.coatings.some(coating => coating.name === "Toxic Coating")) {
+                    console.log("Toxic Coating is already applied to the weapon.");
+                    return;
+                }
+                weapon.coatings.push({
+                    name: "Toxic Coating",
+                    chance: 1, // 100% chance to trigger on attack
+                    effect: (attacker, target) => {
+                        console.log(`${target.name} is poisoned by ${attacker.name}'s Toxic Coating!`);
+                        target.activeEffects.push({
+                            name: "Poisoned",
+                            remainingTurns: 5,
+                            applyEffect: () => {
+                                console.log("hora")
+                                target.statusEffects.poisoned = true;
+                                target.health -= 20;
+                            },
+                            removeEffect: () => {
+                                target.statusEffects.poisoned = false;
+                            }
+                        });
+
+                        // immediately apply the effect
+                        const poisonEffect = target.activeEffects.find(effect => effect.name === "Poisoned");
+                        if (poisonEffect) {
+                            poisonEffect.applyEffect();
                         }
                     }
                 });

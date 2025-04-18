@@ -219,7 +219,7 @@ class BattleScene extends Phaser.Scene {
 
     this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP, this.turnCounter);
     this.battleUI.renderMenu(this.currentMenu, this.currentSelection);
-    
+
     // process active effects for the enemy
     console.log("Processing active effects for the enemy.");
     this.enemy.processActiveEffects();
@@ -237,6 +237,8 @@ class BattleScene extends Phaser.Scene {
     this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP, this.turnCounter);
     this.battleUI.renderMenu(this.currentMenu, this.currentSelection);
     this.checkRoundOutcome();
+    console.log(this.player)
+    console.log(this.enemy)
   }
 
   async switchScene() {

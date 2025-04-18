@@ -34,11 +34,12 @@ export class PipeSlime extends Enemy {
 
     attack(target) { 
 
-        // enemy damage handling needs to be rewritten
+        // stun and paralysis currently do the same thing
         if (this.statusEffects.stunned || this.statusEffects.paralysed  === true) {
-            console.log(`${this.name} is stunned and cannot attack.`);
+            console.log(`${this.name} is incapacitated and cannot attack.`);
         }
         else {
+            // enemy damage handling needs to be rewritten
             target.health -= 50;
             return 50;
         }

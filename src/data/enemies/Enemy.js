@@ -17,7 +17,8 @@ export class Enemy {
 
     statusEffects = [{
         stunned: false,
-        paralysed: false
+        paralysed: false,
+        poisoned: false,
     }]
     
     constructor(weight) {}
