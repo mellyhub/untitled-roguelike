@@ -254,6 +254,9 @@ const spells = {
         effect(attacker, target) {
             const healAmount = Math.round(50 * attacker.healMultiplier);
             attacker.health += healAmount;
+            if(attacker.health > attacker.maxHealth) {
+                attacker.health = attacker.maxHealth;
+            }
             console.log(`${attacker.name} heals for ${healAmount}`);
         },
         description: "used for testing"

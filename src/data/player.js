@@ -30,7 +30,7 @@ export class Player {
     talents = {};
     hasRevived = false;
     damageMultiplier = 1;
-    healingMultiplier = 1;
+    healMultiplier = 1;
 
     processActiveEffects() {
         this.activeEffects = this.activeEffects.filter(effect => {
