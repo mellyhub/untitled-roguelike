@@ -85,6 +85,9 @@ export class Warrior extends Player {
 
         // apply omnivamp
         this.health += Math.round(this.stats.omnivamp * damage);
+        if(this.health >= this.maxHealth) {
+            this.health = this.maxHealth;
+        }
 
         // apply damage to enemy
         target.health -= damage;
