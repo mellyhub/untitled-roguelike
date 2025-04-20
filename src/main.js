@@ -5,6 +5,7 @@ import MapScene from './scenes/MapScene';
 import TalentScene from './scenes/TalentScene';
 import MainMenuScene from './scenes/MainMenuScene';
 import RewardScene from './scenes/RewardScene';
+import MerchantScene from './scenes/MerchantScene';
 
 const gameWidth = 1920;
 const gameHeight = 1080;
@@ -27,7 +28,7 @@ const config = {
   },
 
   // scenen som defineras först är den som laddas först
-  scene: [MainMenuScene, MapScene, BattleScene, TalentScene, RewardScene]
+  scene: [MainMenuScene, MapScene, BattleScene, TalentScene, RewardScene, MerchantScene]
 }
 
 const game = new Phaser.Game(config)

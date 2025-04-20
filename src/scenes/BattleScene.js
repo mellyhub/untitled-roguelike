@@ -256,7 +256,15 @@ class BattleScene extends Phaser.Scene {
 
   async switchScene() {
     await new Promise(resolve => this.time.delayedCall(3000, resolve));
-    this.scene.start('RewardScene', { player: this.player, seed: this.seed });
+
+    // check for merchant encounter
+    console.log(this.player.completedEncounters);
+    if (this.player.completedEncounters % 5 === 0) {  // triggers for every 5 encounters
+      this.scene.start('MerchantScene', { player: this.player, seed: this.seed });
+    }
+    else {
+      this.scene.start('RewardScene', { player: this.player, seed: this.seed });
+    }
     this.inputLocked = false;
   }
 
@@ -273,7 +281,8 @@ class BattleScene extends Phaser.Scene {
       console.log("All active effects have been removed");
 
       this.turnCounter = 0;
-      this.player.score += 100; // example: add 100 points for defeating an enemy
+      this.player.completedEncounters ++;
+      this.player.score = this.player.completedEncounters * 100; // example: add 100 points for defeating an enemy
       console.log(`Player score: ${this.player.score}`);
 
       const highestScore = parseInt(getCookie('highestScore')) || 0;

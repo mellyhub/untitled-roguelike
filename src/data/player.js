@@ -26,10 +26,12 @@ export class Player {
     lastAction = null;
     talentPoints = 50;
     level = 1;
+    completedEncounters = 0;
     score = 0;
     talents = {};
     damageMultiplier = 1;
     healMultiplier = 1;
+    gold = 100;
 
     processActiveEffects() {
         this.activeEffects = this.activeEffects.filter(effect => {

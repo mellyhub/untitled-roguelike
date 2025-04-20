@@ -257,9 +257,12 @@ const talentConfig = {
                 }
 
                 // check if coating is already applied
-                if (weapon.coatings.some(coating => coating.name === "Toxic Coating")) {
+                if (weapon.coatings && weapon.coatings.some(coating => coating.name === "Toxic Coating")) {
                     console.log("Toxic Coating is already applied to the weapon.");
                     return;
+                }
+                else if (!weapon.coatings) {
+                    weapon.coatings = [];
                 }
                 weapon.coatings.push({
                     name: "Toxic Coating",

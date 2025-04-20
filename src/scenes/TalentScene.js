@@ -34,7 +34,7 @@ class TalentScene extends Phaser.Scene {
       this.scene.switch('MapScene');
     });
 
-    this.currentTree = "magic"; // default to first tree
+    this.currentTree = "offense"; // default to first tree
     this.currentSelection = 0;
 
     // Create a tooltip for displaying talent information
