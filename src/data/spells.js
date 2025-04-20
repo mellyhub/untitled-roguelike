@@ -136,7 +136,6 @@ const spells = {
                 effect.applyEffect(attacker);
             }
 
-            attacker.activeEffects = attacker.activeEffects || [];
             attacker.activeEffects.push({
                 name: this.name,
                 remainingTurns: this.turnDuration,
@@ -148,7 +147,6 @@ const spells = {
                     console.log("Conjured weapon has expired");
                 }
             });
-            console.log(attacker);
         },
         description: "Conjure a temporary weapon"
     },
@@ -157,7 +155,7 @@ const spells = {
         type: "Placeholder",
         name: "Thunderclap",
         energyCost: 25,
-        turnDuration: 1, // stun lasts for 1 turn
+        turnDuration: 1, // stuns for 1 turn
         effect(attacker, target) {
             console.log(`${attacker.name} casts Thunderclap on ${target.name}, stunning them for ${this.turnDuration} turns.`);
 

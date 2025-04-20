@@ -197,6 +197,16 @@ const talentConfig = {
         },
 
         {
+            name: "Nimble Instinct",
+            description: "Adds evasion scaling with agility.",
+            maxPoints: 5,
+            effect: (player) => {
+                player.stats.evasion += (player.stats.agility * 0.01);
+                console.log(player.stats);
+            }
+        },
+
+        {
             name: "Rebirth",
             description: "Grants 1 revive per combat.",
             maxPoints: 1,

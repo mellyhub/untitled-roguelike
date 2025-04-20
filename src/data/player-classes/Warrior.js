@@ -23,7 +23,8 @@ export class Warrior extends Player {
         spells.phantom_strike,
         spells.soul_shatter,
         spells.heal,
-        spells.geomancy
+        spells.geomancy,
+        spells.overcharge
     ];
 
     stats = {
