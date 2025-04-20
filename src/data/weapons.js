@@ -40,7 +40,6 @@ const weapons = {
         {
             heavy_swing: spells.heavy_swing,
         },
-        coatings: [],
     },
     jens_sword: {
         name: "Jens Sword",

@@ -117,7 +117,7 @@ class RewardScene extends Phaser.Scene {
             return {
                 name: randomWeapon.name,
                 description: "Equip a new weapon.",
-                effect: () => { player.weapon[0] = randomWeapon }
+                effect: () => { player.weapon.push(randomWeapon) }
             }
         }
     
@@ -128,8 +128,7 @@ class RewardScene extends Phaser.Scene {
                 agility: 50,
                 strength: 50,
                 intelligence: 50,
-                critChance: 10,
-                critDamage: 10,
+                defense: 25,
             };
             
             const randomKey = this.getWeightedRandom(statWeights);

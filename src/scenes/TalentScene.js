@@ -86,10 +86,9 @@ class TalentScene extends Phaser.Scene {
 
     // define position for rendering
     const treePositions = {
-      magic: { x: 180, y: 200 },
-      physical: { x: 660, y: 200 },
-      defense: { x: 1140, y: 200 },
-      utility: { x: 1620, y: 200 }
+      offense: { x: 280, y: 200 },
+      defense: { x: 960, y: 200 },
+      utility: { x: 1520, y: 200 }
     };
 
     // render each tree

@@ -1,69 +1,6 @@
 const talentConfig = {
 
-    magic: [
-        {
-            name: "Conjure+",
-            description: "Conjured weapons are 10% stronger.",
-            maxPoints: 1,
-            effect: (player) => {
-                if (!player.permanentEffects.some(effect => effect.name === "Conjure+")) {
-                    player.permanentEffects.push({
-                        name: "Conjure+",
-                        applyEffect: (player) => {
-                            if (player.weapon.at(-1).name === "Conjured weapon") {
-                                player.weapon.at(-1).damage *= 1.1;
-                                console.log(`Conjured weapon damage increased to ${player.weapon.at(-1).damage}`);
-                            }
-                        },
-                    });
-                }
-            }
-        },
-
-        {
-            name: "Mirror Shield",
-            description: "Reflects a portion of incoming damage back at attackers.",
-            maxPoints: 1,
-            effect: (player) => {
-                if (!player.permanentEffects.some(effect => effect.name === "Mirror Shield")) {
-                    player.permanentEffects.push({
-                        name: "Mirror Shield",
-                        applyEffect: (player, attacker, damage) => {
-                            const reflectedDamage = Math.round(damage * 0.1); // reflects 10% of incoming damage
-                            attacker.health -= reflectedDamage; // apply reflected damage to the attacker
-                            console.log(`${attacker.name} takes ${reflectedDamage} reflected damage from Mirror Shield.`);
-                        },
-                    });
-                }
-            }
-        },
-
-        {
-            name: "Void Channeling",
-            description: "Repeats your attack, dealing 50% of the damage.",
-            maxPoints: 1,
-            effect: (player) => {
-                if (!player.permanentEffects.some(effect => effect.name === "Void Channeling")) {
-                    player.permanentEffects.push({
-                        name: "Void Channeling",
-                        applyEffect: (player, target, originalDamage, battleUI) => {
-                            if (Math.random() < 0.2) {  // 20% chance to trigger
-                                const repeatedDamage = Math.round(originalDamage * 0.5); // 50% of the original damage
-                                console.log(`${player.name} repeats the attack, dealing ${repeatedDamage} damage to ${target.name}.`);
-                                target.health -= repeatedDamage; // apply the repeated damage
-
-                                // display the repeated damage visually
-                                console.log(battleUI);
-                                battleUI.displayDamageText("enemy", repeatedDamage);
-                            }
-                        },
-                    });
-                }
-            }
-        }
-    ],
-
-    physical: [
+    offense: [
         {
             name: "Energy",
             description: "Gain 5 energy when attacking.",
@@ -80,7 +17,6 @@ const talentConfig = {
                 }
             }
         },
-
         {
             name: "Blademaster",
             description: "Increases damage dealt by swords by 5% per point.",
@@ -104,7 +40,6 @@ const talentConfig = {
                 }
             }
         },
-
         {
             name: "Battle Trance",
             description: "Puts the player into a hightened state of awareness, increasing critical hit chance.",
@@ -114,7 +49,6 @@ const talentConfig = {
                 console.log(`Player's critical chanse incresed to ${player.stats.critChance}`);
             }
         },
-
         {
             name: "Shattering Blows",
             description: "Attacks ignore 25% of enemy defense.",
@@ -130,7 +64,6 @@ const talentConfig = {
                 }
             }
         },
-
         {
             name: "Executioner's precision",
             description: "Deal +50% damage to enemies below 25% HP.",
@@ -146,7 +79,29 @@ const talentConfig = {
                 }
             }
         },
+        {
+            name: "Void Channeling",
+            description: "Repeats your attack, dealing 50% of the damage.",
+            maxPoints: 1,
+            effect: (player) => {
+                if (!player.permanentEffects.some(effect => effect.name === "Void Channeling")) {
+                    player.permanentEffects.push({
+                        name: "Void Channeling",
+                        applyEffect: (player, target, originalDamage, battleUI) => {
+                            if (Math.random() < 0.2) {  // 20% chance to trigger
+                                const repeatedDamage = Math.round(originalDamage * 0.5); // 50% of the original damage
+                                console.log(`${player.name} repeats the attack, dealing ${repeatedDamage} damage to ${target.name}.`);
+                                target.health -= repeatedDamage; // apply the repeated damage
 
+                                // display the repeated damage visually
+                                console.log(battleUI);
+                                battleUI.displayDamageText("enemy", repeatedDamage);
+                            }
+                        },
+                    });
+                }
+            }
+        },
         {
             name: "Pact of Power",
             description: "Boosts your stats for the cost of max health.",
@@ -162,17 +117,24 @@ const talentConfig = {
                 player.stats.intelligence++;
             }
         },
-
         {
-            name: "Pact of Resillience",
-            description: "Increases defense but reduces effectiveness of healing.",
-            maxPoints: 5,
+            name: "Conjure+",
+            description: "Conjured weapons are 10% stronger.",
+            maxPoints: 1,
             effect: (player) => {
-                player.stats.defense += 3;
-                player.healMultiplier *= 0.8;
+                if (!player.permanentEffects.some(effect => effect.name === "Conjure+")) {
+                    player.permanentEffects.push({
+                        name: "Conjure+",
+                        applyEffect: (player) => {
+                            if (player.weapon.at(-1).name === "Conjured weapon") {
+                                player.weapon.at(-1).damage *= 1.1;
+                                console.log(`Conjured weapon damage increased to ${player.weapon.at(-1).damage}`);
+                            }
+                        },
+                    });
+                }
             }
         },
-
     ],
 
     defense: [
@@ -185,27 +147,48 @@ const talentConfig = {
                 console.log(`Player's max HP increased to ${player.maxHealth}`);
             }
         },
-
         {
             name: "Energy Shield",
             description: "Adds defense scaling with intelligence.",
             maxPoints: 5,
             effect: (player) => {
                 player.stats.defense += player.stats.intelligence;
-                console.log(player.stats);
             }
         },
-
         {
             name: "Nimble Instinct",
             description: "Adds evasion scaling with agility.",
             maxPoints: 5,
             effect: (player) => {
                 player.stats.evasion += (player.stats.agility * 0.01);
-                console.log(player.stats);
             }
         },
-
+        {
+            name: "Pact of Resillience",
+            description: "Increases defense but reduces effectiveness of healing.",
+            maxPoints: 5,
+            effect: (player) => {
+                player.stats.defense += 3;
+                player.healMultiplier *= 0.8;
+            }
+        },
+        {
+            name: "Mirror Shield",
+            description: "Reflects a portion of incoming damage back at attackers.",
+            maxPoints: 1,
+            effect: (player) => {
+                if (!player.permanentEffects.some(effect => effect.name === "Mirror Shield")) {
+                    player.permanentEffects.push({
+                        name: "Mirror Shield",
+                        applyEffect: (player, attacker, damage) => {
+                            const reflectedDamage = Math.round(damage * 0.1); // reflects 10% of incoming damage
+                            attacker.health -= reflectedDamage; // apply reflected damage to the attacker
+                            console.log(`${attacker.name} takes ${reflectedDamage} reflected damage from Mirror Shield.`);
+                        },
+                    });
+                }
+            }
+        },
         {
             name: "Rebirth",
             description: "Grants 1 revive per combat.",
@@ -232,18 +215,6 @@ const talentConfig = {
 
     utility: [
         {
-            name: "Morbious",
-            description: "Morbs the user",
-            maxPoints: 5,
-            effect: (player) => {
-                player.stats.omnivamp += 0.05;
-            },
-            maxEffect: (player) => {
-                console.log(`${player.name}: ITS MORBIN TIME!`);
-            }
-        },
-
-        {
             name: "Vital Surge",
             description: "Heal 25 HP after defeating an enemy.",
             maxPoints: 1,
@@ -263,7 +234,59 @@ const talentConfig = {
                 }
             }
         },
+        {
+            name: "Morbious",
+            description: "Morbs the user",
+            maxPoints: 5,
+            effect: (player) => {
+                player.stats.omnivamp += 0.05;
+            },
+            maxEffect: (player) => {
+                console.log(`${player.name}: ITS MORBIN TIME!`);
+            }
+        },
+        {
+            name: "Toxic Coating",
+            description: "Applies toxic coating to your weapon.",
+            maxPoints: 1,
+            effect: (player) => {
+                const weapon = player.weapon.at(-1);
+                if (!weapon) {
+                    console.error("No weapon equipped to apply Toxic Coating!");
+                    return;
+                }
 
+                // check if coating is already applied
+                if (weapon.coatings.some(coating => coating.name === "Toxic Coating")) {
+                    console.log("Toxic Coating is already applied to the weapon.");
+                    return;
+                }
+                weapon.coatings.push({
+                    name: "Toxic Coating",
+                    chance: 1, // 100% chance to trigger on attack
+                    effect: (attacker, target) => {
+                        console.log(`${target.name} is poisoned by ${attacker.name}'s Toxic Coating!`);
+                        target.activeEffects.push({
+                            name: "Poisoned",
+                            remainingTurns: 5,
+                            applyEffect: () => {
+                                target.statusEffects.poisoned = true;
+                                target.health -= 20;
+                            },
+                            removeEffect: () => {
+                                target.statusEffects.poisoned = false;
+                            }
+                        });
+
+                        // immediately apply the effect
+                        const poisonEffect = target.activeEffects.find(effect => effect.name === "Poisoned");
+                        if (poisonEffect) {
+                            poisonEffect.applyEffect();
+                        }
+                    }
+                });
+            }
+        },
         {
             name: "Paralysis Coating",
             description: "Applies paralysis coating to your weapon.",
@@ -306,50 +329,7 @@ const talentConfig = {
                 });
             }
         },
-
-        {
-            name: "Toxic Coating",
-            description: "Applies toxic coating to your weapon.",
-            maxPoints: 1,
-            effect: (player) => {
-                const weapon = player.weapon.at(-1);
-                if (!weapon) {
-                    console.error("No weapon equipped to apply Toxic Coating!");
-                    return;
-                }
-
-                // check if coating is already applied
-                if (weapon.coatings.some(coating => coating.name === "Toxic Coating")) {
-                    console.log("Toxic Coating is already applied to the weapon.");
-                    return;
-                }
-                weapon.coatings.push({
-                    name: "Toxic Coating",
-                    chance: 1, // 100% chance to trigger on attack
-                    effect: (attacker, target) => {
-                        console.log(`${target.name} is poisoned by ${attacker.name}'s Toxic Coating!`);
-                        target.activeEffects.push({
-                            name: "Poisoned",
-                            remainingTurns: 5,
-                            applyEffect: () => {
-                                target.statusEffects.poisoned = true;
-                                target.health -= 20;
-                            },
-                            removeEffect: () => {
-                                target.statusEffects.poisoned = false;
-                            }
-                        });
-
-                        // immediately apply the effect
-                        const poisonEffect = target.activeEffects.find(effect => effect.name === "Poisoned");
-                        if (poisonEffect) {
-                            poisonEffect.applyEffect();
-                        }
-                    }
-                });
-            }
-        }
-    ]
+    ],
 };
 
 export default talentConfig;

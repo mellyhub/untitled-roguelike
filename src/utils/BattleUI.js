@@ -104,7 +104,7 @@ class BattleUI {
         const weapon = player.weapon.at(-1);
         this.actionBarContainer.add(this.scene.add.text(500, -100, `Weapon:\n${weapon.name}`, { fontSize: '40px' }));
 
-        if (weapon.coatings.length > 0) {
+        if (weapon.coatings && weapon.coatings.length > 0) {
             this.actionBarContainer.add(this.scene.add.text(500, 0, `Coating:\n${weapon.coatings[0].name}`, { fontSize: '40px' }));
         }
     }
@@ -184,20 +184,21 @@ class BattleUI {
         this.currentMenu.push({ x: 0, y: 6, text: `Agility: ${player.stats.agility}` });
         this.currentMenu.push({ x: 0, y: 7, text: `Intelligence: ${player.stats.intelligence}` });
         this.currentMenu.push({ x: 0, y: 8, text: `Defense: ${player.stats.defense}` });
-        this.currentMenu.push({ x: 0, y: 9, text: `Crit Chance: ${(player.stats.critChance * 100).toFixed(1)}%` });
-        this.currentMenu.push({ x: 0, y: 10, text: `Crit Damage: ${player.stats.critDamage}x` });
-        this.currentMenu.push({ x: 0, y: 11, text: `Evasion: ${(player.stats.evasion * 100).toFixed(1)}%` });
+        this.currentMenu.push({ x: 0, y: 9, text: `Evasion: ${(player.stats.evasion * 100).toFixed(1)}%` });
+        this.currentMenu.push({ x: 0, y: 10, text: `Crit Chance: ${(player.stats.critChance * 100).toFixed(1)}%` });
+        this.currentMenu.push({ x: 0, y: 11, text: `Crit Damage: ${player.stats.critDamage}x` });
+        this.currentMenu.push({ x: 0, y: 12, text: `Omnivamp: ${(player.stats.omnivamp * 100).toFixed(1)}%` });
 
         // adding weapon information
         const weapon = player.weapon.at(-1);
         if (weapon) {
-            this.currentMenu.push({ x: 0, y: 12, text: `Weapon: ${weapon.name}` });
-            this.currentMenu.push({ x: 0, y: 13, text: `Damage: ${weapon.damage}` });
+            this.currentMenu.push({ x: 0, y: 13, text: `Weapon: ${weapon.name}` });
+            this.currentMenu.push({ x: 0, y: 14, text: `Damage: ${weapon.damage}` });
 
             // display weapon coatings if any
             if (weapon.coatings.length > 0) {
                 weapon.coatings.forEach((coating, index) => {
-                    this.currentMenu.push({ x: 0, y: 14 + index, text: `Coating: ${coating.name} (${(coating.chance * 100).toFixed(1)}% chance)` });
+                    this.currentMenu.push({ x: 0, y: 15 + index, text: `Coating: ${coating.name} (${(coating.chance * 100).toFixed(1)}% chance)` });
                 });
             }
         }

@@ -24,7 +24,6 @@ export class Warrior extends Player {
         spells.soul_shatter,
         spells.heal,
         spells.geomancy,
-        spells.overcharge
     ];
 
     stats = {
