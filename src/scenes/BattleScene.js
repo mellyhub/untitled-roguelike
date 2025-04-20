@@ -49,7 +49,7 @@ class BattleScene extends Phaser.Scene {
     // reset rebirth effect at start of combat
     const rebirthEffect = this.player.permanentEffects.find(effect => effect.name === "Rebirth");
     if (rebirthEffect && rebirthEffect.removeEffect) {
-        rebirthEffect.removeEffect();
+      rebirthEffect.removeEffect();
     }
 
     this.playerAnimation;
@@ -142,7 +142,7 @@ class BattleScene extends Phaser.Scene {
           this.mainMenu
         );
       }
-      else if(this.battleUI.currentMenuType === 'main' && selectedItem.text === 'Bag') {
+      else if (this.battleUI.currentMenuType === 'main' && selectedItem.text === 'Bag') {
         // opens bag menu
         this.battleUI.renderBagMenu(
           this.player,
@@ -150,7 +150,7 @@ class BattleScene extends Phaser.Scene {
           this.mainMenu
         );
       }
-      else if(this.battleUI.currentMenuType === 'main' && selectedItem.text === 'Stats') {
+      else if (this.battleUI.currentMenuType === 'main' && selectedItem.text === 'Stats') {
         // opens bag menu
         this.battleUI.renderStatsMenu(
           this.player,
@@ -229,7 +229,7 @@ class BattleScene extends Phaser.Scene {
     if (damage) {
       this.delayedCall(() => this.battleUI.displayDamageText('enemy', damage), 1000);
     }
-    
+
     await this.resolveAfterTime(1000);
     animationText.destroy();
 
@@ -238,7 +238,6 @@ class BattleScene extends Phaser.Scene {
     await this.resolveAfterTime(1000);
 
     // process active effects for the enemy
-    console.log("Processing active effects for the enemy.");
     this.enemy.processActiveEffects();
 
     if (this.enemy.health > 0) {
@@ -266,9 +265,12 @@ class BattleScene extends Phaser.Scene {
   async checkRoundOutcome() {
     if (this.enemy.health <= 0) {
       this.add.text(960, 640, 'You win!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
+      const vitalSurge = this.player.permanentEffects.find(effect => effect.name === "Vital Surge");
+      if (vitalSurge) {
+        vitalSurge.applyEffect(this.player);
+      }
       this.player.increaseLevel(1);
       this.player.increaseTalentPoints(1);
-
       this.player.removeAllActiveEffects();
       console.log("All active effects have been removed");
 
@@ -292,11 +294,11 @@ class BattleScene extends Phaser.Scene {
       // check for rebirth talent
       const rebirthEffect = this.player.permanentEffects.find(effect => effect.name === "Rebirth");
       if (rebirthEffect && !rebirthEffect.hasRevived) {
-          rebirthEffect.applyEffect(this.player); // trigger revive
-          this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP, this.turnCounter);
-          
-          // this causes a bug that makes the menu not render after revived
-          return this.checkRoundOutcome();
+        rebirthEffect.applyEffect(this.player); // trigger revive
+        this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP, this.turnCounter);
+
+        // this causes a bug that makes the menu not render after revived
+        return this.checkRoundOutcome();
       }
 
       this.add.text(960, 540, 'You lose!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);

@@ -196,6 +196,27 @@ const talentConfig = {
         },
 
         {
+            name: "Vital Surge",
+            description: "Heal 25 HP after defeating an enemy.",
+            maxPoints: 1,
+            effect: (player) => {
+                if (!player.permanentEffects.some(effect => effect.name === "Vital Surge")) {
+                    player.permanentEffects.push({
+                        name: "Vital Surge",
+                        applyEffect: (player) => {
+                            const restoreAmount = Math.round(25 * player.healMultiplier);
+                            player.health += restoreAmount;
+                            if (player.health > player.maxHealth) {
+                                player.health = player.maxHealth;
+                            }
+                            console.log(`${player.name} restores ${restoreAmount} health from Vital Surge`);
+                        },
+                    });
+                }
+            }
+        },
+
+        {
             name: "Paralysis Coating",
             description: "Applies paralysis coating to your weapon.",
             maxPoints: 1,

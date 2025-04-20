@@ -151,7 +151,6 @@ class BattleUI {
         this.menuItems = menu.map(menuItem => {
 
             // check if the menu is the spell menu
-            console.log(this.currentMenu);
             const isSpellMenu = menuItem.x === 0 && this.currentMenu.some(item => item.text === 'Back');
             const xPosition = isSpellMenu ? 960 : 300 + menuItem.x * 200; // center horizontally for spell menu, original position for main menu
             const yPosition = isSpellMenu ? 300 + menuItem.y * 50 : 850 + menuItem.y * 100; // adjust vertical spacing for spell menu or main menu
