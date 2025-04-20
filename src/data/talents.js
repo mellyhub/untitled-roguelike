@@ -94,6 +94,22 @@ const talentConfig = {
         },
 
         {
+            name: "Shattering Blows",
+            description: "Attacks ignore 25% of enemy defense",
+            maxPoints: 1,
+            effect: (player) => {
+                if (!player.permanentEffects.some(effect => effect.name === "Shattering Blows")) {
+                    player.permanentEffects.push({
+                        name: "Shattering Blows",
+                        applyEffect: (player) => {
+                            console.log(`${player.name}'s attack ignores 25% of enemy defense`);
+                        },
+                    });
+                }
+            }
+        },
+
+        {
             name: "Pact of Power",
             description: "Boosts your stats for the cost of max health.",
             maxPoints: 5,

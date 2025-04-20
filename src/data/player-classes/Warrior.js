@@ -76,7 +76,14 @@ export class Warrior extends Player {
         damage += this.handleRage(damage);
         
         // apply defense
-        const defenseReduction = target.stats.defense / (target.stats.defense + 100);
+        let defenseReduction;
+        const shatteringBlows = this.permanentEffects.find(effect => effect.name === "Shattering Blows");
+        if(shatteringBlows) {
+            defenseReduction = (target.stats.defense * 0.75) / (target.stats.defense + 100);
+        }
+        else {
+            defenseReduction = target.stats.defense / (target.stats.defense + 100);
+        }
         damage *= 1 - defenseReduction;
         console.log(`${target.name} reduced damage by ${Math.round(defenseReduction * 100)}%`);
 
