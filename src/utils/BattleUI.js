@@ -151,9 +151,10 @@ class BattleUI {
         this.menuItems = menu.map(menuItem => {
 
             // check if the menu is the spell menu
+            console.log(this.currentMenu);
             const isSpellMenu = menuItem.x === 0 && this.currentMenu.some(item => item.text === 'Back');
             const xPosition = isSpellMenu ? 960 : 300 + menuItem.x * 200; // center horizontally for spell menu, original position for main menu
-            const yPosition = isSpellMenu ? 400 + menuItem.y * 50 : 850 + menuItem.y * 100; // adjust vertical spacing for spell menu or main menu
+            const yPosition = isSpellMenu ? 300 + menuItem.y * 50 : 850 + menuItem.y * 100; // adjust vertical spacing for spell menu or main menu
 
             const text = this.scene.add.text(xPosition, yPosition, menuItem.text, { fontSize: '48px', fill: '#fff' }).setOrigin(0.5);
 
@@ -207,10 +208,10 @@ class BattleUI {
 
         this.currentMenu.push({ x: 0, y: this.currentMenu.length, text: 'Back' });
 
-        const backgroundWidth = 400;
+        const backgroundWidth = 500;
         const backgroundHeight = 50 * this.currentMenu.length + 20; // adjust height based on number of items
         const backgroundX = 960 - backgroundWidth / 2; // center horizontally
-        const backgroundY = 400 - 25; // start slightly above the first item
+        const backgroundY = 300 - 25; // start slightly above the first item
 
         if (this.statsMenuBackground) {
             this.statsMenuBackground.destroy();
@@ -245,7 +246,7 @@ class BattleUI {
         const backgroundWidth = 400;
         const backgroundHeight = 50 * this.currentMenu.length + 20; // adjust height based on number of items
         const backgroundX = 960 - backgroundWidth / 2; // center horizontally
-        const backgroundY = 400 - 25; // start slightly above the first item
+        const backgroundY = 300 - 25; // start slightly above the first item
 
         if (this.bagMenuBackground) {
             this.bagMenuBackground.destroy();
@@ -284,7 +285,7 @@ class BattleUI {
         const backgroundWidth = 400;
         const backgroundHeight = 50 * this.currentMenu.length + 20; // adjust height based on number of items
         const backgroundX = 960 - backgroundWidth / 2; // center horizontally
-        const backgroundY = 400 - 25; // start slightly above the first item
+        const backgroundY = 300 - 25; // start slightly above the first item
 
         if (this.spellMenuBackground) {
             this.spellMenuBackground.destroy();
@@ -306,8 +307,30 @@ class BattleUI {
 
     changeSelection(deltaX, deltaY) {
         this.sfx.menu.play();
-        const newX = this.currentSelection.x + deltaX;
-        const newY = this.currentSelection.y + deltaY;
+        let newX = this.currentSelection.x + deltaX;
+        let newY = this.currentSelection.y + deltaY;
+
+        // handle vertical wrapping
+        const menuItemsInColumn = this.currentMenu.filter(item => item.x === this.currentSelection.x);
+        const minY = Math.min(...menuItemsInColumn.map(item => item.y));
+        const maxY = Math.max(...menuItemsInColumn.map(item => item.y));
+
+        if (newY < minY) {
+            newY = maxY; // wrap to the bottom
+        } else if (newY > maxY) {
+            newY = minY; // wrap to the top
+        }
+
+        // handle horizontal wrapping if needed
+        const menuItemsInRow = this.currentMenu.filter(item => item.y === this.currentSelection.y);
+        const minX = Math.min(...menuItemsInRow.map(item => item.x));
+        const maxX = Math.max(...menuItemsInRow.map(item => item.x));
+
+        if (newX < minX) {
+            newX = maxX; // wrap to the right
+        } else if (newX > maxX) {
+            newX = minX; // wrap to the left
+        }
 
         // prevent out of bounds selection
         const isValidSelection = this.currentMenu.some(item => item.x === newX && item.y === newY);
