@@ -12,7 +12,10 @@ export class Warrior extends Player {
     maxHealth = 200;
     energy = 100;
     maxEnergy = 100;
-    weapon = [weapons.big_axe];
+    weapon = [
+        weapons.unarmed,
+        weapons.big_axe
+    ];
     spells = [
         spells.thunderclap,
         spells.conjure_weapon,

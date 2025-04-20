@@ -2,6 +2,11 @@
 import spells from '../data/spells.js';
 
 const weapons = {
+    unarmed: {
+        name: "Unarmed",
+        type: "?",
+        damage: 0
+    },
     dagger: {
         name: "Dagger",
         type: "Dagger",

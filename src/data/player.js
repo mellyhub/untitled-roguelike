@@ -28,7 +28,6 @@ export class Player {
     level = 1;
     score = 0;
     talents = {};
-    hasRevived = false;
     damageMultiplier = 1;
     healMultiplier = 1;
 
