@@ -9,6 +9,7 @@ export class Enemy {
     imageYPos;
 
     health;
+    maxHealth;
     strength;
     energy;
     maxEnergy;

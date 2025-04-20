@@ -77,8 +77,10 @@ export class Warrior extends Player {
         
         // check for Executioner's precision talent
         const executionersPrecision = this.permanentEffects.find(effect => effect.name === "Executioner's precision");
-        if(executionersPrecision && target.health <= target.maxHealth) {
+        console.log(target)
+        if(executionersPrecision && target.health <= target.maxHealth * 0.25) {
             damage *= 1.5;
+            executionersPrecision.applyEffect(this);
         }
 
         // apply defense and shattering blows talent if applicable

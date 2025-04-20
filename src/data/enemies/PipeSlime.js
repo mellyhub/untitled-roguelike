@@ -11,6 +11,7 @@ export class PipeSlime extends Enemy {
     imageYPos = 540;
 
     health;
+    maxHealth;
     strength;
     energy = 100;
     maxEnergy = 100;
@@ -29,6 +30,7 @@ export class PipeSlime extends Enemy {
     constructor(weight) {
         super();
         this.health = 190 + weight * 10;
+        this.maxHealth = 190 + weight * 10;
         this.strength = 100 + weight * 10;
     }
 
