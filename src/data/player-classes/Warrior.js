@@ -75,7 +75,13 @@ export class Warrior extends Player {
         // apply rage muiltiplier
         damage += this.handleRage(damage);
         
-        // apply defense
+        // check for Executioner's precision talent
+        const executionersPrecision = this.permanentEffects.find(effect => effect.name === "Executioner's precision");
+        if(executionersPrecision && target.health <= target.maxHealth) {
+            damage *= 1.5;
+        }
+
+        // apply defense and shattering blows talent if applicable
         let defenseReduction;
         const shatteringBlows = this.permanentEffects.find(effect => effect.name === "Shattering Blows");
         if(shatteringBlows) {

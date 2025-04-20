@@ -14,13 +14,13 @@ const talentConfig = {
                             if (player.weapon.at(-1).name === "Conjured weapon") {
                                 player.weapon.at(-1).damage *= 1.1;
                                 console.log(`Conjured weapon damage increased to ${player.weapon.at(-1).damage}`);
-                                console.log(player);
                             }
                         },
                     });
                 }
             }
         },
+
         {
             name: "Mirror Shield",
             description: "Reflects a portion of incoming damage back at attackers.",
@@ -95,7 +95,7 @@ const talentConfig = {
 
         {
             name: "Shattering Blows",
-            description: "Attacks ignore 25% of enemy defense",
+            description: "Attacks ignore 25% of enemy defense.",
             maxPoints: 1,
             effect: (player) => {
                 if (!player.permanentEffects.some(effect => effect.name === "Shattering Blows")) {
@@ -103,6 +103,22 @@ const talentConfig = {
                         name: "Shattering Blows",
                         applyEffect: (player) => {
                             console.log(`${player.name}'s attack ignores 25% of enemy defense`);
+                        },
+                    });
+                }
+            }
+        },
+
+        {
+            name: "Executioner's precision",
+            description: "Deal +50% damage to enemies below 25% HP.",
+            maxPoints: 1,
+            effect: (player) => {
+                if (!player.permanentEffects.some(effect => effect.name === "Executioner's precision")) {
+                    player.permanentEffects.push({
+                        name: "Executioner's precision",
+                        applyEffect: (player) => {
+                            console.log(`${player.name} triggers Executioner's precision, amplifying damage`);
                         },
                     });
                 }
