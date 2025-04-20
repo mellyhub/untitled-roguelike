@@ -117,9 +117,9 @@ class BattleUI {
             x = 400;
         }
         else if (target === "enemy") {
-            x = 1520;
+            x = 1520 + (Math.random() * 100);
         }
-        let y = 500;
+        let y = 500 + (Math.random() * 100);
 
         const damageText = this.scene.add.text(x, y, `${damage}`, {
             fontSize: "72px",

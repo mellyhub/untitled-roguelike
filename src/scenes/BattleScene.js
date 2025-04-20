@@ -210,24 +210,22 @@ class BattleScene extends Phaser.Scene {
     this.player.processActiveEffects();
 
     const animationText = this.displayAnimationText(this.player.name, action, selectedSpell);
-    let damage = null;
 
     if (action === 'attack') {
       this.player.animations.playAttackAnimation();
-      damage = this.player.attack(this.enemy);
+      this.player.attack(this.enemy, this.battleUI);
     }
     else if (action === 'cast') {
       if (selectedSpell) {
         this.player.animations.playCastAnimation(selectedSpell);
-        damage = this.player.cast(this.enemy, selectedSpell);
+        const damage = this.player.cast(this.enemy, selectedSpell, this.battleUI);
+        if (damage) {
+          this.delayedCall(() => this.battleUI.displayDamageText('enemy', damage), 1000);
+        }
       }
       else {
         console.warn('No spell selected!');
       }
-    }
-
-    if (damage) {
-      this.delayedCall(() => this.battleUI.displayDamageText('enemy', damage), 1000);
     }
 
     await this.resolveAfterTime(1000);

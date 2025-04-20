@@ -56,8 +56,6 @@ export class PipeSlime extends Enemy {
         target.health -= damage;
         console.log(`${this.name} attacks ${target.name} for ${damage} damage.`);
 
-
-
         return damage;
     }
 }

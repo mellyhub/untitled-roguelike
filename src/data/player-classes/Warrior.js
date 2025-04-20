@@ -40,16 +40,14 @@ export class Warrior extends Player {
 
     handleRage(damage) {
         const rageMultiplier = 1 + this.resource.rage * 0.002;
-        console.log(`Rage multiplier: ${rageMultiplier}`);
         damage *= rageMultiplier;
 
         const rageAmount = 10; // amount of rage gained when hit
         this.resource.rage = Math.min(this.resource.rage + rageAmount, 100); // cap rage at 100
-        console.log(`${this.name} gains ${rageAmount} rage. Total rage: ${this.resource.rage}`);
         return damage;
     }
 
-    attack(target) {
+    attack(target, battleUI) {
 
         // check evasion
         if (Math.random() < target.stats.evasion) {
@@ -70,15 +68,15 @@ export class Warrior extends Player {
             });
         }
 
+        // apply attacker specific multiplier
         damage *= this.damageMultiplier;
-        
+
         // apply rage muiltiplier
         damage += this.handleRage(damage);
-        
+
         // check for Executioner's precision talent
         const executionersPrecision = this.permanentEffects.find(effect => effect.name === "Executioner's precision");
-        console.log(target)
-        if(executionersPrecision && target.health <= target.maxHealth * 0.25) {
+        if (executionersPrecision && target.health <= target.maxHealth * 0.25) {
             damage *= 1.5;
             executionersPrecision.applyEffect(this);
         }
@@ -86,7 +84,7 @@ export class Warrior extends Player {
         // apply defense and shattering blows talent if applicable
         let defenseReduction;
         const shatteringBlows = this.permanentEffects.find(effect => effect.name === "Shattering Blows");
-        if(shatteringBlows) {
+        if (shatteringBlows) {
             defenseReduction = (target.stats.defense * 0.75) / (target.stats.defense + 100);
         }
         else {
@@ -100,7 +98,7 @@ export class Warrior extends Player {
 
         // apply omnivamp
         this.health += Math.round(this.stats.omnivamp * this.healMultiplier * damage);
-        if(this.health > this.maxHealth) {
+        if (this.health > this.maxHealth) {
             this.health = this.maxHealth;
         }
 
@@ -111,10 +109,22 @@ export class Warrior extends Player {
         if (restoreEnergy) {
             restoreEnergy.applyEffect(this);
         }
-        return damage;
+
+        // trigger Void Channeling effect
+        const voidChanneling = this.permanentEffects.find(effect => effect.name === "Void Channeling");
+        if (voidChanneling) {
+            voidChanneling.applyEffect(this, target, damage, battleUI);
+        }
+
+        // reset Void Channeling flag
+        if (voidChanneling && voidChanneling.removeEffect) {
+            voidChanneling.removeEffect();
+        }
+
+        battleUI.displayDamageText("enemy", damage);
     }
 
-    cast(target, spell) {
+    cast(target, spell, battleUI) {
         if (this.energy >= spell.energyCost) {
             this.energy -= spell.energyCost;
 
@@ -134,7 +144,7 @@ export class Warrior extends Player {
                 let damage = this.handleCrit(null);
 
                 console.log(damage);
-                
+
                 // apply rage muiltiplier
                 damage += this.handleRage(damage);
 
@@ -156,10 +166,8 @@ export class Warrior extends Player {
 
                 console.log(`${this.name} casts ${spell.name} on ${target.name} for ${damage} damage.`);
 
-                return damage;
+                battleUI.displayDamageText("enemy", damage);
             }
-
-            return 0;
         }
         else {
             console.log("Not enough energy to cast!");

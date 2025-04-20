@@ -6,7 +6,6 @@ const talentConfig = {
             description: "Conjured weapons are 10% stronger.",
             maxPoints: 1,
             effect: (player) => {
-                console.log(player);
                 if (!player.permanentEffects.some(effect => effect.name === "Conjure+")) {
                     player.permanentEffects.push({
                         name: "Conjure+",
@@ -26,7 +25,6 @@ const talentConfig = {
             description: "Reflects a portion of incoming damage back at attackers.",
             maxPoints: 1,
             effect: (player) => {
-                console.log(player);
                 if (!player.permanentEffects.some(effect => effect.name === "Mirror Shield")) {
                     player.permanentEffects.push({
                         name: "Mirror Shield",
@@ -34,6 +32,30 @@ const talentConfig = {
                             const reflectedDamage = Math.round(damage * 0.1); // reflects 10% of incoming damage
                             attacker.health -= reflectedDamage; // apply reflected damage to the attacker
                             console.log(`${attacker.name} takes ${reflectedDamage} reflected damage from Mirror Shield.`);
+                        },
+                    });
+                }
+            }
+        },
+
+        {
+            name: "Void Channeling",
+            description: "Repeats your attack, dealing 50% of the damage.",
+            maxPoints: 1,
+            effect: (player) => {
+                if (!player.permanentEffects.some(effect => effect.name === "Void Channeling")) {
+                    player.permanentEffects.push({
+                        name: "Void Channeling",
+                        applyEffect: (player, target, originalDamage, battleUI) => {
+                            if (Math.random() < 0.2) {  // 20% chance to trigger
+                                const repeatedDamage = Math.round(originalDamage * 0.5); // 50% of the original damage
+                                console.log(`${player.name} repeats the attack, dealing ${repeatedDamage} damage to ${target.name}.`);
+                                target.health -= repeatedDamage; // apply the repeated damage
+
+                                // display the repeated damage visually
+                                console.log(battleUI);
+                                battleUI.displayDamageText("enemy", repeatedDamage);
+                            }
                         },
                     });
                 }
