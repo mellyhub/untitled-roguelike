@@ -287,6 +287,7 @@ const talentConfig = {
             },
             maxEffect: (player) => {
                 console.log(`${player.name}: ITS MORBIN TIME!`);
+                player.stats.omnivamp = 0.7; // morbious buff (see meeting notes 25/04/21)
             }
         },
         {

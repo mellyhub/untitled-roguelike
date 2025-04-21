@@ -100,6 +100,9 @@ class TalentScene extends Phaser.Scene {
         for(let j = 0; j < arr.length; j++) {
           arr[j].value = arr[j].maxPoints;
           arr[j].effect(this.player);
+          if(arr[j].maxEffect) {
+            arr[j].maxEffect(this.player);
+          }
         }
       }
       this.renderUI();
