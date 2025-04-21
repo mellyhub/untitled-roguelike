@@ -52,14 +52,14 @@ const spells = {
     /* aura_of_might: {
         type: "Placeholder",
         name: "Aura of Might",
-        turnDuration: 3,
+        duration: 3,
         effect(attacker, target) {
             attacker.stats.strength += 10;
             console.log(`Taifun strenght: ${attacker.stats.strength}`)
             console.log(`${attacker.name} is empowered, increasing their strength by 10.`);
             attacker.activeEffects.push({
                 name: this.name,
-                remainingTurns: this.turnDuration,
+                remainingTurns: this.duration,
                 applyEffect: () => {
                     console.log(`${attacker.name} is empowered by Aura of Might.`);
                 },
@@ -79,15 +79,15 @@ const spells = {
             return 10;
         },
         damagePerTurn: 5,
-        turnDuration: 3,
+        duration: 3,
         effect(attacker, target) {
-            console.log(`${attacker.name} casts Ignite on ${target.name}, applying damage over ${this.turnDuration} turns.`);
+            console.log(`${attacker.name} casts Ignite on ${target.name}, applying damage over ${this.duration} turns.`);
 
             // should be made more modular
             target.activeEffects = target.activeEffects || [];
             target.activeEffects.push({
                 name: this.name,
-                remainingTurns: this.turnDuration,
+                remainingTurns: this.duration,
                 applyEffect: () => {
                     target.health -= this.damagePerTurn;
                     console.log(`${target.name} takes ${this.damagePerTurn} damage from Ignite.`);
@@ -99,13 +99,13 @@ const spells = {
         type: "Placeholder",
         name: "Rejuvenation",
         healPerTurn: 50,
-        turnDuration: 3,
+        duration: 3,
         effect(attacker, target) {
-            console.log(`${attacker.name} casts Rejuvenation, applying healing over ${this.turnDuration} turns.`);
+            console.log(`${attacker.name} casts Rejuvenation, applying healing over ${this.duration} turns.`);
 
             attacker.activeEffects.push({
                 name: this.name,
-                remainingTurns: this.turnDuration,
+                remainingTurns: this.duration,
                 applyEffect: () => {
                     // scale healing with focus points
                     if (attacker.class && attacker.class.name === "Mage") {
@@ -123,7 +123,7 @@ const spells = {
         type: "Conjuration",
         name: "Conjure Weapon",
         energyCost: 25,
-        turnDuration: 3,
+        duration: Infinity,
         effect(attacker, target) {
             attacker.weapon.push({
                 name: "Conjured weapon",
@@ -138,7 +138,8 @@ const spells = {
 
             attacker.activeEffects.push({
                 name: this.name,
-                remainingTurns: this.turnDuration,
+                type: "Buff",
+                remainingTurns: this.duration,
                 applyEffect: () => {
                     console.log(`${attacker.name} is using the conjured weapon.`);
                 },
@@ -155,21 +156,20 @@ const spells = {
         type: "Placeholder",
         name: "Thunderclap",
         energyCost: 25,
-        turnDuration: 1, // stuns for 1 turn
+        duration: 1, // stuns for 1 turn
         effect(attacker, target) {
-            console.log(`${attacker.name} casts Thunderclap on ${target.name}, stunning them for ${this.turnDuration} turns.`);
+            console.log(`${attacker.name} casts Thunderclap on ${target.name}, stunning them for ${this.duration} turns.`);
 
             // add the stun effect to the target's active effects
             // (maybe status effects should be stored differently?)
             target.activeEffects.push({
                 name: "Stunned",
-                remainingTurns: this.turnDuration,
+                type: "Status",
+                remainingTurns: this.duration,
                 applyEffect: () => {
-                    target.statusEffects.stunned = true; // mark target as stunned
                     console.log(`${target.name} is stunned and cannot act.`);
                 },
                 removeEffect: () => {
-                    target.statusEffects.stunned = false; // remove stun after duration
                     console.log(`${target.name} is no longer stunned.`);
                 }
             });
@@ -181,13 +181,14 @@ const spells = {
         type: "Placeholder",
         name: "Arcane Surge",
         energyCost: 25,
-        turnDuration: 3,
+        duration: 3,
         effect(attacker, target) {
-            console.log(`${attacker.name} casts Arcane Surge, increasing intellect for ${this.turnDuration} turns.`);
+            console.log(`${attacker.name} casts Arcane Surge, increasing intellect for ${this.duration} turns.`);
             attacker.stats.intelligence += 10;
             attacker.activeEffects.push({
                 name: "Arcane Surge",
-                remainingTurns: this.turnDuration,
+                type: "Buff",
+                remainingTurns: this.duration,
                 applyEffect: () => {
                     console.log(`${attacker.name} is empowered by Arcane Surge`);
                 },
@@ -230,6 +231,7 @@ const spells = {
 
             target.activeEffects.push({
                 name: "Soul Shatter",
+                type: "Debuff",
                 remainingTurns: Infinity, // effect lasts for the rest of combat
                 applyEffect: () => {
                     console.log(`${target.name}'s stats are reduced by Soul Shatter.`);

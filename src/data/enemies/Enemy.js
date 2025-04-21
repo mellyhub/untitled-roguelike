@@ -15,23 +15,29 @@ export class Enemy {
     maxEnergy;
     spells = [];
     activeEffects = [];
-
-    statusEffects = [{
-        stunned: false,
-        paralysed: false,
-        poisoned: false,
-    }]
     
     constructor(weight) {}
 
+    /**
+     * checks if the character has a specific status effect.
+     * @param {string} effectName - the name of the status effect to check.
+     * @returns {boolean} - true if the effect is active, false otherwise.
+     */
+    hasStatusEffect(effectName) {
+        return this.activeEffects.some(effect => effect.type === "Status" && effect.name === effectName);
+    }
+
     processActiveEffects() {
         this.activeEffects = this.activeEffects.filter(effect => {
-            effect.applyEffect();
+
+            if(effect.applyEffect) {
+                effect.applyEffect(this);
+            }
             
             // remove effect if expired
             if (effect.remainingTurns <= 0) {
                 if (effect.removeEffect) {
-                    effect.removeEffect(); // call the removeEffect function if it exists
+                    effect.removeEffect(this); // call the removeEffect function if it exists
                 }
                 console.log(`${effect.name} effect on ${this.name} has expired.`);
                 return false; // remove effect

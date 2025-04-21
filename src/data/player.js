@@ -18,11 +18,6 @@ export class Player {
     image;
     permanentEffects = [];
     activeEffects = [];
-    statusEffects = [{
-        stunned: false,
-        paralysed: false,
-        poisoned: false,
-    }]
     lastAction = null;
     talentPoints = 50;
     level = 1;

@@ -36,10 +36,16 @@ export class PipeSlime extends Enemy {
 
     attack(target) {
 
-        // stun and paralysis currently do the same thing
-        if (this.statusEffects.stunned || this.statusEffects.paralysed === true) {
+        // process active effects before attacking
+        this.processActiveEffects();
+
+        // check for incapacitating status effects
+        const incapacitatingEffects = ["Stunned", "Paralyzed"]; // stun and paralysis currently have the same effect, will change this later
+        const isIncapacitated = incapacitatingEffects.some(effect => this.hasStatusEffect(effect));
+
+        if (isIncapacitated) {
             console.log(`${this.name} is incapacitated and cannot attack.`);
-            return "";
+            return 0; // no damage dealt
         }
 
         let damage = 50;
@@ -52,7 +58,7 @@ export class PipeSlime extends Enemy {
         }
 
         // enemy damage handling needs to be rewritten
-        
+
         target.health -= damage;
         console.log(`${this.name} attacks ${target.name} for ${damage} damage.`);
 
