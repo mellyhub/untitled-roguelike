@@ -159,9 +159,6 @@ const spells = {
         duration: 1, // stuns for 1 turn
         effect(attacker, target) {
             console.log(`${attacker.name} casts Thunderclap on ${target.name}, stunning them for ${this.duration} turns.`);
-
-            // add the stun effect to the target's active effects
-            // (maybe status effects should be stored differently?)
             target.activeEffects.push({
                 name: "Stunned",
                 type: "Status",

@@ -196,7 +196,7 @@ class BattleUI {
             this.currentMenu.push({ x: 0, y: 14, text: `Damage: ${weapon.damage}` });
 
             // display weapon coatings if any
-            if (weapon.coatings.length > 0) {
+            if (weapon.coatings) {
                 weapon.coatings.forEach((coating, index) => {
                     this.currentMenu.push({ x: 0, y: 15 + index, text: `Coating: ${coating.name} (${(coating.chance * 100).toFixed(1)}% chance)` });
                 });

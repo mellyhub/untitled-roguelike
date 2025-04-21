@@ -2,8 +2,6 @@ import seedrandom from 'seedrandom';
 import BattleUI from '../utils/BattleUI.js';
 import assets from '../assets/assets.json'; // Import the assets.json file
 import { setCookie, getCookie } from '../utils/cookieUtils.js';
-import { get_random_enemy } from '../data/enemies.js';
-import { Snowman } from '../data/enemies/Snowman.js';
 import { PipeSlime } from '../data/enemies/PipeSlime.js';
 
 class BattleScene extends Phaser.Scene {
@@ -239,6 +237,7 @@ class BattleScene extends Phaser.Scene {
       const animationText = this.displayAnimationText(this.enemy.name, "attack", selectedSpell);
       const damage = this.enemy.attack(this.player);
       this.delayedCall(() => animationText.destroy(), 1000);
+      console.log(this.enemy);
       this.delayedCall(() => this.battleUI.displayDamageText('player', damage), 1000)
     }
 
