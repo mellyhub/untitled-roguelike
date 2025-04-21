@@ -55,11 +55,11 @@ class BattleUI {
             this.enemyUnitFrame.destroy(true);
         }
 
-        const playerHealthBarSize = this.calculateHealthBarSize(playerStartHP, player.health);
-        const playerEnergyBarSize = this.calculateEnergyBarSize(player.maxEnergy, player.energy);
-        const playerRageBarSize = this.calculateRageBarSize(100, player.resource.rage);
-        const enemyHealthBarSize = this.calculateHealthBarSize(enemyStartHP, enemy.health);
-        const enemyEnergyBarSize = this.calculateEnergyBarSize(enemy.maxEnergy, enemy.energy);
+        const playerHealthBarSize = this.calculateHealthBarSize(playerStartHP, player.getHealth());
+        const playerEnergyBarSize = this.calculateEnergyBarSize(player.getMaxEnergy(), player.getEnergy());
+        const playerRageBarSize = this.calculateRageBarSize(100, player.getResource());
+        const enemyHealthBarSize = this.calculateHealthBarSize(enemyStartHP, enemy.getHealth());
+        const enemyEnergyBarSize = this.calculateEnergyBarSize(enemy.getMaxEnergy(), enemy.getEnergy());
 
         // score and turn counter
         this.statsContainer = this.scene.add.container(0, 0);
@@ -72,7 +72,7 @@ class BattleUI {
         this.playerUnitFrame.add(this.scene.add.rectangle(-153, 20, playerRageBarSize.width, playerRageBarSize.height, COLOR_CODES.RED).setOrigin(0));
         this.playerUnitFrame.add(this.scene.add.rectangle(-162, -116, playerHealthBarSize.width, playerHealthBarSize.height, COLOR_CODES.GREEN).setOrigin(0));
         this.playerUnitFrame.add(this.scene.add.rectangle(-162, -32, playerEnergyBarSize.width, playerEnergyBarSize.height, COLOR_CODES.YELLOW).setOrigin(0));
-        this.playerUnitFrame.add(this.scene.add.text(0, -74, `${Math.max(0, player.health)}/${playerStartHP}`, { fontSize: '52px', fill: '#000' }).setOrigin(0.5));
+        this.playerUnitFrame.add(this.scene.add.text(0, -74, `${Math.max(0, player.getHealth())}/${playerStartHP}`, { fontSize: '52px', fill: '#000' }).setOrigin(0.5));
         this.playerUnitFrame.add(this.scene.add.text(200, -120, `${player.name}`, { fontSize: '40px' }));
         this.playerUnitFrame.add(this.scene.add.text(200, -60, `Class: ${player.class}`, { fontSize: '40px' }));
         this.playerUnitFrame.add(this.scene.add.text(200, 0, `Level: ${player.level}`, { fontSize: '40px' }));
@@ -83,7 +83,7 @@ class BattleUI {
         this.enemyUnitFrame.add(this.scene.add.image(0, 0, 'enemy-unitframe-back'));
         this.enemyUnitFrame.add(this.scene.add.rectangle(-162, -116, enemyHealthBarSize.width, enemyHealthBarSize.height, COLOR_CODES.RED).setOrigin(0));
         this.enemyUnitFrame.add(this.scene.add.rectangle(-162, -32, enemyEnergyBarSize.width, enemyEnergyBarSize.height, COLOR_CODES.YELLOW).setOrigin(0));
-        this.enemyUnitFrame.add(this.scene.add.text(0, -74, `${Math.max(0, enemy.health)}/${enemyStartHP}`, { fontSize: '52px', fill: '#000' }).setOrigin(0.5));
+        this.enemyUnitFrame.add(this.scene.add.text(0, -74, `${Math.max(0, enemy.getHealth())}/${enemyStartHP}`, { fontSize: '52px', fill: '#000' }).setOrigin(0.5));
         this.enemyUnitFrame.add(this.scene.add.text(-200, -120, `${enemy.name}`, { fontSize: '40px' }).setOrigin(1, 0));
         this.enemyUnitFrame.add(this.scene.add.image(0, 0, 'enemy-unitframe-front'));
 
@@ -101,7 +101,7 @@ class BattleUI {
         this.actionBarContainer.add(this.scene.add.image(400, 70, 'uncommon-item-frame').setScale(0.4));
 
         // for debugging
-        const weapon = player.weapon.at(-1);
+        const weapon = player.getCurrentWeapon();
         this.actionBarContainer.add(this.scene.add.text(500, -100, `Weapon:\n${weapon.name}`, { fontSize: '40px' }));
 
         if (weapon.coatings && weapon.coatings.length > 0) {
@@ -109,17 +109,10 @@ class BattleUI {
         }
     }
 
+    // Target is a Character object
     displayDamageText(target, damage) {
-        console.log(`Displaying damage: ${damage} to ${target}`); // debug
-
-        let x;
-        if (target === "player") {
-            x = 400;
-        }
-        else if (target === "enemy") {
-            x = 1520 + (Math.random() * 100);
-        }
-        let y = 500 + (Math.random() * 100);
+        let x = target.animations.properties.idleAnimPos.x;
+        let y = target.animations.properties.idleAnimPos.y;
 
         const damageText = this.scene.add.text(x, y, `${damage}`, {
             fontSize: "72px",
@@ -178,8 +171,8 @@ class BattleUI {
         this.currentMenu.push({ x: 0, y: 0, text: `Name: ${player.name}` });
         this.currentMenu.push({ x: 0, y: 1, text: `Class: ${player.class}` });
         this.currentMenu.push({ x: 0, y: 2, text: `Level: ${player.level}` });
-        this.currentMenu.push({ x: 0, y: 3, text: `Health: ${player.health}/${player.maxHealth}` });
-        this.currentMenu.push({ x: 0, y: 4, text: `Energy: ${player.energy}/${player.maxEnergy}` });
+        this.currentMenu.push({ x: 0, y: 3, text: `Health: ${player.getHealth()}/${player.maxHealth}` });
+        this.currentMenu.push({ x: 0, y: 4, text: `Energy: ${player.getEnergy()}/${player.getMaxEnergy()}` });
         this.currentMenu.push({ x: 0, y: 5, text: `Strength: ${player.stats.strength}` });
         this.currentMenu.push({ x: 0, y: 6, text: `Agility: ${player.stats.agility}` });
         this.currentMenu.push({ x: 0, y: 7, text: `Intelligence: ${player.stats.intelligence}` });

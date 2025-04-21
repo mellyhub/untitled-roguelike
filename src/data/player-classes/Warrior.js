@@ -1,46 +1,17 @@
-import { Player } from "../player";
-import weapons from "../weapons";
-import spells from "../spells";
-import { Animations } from "../Animations";
+import { Character } from "../Character";
 
-export class Warrior extends Player {
-    name = "Taifun";
-    class = "Warrior";
-    animations = new Animations("warrior", "warrior idle", "warrior attack", "warrior cast");
+export class Warrior extends Character {
 
-    health = 200;
-    maxHealth = 200;
-    energy = 100;
-    maxEnergy = 100;
-    weapon = [
-        weapons.unarmed,
-        weapons.big_axe
-    ];
-    spells = [
-        spells.thunderclap,
-        spells.conjure_weapon,
-        spells.arcane_surge,
-        spells.phantom_strike,
-        spells.soul_shatter,
-        spells.heal,
-        spells.geomancy,
-    ];
+    // Warrior only has spells that works with the refactor
 
-    stats = {
-        strength: 10,
-        agility: 5,
-        intelligence: 2,
-        defense: 10,
-        evasion: 0,
-        critChance: 0.1,
-        critDamage: 1.5,
-        omnivamp: 0,
-    };
-
-    resource = {
-        rage: 0
+    constructor(name, weapons, spells, stats, animations) {
+        super(name, weapons, spells, stats);
+        this.class = "Warrior";
+        this.resource = { rage : 0 };
+        this.animations = animations;
     }
 
+    /*
     handleRage(damage) {
         const rageMultiplier = 1 + this.resource.rage * 0.002;
         damage *= rageMultiplier;
@@ -177,4 +148,5 @@ export class Warrior extends Player {
             // this behavior should probably be changed
         }
     }
+    */
 }

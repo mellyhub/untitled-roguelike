@@ -16,8 +16,8 @@ const spells = {
     fireball: {
         type: "Fire",
         name: "Fireball",
-        damage(attackerStats) {
-            return 25 + attackerStats.intelligence * 3;
+        damage(attacker) {
+            return 25 + attacker.stats.intelligence * 3;
         }
     },
     fire_breath: {
@@ -125,18 +125,20 @@ const spells = {
         energyCost: 25,
         duration: Infinity,
         effect(attacker, target) {
-            attacker.weapon.push({
+            attacker.addWeapon({
                 name: "Conjured weapon",
                 damage: 100,
                 coatings: []
             });
 
+            /*
             const effect = attacker.permanentEffects.find(effect => effect.name === "Conjure+");
             if (effect) {
                 effect.applyEffect(attacker);
             }
+            */
 
-            attacker.activeEffects.push({
+            attacker.effectsHandler.addActiveEffect({
                 name: this.name,
                 type: "Buff",
                 remainingTurns: this.duration,
@@ -144,7 +146,7 @@ const spells = {
                     console.log(`${attacker.name} is using the conjured weapon.`);
                 },
                 removeEffect: () => {
-                    attacker.weapon.pop();
+                    attacker.popWeapon();
                     console.log("Conjured weapon has expired");
                 }
             });
@@ -158,16 +160,16 @@ const spells = {
         energyCost: 25,
         duration: 1, // stuns for 1 turn
         effect(attacker, target) {
-            console.log(`${attacker.name} casts Thunderclap on ${target.name}, stunning them for ${this.duration} turns.`);
-            target.activeEffects.push({
+            console.log(`${attacker.getName()} casts Thunderclap on ${target.getName()}, stunning them for ${this.duration} turns.`);
+            target.effectsHandler.activeEffects.push({
                 name: "Stunned",
                 type: "Status",
                 remainingTurns: this.duration,
                 applyEffect: () => {
-                    console.log(`${target.name} is stunned and cannot act.`);
+                    console.log(`${target.getName()} is stunned and cannot act.`);
                 },
                 removeEffect: () => {
-                    console.log(`${target.name} is no longer stunned.`);
+                    console.log(`${target.getName()} is no longer stunned.`);
                 }
             });
         },
@@ -249,11 +251,11 @@ const spells = {
         name: "Heal",
         energyCost: 25,
         effect(attacker, target) {
-            const healAmount = Math.round(50 * attacker.healMultiplier);
-            attacker.health += healAmount;
-            if(attacker.health > attacker.maxHealth) {
-                attacker.health = attacker.maxHealth;
-            }
+            const healAmount = Math.round(10 * attacker.stats.intelligence);
+            
+            // Sets the attackers health to the healed health or the max attacker HP
+            attacker.setHealth(Math.min(attacker.getHealth() + healAmount, attacker.getMaxHealth()));
+
             console.log(`${attacker.name} heals for ${healAmount}`);
         },
         description: "used for testing"
