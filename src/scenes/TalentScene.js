@@ -84,6 +84,30 @@ class TalentScene extends Phaser.Scene {
     }).setOrigin(0.5);
     this.uiElements.push(talentPointsText);
 
+
+
+    // button for testing talents
+    const devButton = this.add.text(250, 50, "-- MAX ALL --", {
+      fontSize: '28px',
+      fill: '#fff',
+    }).setOrigin(0.5);
+    this.uiElements.push(devButton);
+    devButton.setInteractive();
+    devButton.on('pointerdown', () => {
+      for(let i = 0; i < Object.entries(this.player.talents).length; i++) {
+        let arr = Object.entries(this.player.talents)[i];
+        arr = arr[1];
+        for(let j = 0; j < arr.length; j++) {
+          arr[j].value = arr[j].maxPoints;
+          arr[j].effect(this.player);
+        }
+      }
+      this.renderUI();
+    });
+
+
+
+
     // define position for rendering
     const treePositions = {
       offense: { x: 280, y: 200 },
@@ -151,12 +175,10 @@ class TalentScene extends Phaser.Scene {
 
   changeSelection(treeDirection, talentDirection) {
     // Update selected tree
-    console.log(this.player.talents);
     const treeNames = Object.keys(this.player.talents);
     const currentTreeIndex = treeNames.indexOf(this.currentTree || treeNames[0]);
     const newTreeIndex = (currentTreeIndex + treeDirection + treeNames.length) % treeNames.length;
     this.currentTree = treeNames[newTreeIndex];
-    console.log("Updated Tree:", this.currentTree);
 
     // Ensure the current tree is valid
     if (!this.player.talents[this.currentTree]) {

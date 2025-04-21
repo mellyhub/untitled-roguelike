@@ -84,7 +84,7 @@ export class Warrior extends Player {
             executionersPrecision.applyEffect(this);
         }
 
-        // apply defense and shattering blows talent if applicable
+        // apply defense and Shattering Blows talent if applicable
         let defenseReduction;
         const shatteringBlows = this.permanentEffects.find(effect => effect.name === "Shattering Blows");
         if (shatteringBlows) {
@@ -118,7 +118,6 @@ export class Warrior extends Player {
         if (voidChanneling) {
             voidChanneling.applyEffect(this, target, damage, battleUI);
         }
-
         // reset Void Channeling flag
         if (voidChanneling && voidChanneling.removeEffect) {
             voidChanneling.removeEffect();

@@ -32,11 +32,7 @@ const talentConfig = {
                         name: "Blademaster",
                         type: "Buff",
                         applyEffect: (player) => {
-                            const weapon = player.weapon.at(-1);
-                            if (weapon && weapon.type === "Sword") {
-                                weapon.damage *= 1.05;
-                                console.log(`Sword damage is increased to ${weapon.damage}`);
-                            }
+                            // to be implemented
                         },
                     });
                 }
@@ -141,6 +137,26 @@ const talentConfig = {
                 }
             }
         },
+        {
+            // to be implemented !
+            name: "Exploit Weakness",
+            description: "Guarantees your attack to be a critical hit if the enemy is under a status effect.",
+            maxPoints: 1,
+            effect: (player) => {
+                if (!player.permanentEffects.some(effect => effect.name === "Exploit Weakness")) {
+                    player.permanentEffects.push({
+                        name: "Exploit Weakness",
+                        type: "Buff",
+                        applyEffect: (player, target) => {
+                            if(target.permanentEffects.some(effect => effect.type === "Status")) {
+                                console.log(`${player.name} triggers Exploit Weakness, amplifying damage`);
+                            }
+                        },
+                    });
+                }
+            }
+            // to be implemented !
+        }
     ],
 
     defense: [
@@ -219,6 +235,25 @@ const talentConfig = {
                 }
             }
         },
+        {
+            name: "Warrior's Resolve",
+            description: "Grants immunity from all status effects.",
+            maxPoints: 1,
+            effect: (player) => {
+                if (!player.permanentEffects.some(effect => effect.name === "Warrior's Resolve")) {
+                    player.permanentEffects.push({
+                        name: "Warrior's Resolve",
+                        type: "Buff",
+                        applyEffect: (player) => {
+                            if (player.activeEffects.some(effect => effect.type === "Status")) {
+                                console.log(`${player.name} has been cleansed from ${effect.name}.`)
+                                players.activeEffects.pop(effect);
+                            }
+                        },
+                    });
+                }
+            }
+        }
     ],
 
     utility: [
@@ -317,7 +352,8 @@ const talentConfig = {
 
                 weapon.coatings.push({
                     name: "Paralysis Coating",
-                    chance: 0.2, // 20% chance to trigger on attack
+                    //chance: 0.2, // 20% chance to trigger on attack
+                    chance: 1,
                     effect: (attacker, target) => {
                         console.log(`${target.name} is paralyzed by ${attacker.name}'s Paralysis Coating!`);
                         target.activeEffects.push({
