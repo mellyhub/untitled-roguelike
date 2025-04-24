@@ -19,7 +19,7 @@ export const enemies = {
             agility: 5,
             intelligence: 2,
             defense: 10,
-            evasion: 0,
+            evasion: 0.3,
             critChance: 0.1,
             critDamage: 1.5,
             omnivamp: 0,
