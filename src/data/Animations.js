@@ -1,21 +1,21 @@
 export class Animations {
     idleAnimationKey;
     idleAnimationSheetKey;
-    idleAnimationFrameRate = 2;
 
     attackAnimationKey;
     attackAnimationSheetKey;
-    attackAnimationFrameRate = 16;
 
     castAnimationKey;
     castAnimationSheetKey;
-    castAnimationFrameRate = 10;
+
+    properties;
 
     idleAnimation;
     attackAnimation;
     castAnimation;
 
-    constructor(unitName, idleAssetKey, attackAssetKey, castAssetKey) {
+    constructor(unitName, idleAssetKey, attackAssetKey, castAssetKey, properties) {
+        this.unitName = unitName;
         this.idleAnimationKey = `${unitName} idle`;
         this.idleAnimationSheetKey = idleAssetKey;
 
@@ -24,6 +24,8 @@ export class Animations {
 
         this.castAnimationKey = `${unitName} cast`;
         this.castAnimationSheetKey = castAssetKey;
+
+        this.properties = properties;
     }
 
     playIdleAnimation() {
@@ -80,9 +82,9 @@ export class Animations {
         this.createIdleAnimation(scene);
         this.createAttackAnimation(scene);
         this.createCastAnimation(scene);
-        this.idleAnimation = scene.add.sprite(480, 540, this.idleAnimationSheetKey).setScale(1.2);
-        this.attackAnimation = scene.add.sprite(830, 348, this.attackAnimationSheetKey).setScale(1.2);
-        this.castAnimation = scene.add.sprite(480, 540, this.castAnimationSheetKey).setScale(1.2);
+        this.idleAnimation = scene.add.sprite(this.properties.idleAnimPos.x, this.properties.idleAnimPos.y, this.idleAnimationSheetKey).setScale(1.2);
+        this.attackAnimation = scene.add.sprite(this.properties.attackAnimPos.x, this.properties.attackAnimPos.y, this.attackAnimationSheetKey).setScale(1.2);
+        this.castAnimation = scene.add.sprite(this.properties.castAnimPos.x, this.properties.castAnimPos.y, this.castAnimationSheetKey).setScale(1.2);
         this.idleAnimation.setVisible(true);
         this.attackAnimation.setVisible(false);
         this.castAnimation.setVisible(false);
@@ -92,7 +94,7 @@ export class Animations {
         scene.anims.create({
             key: this.idleAnimationKey,
             frames: scene.anims.generateFrameNumbers(this.idleAnimationSheetKey),
-            frameRate: this.idleAnimationFrameRate,
+            frameRate: this.properties.idleAnimFramerate,
             repeat: -1,
         });
     }
@@ -102,7 +104,7 @@ export class Animations {
             scene.anims.create({
                 key: this.attackAnimationKey,
                 frames: scene.anims.generateFrameNumbers(this.attackAnimationSheetKey),
-                frameRate: this.attackAnimationFrameRate,
+                frameRate: this.properties.attackAnimFramerate,
                 repeat: 0,
             });
         }
@@ -113,7 +115,7 @@ export class Animations {
             scene.anims.create({
                 key: this.castAnimationKey,
                 frames: scene.anims.generateFrameNumbers(this.castAnimationSheetKey),
-                frameRate: this.castAnimationFrameRate,
+                frameRate: this.properties.castAnimFramerate,
                 repeat: 0,
             });
         }

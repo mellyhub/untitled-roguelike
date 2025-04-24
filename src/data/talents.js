@@ -6,12 +6,12 @@ const talentConfig = {
             description: "Gain 5 energy when attacking.",
             maxPoints: 1,
             effect: (player) => {
-                if (!player.permanentEffects.some(effect => effect.name === "Energy on Attack")) {
-                    player.permanentEffects.push({
+                if (!player.effectsHandler.permanentEffects.some(effect => effect.name === "Energy on Attack")) {
+                    player.effectsHandler.permanentEffects.push({
                         name: "Energy on Attack",
                         type: "Buff",
                         applyEffect: (player) => {
-                            player.energy = Math.min(player.energy + 5, 100); // cap energy at 100
+                            player.setEnergy(Math.min(player.getEnergy() + 5, 100)); // cap energy at 100
                             console.log(`${player.name} gains 5 energy from "Energy on Attack". Current energy: ${player.energy}`);
                         }
                     });

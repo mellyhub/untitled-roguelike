@@ -2,7 +2,7 @@ import seedrandom from 'seedrandom';
 import BattleUI from '../utils/BattleUI.js';
 import assets from '../assets/assets.json'; // Import the assets.json file
 import { setCookie, getCookie } from '../utils/cookieUtils.js';
-import { PipeSlime } from '../data/enemies/PipeSlime.js';
+import { get_random_enemy } from '../data/enemies.js';
 
 class BattleScene extends Phaser.Scene {
   constructor() {
@@ -44,20 +44,20 @@ class BattleScene extends Phaser.Scene {
     this.levelData = data.level;
     this.seed = data.seed;
 
+    /*
     // reset rebirth effect at start of combat
     const rebirthEffect = this.player.permanentEffects.find(effect => effect.name === "Rebirth");
     if (rebirthEffect && rebirthEffect.removeEffect) {
       rebirthEffect.removeEffect();
     }
+    */
 
     this.playerAnimation;
+    this.playerStartHP = this.player.getMaxHealth();
 
-    this.playerStartHP = this.player.maxHealth;
-
-    //const EnemyClass = get_random_enemy(this.seed);
-    const EnemyClass = PipeSlime;
-    this.enemy = new EnemyClass(this.player.level);
-    this.enemyStartHP = this.enemy.health;
+    const EnemyClass = get_random_enemy(this.seed);
+    this.enemy = EnemyClass.createEnemy();
+    this.enemyStartHP = this.enemy.getHealth();
 
     this.turnCounter = 0;
     this.currentTurn = this.turnCounter % 2;
@@ -65,6 +65,7 @@ class BattleScene extends Phaser.Scene {
     this.cursors = this.input.keyboard.createCursorKeys(); // lägger till arrow keys
     this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER); // lägger till enter key
 
+    console.log(this.player);
     console.log(this.enemy);
 
     const sfxConfig = this.cache.json.get('sfxConfig'); // Get the loaded SFX configuration
@@ -79,13 +80,9 @@ class BattleScene extends Phaser.Scene {
     this.player.animations.createAnimations(this);
     this.player.animations.playIdleAnimation();
 
-    // Add enemy image or animation
-    if (this.enemy.image) {
-      this.add.image(this.enemy.imageXPos, this.enemy.imageYPos, this.enemy.image).setScale(this.enemy.imageScale);
-    } else {
-      let enemyAnimation = this.createEnemyAnimation();
-      enemyAnimation.play(this.enemy.animationKey);
-    }
+    // Add enemy animations
+    this.enemy.animations.createAnimations(this);
+    this.enemy.animations.playIdleAnimation();
 
     // play the enemy's battle cry
     if (this.sfx[this.enemy.battleCry]) {
@@ -169,17 +166,6 @@ class BattleScene extends Phaser.Scene {
     }
   }
 
-  createEnemyAnimation() {
-    this.anims.create({
-      key: this.enemy.animationKey,
-      frames: this.anims.generateFrameNumbers(this.enemy.animationSheetName),
-      frameRate: this.enemy.animationFrameRate,
-      repeat: -1,
-    });
-
-    return this.add.sprite(this.enemy.imageXPos, this.enemy.imageYPos, this.enemy.animationSheetName).setScale(this.enemy.imageScale);
-  }
-
   // Resolve a promise after some time, used to implement delay
   resolveAfterTime(ms) {
     return new Promise((resolve) => {
@@ -187,12 +173,6 @@ class BattleScene extends Phaser.Scene {
         resolve();
       }, ms);
     })
-  }
-
-  // Call a function after a delay
-  async delayedCall(fn, delay) {
-    await this.resolveAfterTime(delay);
-    fn?.();
   }
 
   displayAnimationText(name, action, selectedSpell) {
@@ -205,43 +185,33 @@ class BattleScene extends Phaser.Scene {
 
   async executeTurn(action, selectedSpell) {
     this.inputLocked = true;
-    this.player.processActiveEffects();
 
-    const animationText = this.displayAnimationText(this.player.name, action, selectedSpell);
+    const animationText = this.displayAnimationText(this.player.getName(), action, selectedSpell);
 
     if (action === 'attack') {
       this.player.animations.playAttackAnimation();
-      this.player.attack(this.enemy, this.battleUI);
+      await this.resolveAfterTime(1000);
+      this.player.attemptAction("attack", this.enemy, null, this.battleUI);
     }
     else if (action === 'cast') {
-      if (selectedSpell) {
-        this.player.animations.playCastAnimation(selectedSpell);
-        const damage = this.player.cast(this.enemy, selectedSpell, this.battleUI);
-        if (damage) {
-          this.delayedCall(() => this.battleUI.displayDamageText('enemy', damage), 1000);
-        }
-      }
-      else {
-        console.warn('No spell selected!');
-      }
+      this.player.animations.playCastAnimation(selectedSpell);
+      await this.resolveAfterTime(1000);
+      this.player.attemptAction("cast", this.enemy, selectedSpell, this.battleUI);
     }
 
-    await this.resolveAfterTime(1000);
     animationText.destroy();
 
     this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP, this.turnCounter);
     this.battleUI.renderMenu(this.currentMenu, this.currentSelection);
     await this.resolveAfterTime(1000);
 
-    if (this.enemy.health > 0) {
-      const animationText = this.displayAnimationText(this.enemy.name, "attack", selectedSpell);
-      const damage = this.enemy.attack(this.player);
-      this.delayedCall(() => animationText.destroy(), 1000);
-      console.log(this.enemy);
-      this.delayedCall(() => this.battleUI.displayDamageText('player', damage), 1000)
+    if (this.enemy.getHealth() > 0) {
+      const animationText = this.displayAnimationText(this.enemy.getName(), "attack", selectedSpell);
+      await this.resolveAfterTime(1000);
+      this.enemy.attemptAction("attack", this.player, null, this.battleUI);
+      animationText.destroy();
     }
 
-    await this.resolveAfterTime(1000);
     this.turnCounter++;
     this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP, this.turnCounter);
     this.battleUI.renderMenu(this.currentMenu, this.currentSelection);
@@ -265,21 +235,27 @@ class BattleScene extends Phaser.Scene {
   }
 
   async checkRoundOutcome() {
-    if (this.enemy.health <= 0) {
+    if (this.enemy.getHealth() <= 0) {
       this.add.text(960, 640, 'You win!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
+
+      /*
       const vitalSurge = this.player.permanentEffects.find(effect => effect.name === "Vital Surge");
       if (vitalSurge) {
         vitalSurge.applyEffect(this.player);
       }
+      */
+      
+      /*
       this.player.increaseLevel(1);
       this.player.increaseTalentPoints(1);
       this.player.removeAllActiveEffects();
       console.log("All active effects have been removed");
+      */
 
       this.turnCounter = 0;
-      this.player.completedEncounters ++;
-      this.player.score = this.player.completedEncounters * 100; // example: add 100 points for defeating an enemy
-      console.log(`Player score: ${this.player.score}`);
+      //this.player.completedEncounters ++;
+      //this.player.score = this.player.completedEncounters * 100; // example: add 100 points for defeating an enemy
+      this.player.score += 100;
 
       const highestScore = parseInt(getCookie('highestScore')) || 0;
       if (this.player.score > highestScore) {
@@ -292,8 +268,9 @@ class BattleScene extends Phaser.Scene {
       return;
     }
 
-    if (this.player.health <= 0) {
+    if (this.player.getHealth() <= 0) {
 
+      /*
       // check for rebirth talent
       const rebirthEffect = this.player.permanentEffects.find(effect => effect.name === "Rebirth");
       if (rebirthEffect && !rebirthEffect.hasRevived) {
@@ -303,6 +280,7 @@ class BattleScene extends Phaser.Scene {
         // this causes a bug that makes the menu not render after revived
         return this.checkRoundOutcome();
       }
+      */
 
       this.add.text(960, 540, 'You lose!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
       this.scene.pause();
@@ -310,10 +288,5 @@ class BattleScene extends Phaser.Scene {
     this.inputLocked = false;
   }
 
-  getEnemy() {
-    const rng = seedrandom(this.seed);
-    const random = rng();
-    this.enemy = this.levelData.enemies[Math.floor(random * this.levelData.enemies.length)];
-  }
 }
 export default BattleScene;
