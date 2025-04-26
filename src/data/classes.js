@@ -81,6 +81,13 @@ export const classes = {
             comboPoints: 3
         }
     },
+    enemy: {
+        name: "Enemy",
+        description: "Placeholder class for enemies",
+        stats: {
+            talents: [],
+        }
+    }
 };
 
 export default classes;

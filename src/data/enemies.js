@@ -9,6 +9,7 @@ import { Animations } from './Animations.js';
 export const enemies = {
     pipeSlime: {
         name: "PipeSlime",
+        class: "Slime",
         stats: {
             level: 0,
             health: 200,
@@ -19,7 +20,7 @@ export const enemies = {
             agility: 5,
             intelligence: 2,
             defense: 10,
-            evasion: 0.3,
+            evasion: 0.1,
             critChance: 0.1,
             critDamage: 1.5,
             omnivamp: 0,
@@ -52,7 +53,8 @@ export const enemies = {
                 [...this.weapons], 
                 [...this.spells], 
                 structuredClone(this.stats), 
-                this.animations
+                this.animations,
+                this.class
             );
         }
     }

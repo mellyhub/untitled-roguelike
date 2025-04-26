@@ -28,8 +28,9 @@ export class Character {
     // Inventory handler
     inventoryHandler;
 
-    constructor(name, weapons, spells, stats, animations) {
+    constructor(name, weapons, spells, stats, animations, characterClass = "Enemy") {
         this.name = name;
+        this.class = characterClass;
         this.weapons = weapons;
         this.spells = spells;
         this.stats = stats;
