@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Changelog</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px; }
+        h1 { color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        h2 { color: #444; margin-top: 20px; }
+        ul { padding-left: 20px; }
+        li { margin-bottom: 8px; }
+    </style>
+</head>
+<body>
+<h1>Changelog</h1>
+<h2>2025-04-24</h2>
+<ul>
+<li>Merge pull request #3 from mellyhub/big-refactor (Ludvig Sjöberg, f319e13)</li>
+<li>fix (lusj3822, c3851fb)</li>
+</ul>
+<h2>2025-04-21</h2>
+<ul>
+<li>core functionality works (lusj3822, 01c75a7)</li>
+<li>morbious buff according to meeting (25/04/21) (mellyhub, a90f618)</li>
+<li>bogfix (mellyhub, 02a917c)</li>
+<li>Refactor talent application logic; add testing button in TalentScene and improve talent effects handling (mellyhub, 6ab2f5e)</li>
+<li>Refactor enemy and player status effects; add hasStatusEffect method and update effect handling in spells and talents (mellyhub, e68f62d)</li>
+<li>Add MerchantScene and integrate merchant encounters; update player stats and talent tree defaults (mellyhub, f2901ff)</li>
+<li>Refactor talent and weapon systems; update UI to display weapon coatings and stats correctly (mellyhub, 02ce030)</li>
+<li>Add "Nimble Instinct" talent for evasion scaling (mellyhub, e0cde78)</li>
+</ul>
+<h2>2025-04-20</h2>
+<ul>
+<li>Add unarmed weapon option for Warrior class (mellyhub, 0ddcbf4)</li>
+<li>Refactor attack and casting methods to include battle UI updates; add Void Channeling talent for repeated damage effect (mellyhub, da232e3)</li>
+<li>bugfix (mellyhub, c6a81fb)</li>
+<li>Add "Executioner's precision" talent to amplify damage against low-health enemies (mellyhub, 9a5d62f)</li>
+<li>Add "Vital Surge" talent to heal player after defeating an enemy; (mellyhub, 35f21fe)</li>
+<li>Add "Shattering Blows" talent to ignore 25% of enemy defense; update damage calculation in Warrior class (mellyhub, 5beab61)</li>
+<li>Adjust menu positioning and add wrapping logic for selection navigation (mellyhub, a90652d)</li>
+</ul>
+<h2>2025-04-19</h2>
+<ul>
+<li>Refactor healing logic to use healMultiplier; ensure health does not exceed maxHealth. (mellyhub, 57d6fed)</li>
+<li>Fix health overflow in Warrior class (mellyhub, ea77ad9)</li>
+<li>Merge pull request #2 from mellyhub/executeTurn-improvements (Ludvig Sjöberg, 4c5186e)</li>
+<li>improved executeTurn rendering sequence, now smoother (Ludvig Sjöberg, 1cf5c04)</li>
+<li>Merge branch 'main' of https://github.com/mellyhub/untitled-roguelike (mellyhub, ce887c4)</li>
+<li>Enhance battle mechanics by implementing Mirror Shield talent effect and updating PipeSlime attack logic; add stats menu rendering in BattleUI. (mellyhub, 2d8ad0e)</li>
+</ul>
+<h2>2025-04-18</h2>
+<ul>
+<li>uncommented some spells that caused Mage to crash when opening the spell menu (Ludvig Sjöberg, 51cba6a)</li>
+<li>improved the MapScene UI a bit (Ludvig Sjöberg, 0fc83ad)</li>
+<li>bag menu functionality (mellyhub, 3821b94)</li>
+<li>implement new talents for stat boosts and healing adjustments. (mellyhub, e01e425)</li>
+<li>Display weapon and coating information in the action bar for better player feedback. (mellyhub, aa2b25f)</li>
+<li>Enhance status effects handling by adding poisoned state to Enemy and Player classes; update attack logic in PipeSlime and add Toxic Coating talent effect. (mellyhub, 4b6a694)</li>
+<li>add weapon coating processing (mellyhub, c777a7c)</li>
+<li>spell and damage calculations (mellyhub, d8100b1)</li>
+<li>Refactor status effects handling in Enemy and Player classes (mellyhub, b1eefbd)</li>
+</ul>
+<h2>2025-04-17</h2>
+<ul>
+<li>Add Phantom Strike spell to Warrior class and adjust damage calculations; refactor BattleScene and TalentScene for improved functionality (mellyhub, 3ecb168)</li>
+<li>arcane surge spell (mellyhub, b1c16ac)</li>
+<li>Refactor active effects processing in Enemy and Player classes (mellyhub, 60db802)</li>
+<li>Refactor enemy and warrior classes, implement Thunderclap spell, and add Battle Trance talent (mellyhub, ef8beae)</li>
+<li>rebirth talent (mellyhub, 812ccb9)</li>
+<li>Enhance attack mechanics in Warrior class with evasion checks, damage calculations, and omnivamp application (mellyhub, 1942256)</li>
+</ul>
+<h2>2025-04-16</h2>
+<ul>
+<li>Add PipeSlime enemy with stats and implement evasion in Warrior attack (mellyhub, 0f4aef9)</li>
+<li>energy shield talent (mellyhub, f1e1f9e)</li>
+</ul>
+<h2>2025-04-15</h2>
+<ul>
+<li>Fix damage return value in attack and cast methods of Warrior class (mellyhub, c465d2a)</li>
+<li>Merge branch 'main' of https://github.com/mellyhub/untitled-roguelike (mellyhub, e14a1da)</li>
+<li>Refactor damage handling and display in Warrior and BattleScene (mellyhub, 1976bd9)</li>
+<li>improved warrior, mage and fireball/firebreath scaling (lusj3822, c9c0787)</li>
+<li>talents ui (mellyhub, ee05b86)</li>
+<li>working on talents (lusj3822, c57d2f4)</li>
+<li>Merge branch 'main' of https://github.com/mellyhub/untitled-roguelike (mellyhub, dce1ba3)</li>
+<li>its morbin time (mellyhub, 5428d4b)</li>
+<li>removed redundant code (lusj3822, 6434b92)</li>
+<li>Merge branch 'main' of https://github.com/mellyhub/untitled-roguelike (mellyhub, 3962ace)</li>
+<li>added effects to enemies (lusj3822, 796b435)</li>
+<li>added omnivamp stat (mellyhub, c4c82e0)</li>
+<li>some bug fixes (lusj3822, 594a31c)</li>
+<li>Added debugging text to display the player's current weapon in the action bar (mellyhub, b57ad43)</li>
+<li>Added maxPoints property to talents and updated TalentScene to reflect maximum allocation limits (mellyhub, 8fc3a71)</li>
+<li>Merge branch 'main' of https://github.com/mellyhub/untitled-roguelike (mellyhub, 85be318)</li>
+<li>talent thingys (mellyhub, cbd2fb4)</li>
+<li>Implemented conjuration cast animation for warrior (HectorLundman, 1665da6)</li>
+<li>Added conjuration spell cast sprite sheet for warrior (HectorLundman, 2122fe0)</li>
+<li>added new talent for conjure weapon (mellyhub, 3b12e45)</li>
+</ul>
+<h2>2025-04-14</h2>
+<ul>
+<li>weapon refactoring + conjure spell :3 (mellyhub, bacafae)</li>
+<li>nu så (mellyhub, 3d3402a)</li>
+<li>vafan (mellyhub, 10a7121)</li>
+<li>ö (mellyhub, 3702ec0)</li>
+<li>Merge branch 'main' of https://github.com/mellyhub/untitled-roguelike (mellyhub, 7cf6bed)</li>
+<li>restructuring of project files (mellyhub, 2b2c138)</li>
+<li>fixed the many imports in battlescene (lusj3822, 91d4910)</li>
+<li>Added sprites and class for new enemy (HectorLundman, c1366a8)</li>
+<li>Merge branch 'main' of https://github.com/mellyhub/untitled-roguelike (mellyhub, fb50ccb)</li>
+<li>refactoring of talents (mellyhub, 326762e)</li>
+<li>Redid goblin with animation (HectorLundman, 19bc0af)</li>
+<li>Updated Snowman sprite sheet (HectorLundman, abd8cf9)</li>
+<li>Updated sprite sheets (HectorLundman, 432d6c9)</li>
+</ul>
+<h2>2025-04-13</h2>
+<ul>
+<li>casting a spell now drains energy for mage and rouge (lusj3822, 4106496)</li>
+<li>fixed a bug with the goblins energy bar (lusj3822, cab5f30)</li>
+<li>talent scene bugfix (mellyhub, df84501)</li>
+<li>Merge branch 'main' of https://github.com/mellyhub/untitled-roguelike (mellyhub, e963105)</li>
+<li>testing permanent buff talent (mellyhub, 1e13cd2)</li>
+<li>fixed the energy bar (lusj3822, 270ba36)</li>
+<li>Merge branch 'main' of https://github.com/mellyhub/untitled-roguelike (lusj3822, 2260363)</li>
+<li>added mage attack animation (lusj3822, e3a674d)</li>
+<li>Update assets.json (HectorLundman, e117b99)</li>
+<li>added an Animation class that handles animations (lusj3822, f5a036e)</li>
+<li>added the first talent for testing (mellyhub, 71b81bc)</li>
+<li>dynamic sound loading + extra sfx (mellyhub, 24fd7fe)</li>
+<li>hardcoded rage bar for warrior (mellyhub, 6dbb374)</li>
+<li>added battlecry for pipeslime (mellyhub, 135d139)</li>
+<li>Added sprite sheets for mage and rogue (HectorLundman, 10a2db9)</li>
+<li>Added attack animation for warrior (HectorLundman, d8cdc14)</li>
+<li>Added rogue + changes to warrior sprite (HectorLundman, 93fac09)</li>
+<li>cat (lusj3822, f250c86)</li>
+<li>changed a bunch of names (HectorLundman, dc26622)</li>
+<li>changed snowman (HectorLundman, 1ae36b6)</li>
+<li>Merge branch 'main' of https://github.com/mellyhub/untitled-roguelike (lusj3822, d1f475f)</li>
+<li>mage cast fire spells animation (lusj3822, fa7d802)</li>
+<li>Merge branch 'main' of https://github.com/mellyhub/untitled-roguelike (HectorLundman, ab2b27d)</li>
+<li>Added snowman sprite sheet (HectorLundman, bc0e209)</li>
+<li>animations, pipeslime, class selection is working (lusj3822, f7adb51)</li>
+</ul>
+<h2>2025-04-12</h2>
+<ul>
+<li>Update nightGlider-idle-Sheet.png (HectorLundman, 0351460)</li>
+<li>Merge branch 'main' of https://github.com/mellyhub/untitled-roguelike (mellyhub, 856dec7)</li>
+<li>healthbar bugfix (mellyhub, 2a1ae4a)</li>
+<li>Merge branch 'main' of https://github.com/mellyhub/untitled-roguelike (HectorLundman, 938f7b7)</li>
+<li>Added new sprite sheet (HectorLundman, a964cfc)</li>
+<li>Merge branch 'main' of https://github.com/mellyhub/untitled-roguelike (mellyhub, 3019f7b)</li>
+<li>stuff (mellyhub, a314be5)</li>
+<li>mage class and animation (lusj3822, 27acd75)</li>
+<li>Added sprite sheets (HectorLundman, f91d835)</li>
+<li>Snowman and Night Glider (megadraken) classes, random enemy selection (lusj3822, 0cd3898)</li>
+<li>spells now work, cleaned up some code (lusj3822, bcd8473)</li>
+<li>rewards are dynamically generated instead of hardcoded (mellyhub, 0df6247)</li>
+<li>implemented basic sound effects for combat (mellyhub, f8d02c1)</li>
+</ul>
+<h2>2025-04-09</h2>
+<ul>
+<li>saved (mellyhub, 3547a43)</li>
+<li>TalentScene 2d array moments (HectorLundman, 89cb1af)</li>
+</ul>
+<h2>2025-04-07</h2>
+<ul>
+<li>Added button texture for action bar (HectorLundman, d8af69a)</li>
+</ul>
+<h2>2025-04-06</h2>
+<ul>
+<li>Updated stat icon-frames in action bar (HectorLundman, af392c5)</li>
+<li>New assets (HectorLundman, 3db7a33)</li>
+<li>GOBLIN SCALING MOMENTS (HectorLundman, 927c761)</li>
+<li>Updated Ui and card texture (HectorLundman, 6152b3c)</li>
+<li>Added frame for icons on Reward Scene (HectorLundman, 4a5ef66)</li>
+<li>Changed Battle Ui (HectorLundman, 1e8dc06)</li>
+<li>Added unit frames (HectorLundman, 79f88a9)</li>
+<li>Added icons (HectorLundman, cd9c5b5)</li>
+<li>Added a bunch of ui stuff (HectorLundman, 9f45734)</li>
+<li>Merge branch 'main' of https://github.com/mellyhub/untitled-roguelike (lusj3822, c61e08d)</li>
+<li>big refactor in progress, some functionallity temporarily disabled (lusj3822, 3d4b512)</li>
+<li>Added 2 new weapon icons (HectorLundman, f5c9758)</li>
+<li>Added new background (HectorLundman, 3613054)</li>
+<li>fixed a bug with duplicate rendering of player stats and score/turn (lusj3822, 400071a)</li>
+<li>Remove unused renderedElements array and clean up rendering logic in BattleUI (HectorLundman, 37146b3)</li>
+<li>Added icon (HectorLundman, bd30d90)</li>
+</ul>
+<h2>2025-04-05</h2>
+<ul>
+<li>Improved functions in Reward Scene (HectorLundman, 75e9b08)</li>
+<li>lil bugfix (mellyhub, ba0e931)</li>
+<li>nerfed aura of might (mellyhub, 1b75caf)</li>
+<li>save highscore in cookies (mellyhub, 9121262)</li>
+<li>added basic score system (mellyhub, ccf3c3f)</li>
+<li>implemented weighted stat scaling on test level (mellyhub, 87522d5)</li>
+<li>Enhance player spells and battle UI: add additional spells, implement spell menu, and improve menu navigation (mellyhub, e3d41c5)</li>
+</ul>
+<h2>2025-04-04</h2>
+<ul>
+<li>Merge branch 'main' of https://github.com/mellyhub/untitled-roguelike (mellyhub, 9efa311)</li>
+<li>added heal over time spell (mellyhub, d07a138)</li>
+<li>implemented combo points for rogue (scuffed) (mellyhub, c2fe17d)</li>
+<li>Added icon for Snowman's Bane (HectorLundman, f8a8fbf)</li>
+<li>Merge branch 'main' of https://github.com/mellyhub/untitled-roguelike (mellyhub, 131a53d)</li>
+<li>implemented focus points for mage (mellyhub, 1e354c8)</li>
+<li>Merge branch 'main' of https://github.com/mellyhub/untitled-roguelike (lusj3822, 91951eb)</li>
+<li>main menu image and text alignment fix (lusj3822, 66ff2dd)</li>
+<li>rage stuff (mellyhub, 9408015)</li>
+<li>Merge branch 'main' of https://github.com/mellyhub/untitled-roguelike (mellyhub, b8a1081)</li>
+<li>fixed rage scaling (mellyhub, ed588a5)</li>
+<li>Merge branch 'main' of https://github.com/mellyhub/untitled-roguelike (lusj3822, 85e91d4)</li>
+<li>jens buff (lusj3822, 86694a4)</li>
+<li>Merge branch 'main' of https://github.com/mellyhub/untitled-roguelike (mellyhub, 07c854d)</li>
+<li>implemented basic rage system (mellyhub, 044b673)</li>
+<li>Merge branch 'main' of https://github.com/mellyhub/untitled-roguelike (lusj3822, 2c3c169)</li>
+<li>easter egg (lusj3822, 74aade2)</li>
+<li>Added inventory and spellbook to player.js (HectorLundman, 89d9732)</li>
+<li>Merge branch 'main' of https://github.com/mellyhub/untitled-roguelike (lusj3822, 5c05002)</li>
+<li>dynamic enemy image (lusj3822, 769dfac)</li>
+<li>created seperate file for damage calculations (mellyhub, d0b4d53)</li>
+<li>Added crit stats and the rogue class (HectorLundman, 33abdf7)</li>
+<li>Added bite and fireball icons to assets.json (HectorLundman, 39139f0)</li>
+</ul>
+<h2>2025-04-03</h2>
+<ul>
+<li>big important (mellyhub, e578622)</li>
+<li>refactoring of the BattleScene UI (mellyhub, 1028114)</li>
+<li>reward cards are now only rendered once (mellyhub, 7feccc4)</li>
+<li>implemented dynamic asset loading for RewardScene (mellyhub, b619469)</li>
+<li>added functionality for damage over time spells (mellyhub, 0e1297f)</li>
+<li>Added Bite icon (HectorLundman, 8c1ee93)</li>
+<li>Added icon for Fireball (HectorLundman, 2d0709d)</li>
+<li>Merge branch 'main' of github.com:mellyhub/untitled-roguelike (Axel-Jacobs, 2a8fe1c)</li>
+<li>Changed assets.json (HectorLundman, 4063a5f)</li>
+<li>fix icon, fix random weapons on change selection (Axel-Jacobs, 4894489)</li>
+<li>log correct damage, added enemies strength (Axel-Jacobs, 93aef74)</li>
+<li>Created json file for assets (HectorLundman, 26eb1a6)</li>
+<li>Added new sprite (HectorLundman, 7624858)</li>
+<li>Updated reward scene (HectorLundman, 1aef4c5)</li>
+<li>Added icon attributes to spells and weapons (HectorLundman, a4107b4)</li>
+<li>Sorted images + added icons to stat- and weapon card (HectorLundman, 224033c)</li>
+</ul>
+<h2>2025-04-02</h2>
+<ul>
+<li>Added the first spell icon (HectorLundman, 723cbdd)</li>
+<li>improved ui (lusj3822, c4b5319)</li>
+<li>experimenting with new spell types (mellyhub, ecb9289)</li>
+<li>Fixed scaling on abilities in BattleScene (HectorLundman, 237af70)</li>
+<li>Casting spells coming soon TM (HectorLundman, 71a1250)</li>
+<li>Added relevant stuff for weapon spells (HectorLundman, acd6b61)</li>
+<li>Renamed weapon castables (HectorLundman, 509634d)</li>
+<li>Configured weapons and spells (HectorLundman, c875fea)</li>
+<li>Player now gets his weapon (HectorLundman, 4ff1ae6)</li>
+<li>Updated card.png (HectorLundman, 552a1a3)</li>
+<li>Updated map.png (HectorLundman, a87b6db)</li>
+</ul>
+<h2>2025-04-01</h2>
+<ul>
+<li>turn thingys (mellyhub, 2a884e8)</li>
+<li>big things (mellyhub, 69d24d6)</li>
+<li>Merge branch 'main' of https://github.com/mellyhub/untitled-roguelike (mellyhub, adafae0)</li>
+<li>added descriptions to reward scene (mellyhub, d3686f2)</li>
+<li>NEW PLACEHOLDER MAP IMAGE (HectorLundman, 84d6168)</li>
+<li>Merge branch 'main' of https://github.com/mellyhub/untitled-roguelike (HectorLundman, 7d4fa81)</li>
+<li>Placerholder map replaced (HectorLundman, 0e4124e)</li>
+<li>Merge branch 'main' of https://github.com/mellyhub/untitled-roguelike (mellyhub, cfaf3c9)</li>
+<li>frostballe (mellyhub, b30ac81)</li>
+<li>new map image, stats on battle Scence (lusj3822, 49194ee)</li>
+<li>added random weapon reward (mellyhub, 52146b7)</li>
+<li>Merge branch 'main' of https://github.com/mellyhub/untitled-roguelike (mellyhub, 468d880)</li>
+<li>added reward scene prototype (mellyhub, 9581982)</li>
+<li>random enemy selection (lusj3822, 5c0818a)</li>
+<li>music (lusj3822, 69646c4)</li>
+<li>fuckin with sound (mellyhub, 0655510)</li>
+<li>refactored enemies/levels (mellyhub, 9a1f4f7)</li>
+<li>refactored handling of player object (mellyhub, ffb56dd)</li>
+</ul>
+<h2>2025-03-31</h2>
+<ul>
+<li>better healthbar visuals (lusj3822, f25535b)</li>
+<li>Merge pull request #1 from mellyhub/Changed-BattleScene-layout-(this-is-still-mega-fucked) (Ludvig Sjöberg, 0c273b2)</li>
+<li>added dynamic health bars, proper battle input handling, no overlapping rerendering (lusj3822, a79d4c9)</li>
+<li>Placeholder sprite added (HectorLundman, be8bc7f)</li>
+<li>Updated BattleScene and simplified functions (HectorLundman, 10391e3)</li>
+<li>MEGA FUCKED I DONT KNOW WHAT I AM DOING BUT IT WILL BE FINE IN THE END (HectorLundman, 39a8968)</li>
+</ul>
+<h2>2025-03-30</h2>
+<ul>
+<li>talent ui prototyp (mellyhub, 482efe1)</li>
+<li>meny grejer (mellyhub, 23e62e4)</li>
+<li>lagt till main menu (mellyhub, b6801cd)</li>
+<li>map logik + combat bugfix (mellyhub, 09a18c2)</li>
+</ul>
+<h2>2025-03-29</h2>
+<ul>
+<li>Ändrat på hur damage räknas ut i spells (HectorLundman, 3306076)</li>
+<li>vapen scaling part 2 (mellyhub, de95cec)</li>
+<li>Merge branch 'main' of https://github.com/mellyhub/untitled-roguelike (HectorLundman, 9f08b00)</li>
+<li>Formaterat om player.js + stat-scaling (HectorLundman, 66f9bcc)</li>
+<li>menyfitta (mellyhub, c6e7deb)</li>
+<li>formaterat om koden för vapen/spells (mellyhub, 7e2a52f)</li>
+<li>skapat talent scene (mellyhub, 2f473bb)</li>
+<li>lite mer bra grejer (mellyhub, f2035fe)</li>
+<li>bra grejer (mellyhub, d9fd11c)</li>
+</ul>
+<h2>2025-03-28</h2>
+<ul>
+<li>gjort om koden för vapen/spells + skapat klasser (mellyhub, 387539e)</li>
+<li>Grafisk design igen (HectorLundman, c859c26)</li>
+<li>Tillagt + ändrat artwork (HectorLundman, afbfb36)</li>
+<li>Megadraken (HectorLundman, ac49cf7)</li>
+<li>woopsie poopsie (mellyhub, 036c633)</li>
+<li>first commit (mellyhub, 9cacd9f)</li>
+<li>Initial commit (mellyhub, 6498e47)</li>
+</ul>
+</body>
+</html>
