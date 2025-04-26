@@ -5,6 +5,7 @@ export class Character {
     name;
     class;
     weapons;
+    currentWeapon;
     spells;
     stats; // Includes Health, Energy/Mana, ...
     level;
@@ -128,6 +129,19 @@ export class Character {
     
     getCurrentWeapon() {
         return this.weapons.at(-1);
+    }
+
+    equipWeapon(weapon) {
+        this.currentWeapon = weapon;
+        this.weapons.push(weapon);
+        if (weapon.stats) {
+            this.stats.strength += weapon.stats.strength;
+            this.stats.agility += weapon.stats.agility;
+            this.stats.intelligence += weapon.stats.intelligence;
+        }
+        else {
+            console.log("Weapon has no stats.");
+        }
     }
 
     addWeapon(weapon) {

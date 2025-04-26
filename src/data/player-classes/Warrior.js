@@ -9,9 +9,8 @@ export class Warrior extends Character {
         this.class = "Warrior";
         this.resource = { rage : 0 };
         this.animations = animations;
-    }
-
-    /*
+    }  
+    
     handleRage(damage) {
         const rageMultiplier = 1 + this.resource.rage * 0.002;
         damage *= rageMultiplier;
@@ -21,6 +20,16 @@ export class Warrior extends Character {
         return damage;
     }
 
+    attack(target, battleUI) {
+        if (target.stats.evasion > Math.random()) {
+            console.log(`${target.name} evaded the attack`);
+            return;
+        }
+        const damage = Math.round(this.handleRage(this.weapons.at(-1).damage));
+        this.doDamage(damage, target, battleUI);
+    }
+
+    /*
     attack(target, battleUI) {
 
         // check evasion
