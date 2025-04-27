@@ -46,6 +46,35 @@ class RewardScene extends Phaser.Scene {
             const yPosition = 400;
 
             const card = this.add.image(xPosition, yPosition, 'card').setScale(1.5);
+            
+            // Make card interactive
+            card.setInteractive({ useHandCursor: true })
+                .on('pointerover', () => {
+                    if (this.currentSelection !== index) {
+                        card.setTint(0xaaaaff); // Light blue hover effect
+                    }
+                    // Update description when hovering
+                    this.descriptionText.setText(this.rewards[index].description);
+                })
+                .on('pointerout', () => {
+                    if (this.currentSelection !== index) {
+                        card.clearTint();
+                    }
+                    // Restore description to selected card
+                    this.descriptionText.setText(this.rewards[this.currentSelection].description);
+                })
+                .on('pointerdown', () => {
+                    // Update selection
+                    this.currentSelection = index;
+                    this.updateCardHighlights();
+                    this.descriptionText.setText(this.rewards[index].description);
+                    
+                    // Double click detection for selection
+                    if (card.lastClickTime && (this.time.now - card.lastClickTime < 300)) {
+                        this.selectCard();
+                    }
+                    card.lastClickTime = this.time.now;
+                });
 
             const rewardType = reward.name.includes('Weapon') ? 'weapon' : reward.name.includes('spell') ? 'spell' : 'stat';
 
@@ -76,6 +105,30 @@ class RewardScene extends Phaser.Scene {
             wordWrap: { width: 800 },
             align: 'center',
         }).setOrigin(0.5);
+
+        // Add select button
+        const selectButton = this.add.text(960, 800, 'SELECT', {
+            fontSize: '40px',
+            fill: '#fff',
+            backgroundColor: '#4a1',
+            padding: { x: 30, y: 10 }
+        }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+
+        // Add hover and click effects for select button
+        selectButton
+            .on('pointerover', () => {
+                selectButton.setStyle({ fill: '#ff0' });
+            })
+            .on('pointerout', () => {
+                selectButton.setStyle({ fill: '#fff' });
+            })
+            .on('pointerdown', () => {
+                selectButton.setStyle({ fill: '#f80' });
+            })
+            .on('pointerup', () => {
+                selectButton.setStyle({ fill: '#ff0' });
+                this.selectCard();
+            });
 
         this.cursors = this.input.keyboard.createCursorKeys();
         this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);

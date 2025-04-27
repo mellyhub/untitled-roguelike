@@ -51,13 +51,63 @@ class MapScene extends Phaser.Scene {
         this.cursors = this.input.keyboard.createCursorKeys();
         this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
 
+        // Add enhanced mouse interactivity to nodes
         this.levelNodes.forEach((node, index) => {
-            node.render.setInteractive();
+            node.render.setInteractive({ useHandCursor: true });
+            
+            // Hover effects
+            node.render.on('pointerover', () => {
+                if (!node.completed && this.currentNodeIndex !== index) {
+                    node.render.setFillStyle(0x4444ff, 0.7); // Blue hover effect
+                    node.text.setColor('#ffff00'); // Yellow text on hover
+                }
+            });
+            
+            node.render.on('pointerout', () => {
+                if (!node.completed && this.currentNodeIndex !== index) {
+                    node.render.setFillStyle(0x000000, 0.7); // Reset to black
+                    node.text.setColor('#ffffff'); // Reset text color
+                }
+            });
+            
+            // Click to select
             node.render.on('pointerdown', () => {
                 if (!node.completed) {
                     this.selectNode(index);
+                    
+                    // Double-click detection to start level
+                    if (node.render.lastClickTime && (this.time.now - node.render.lastClickTime < 300)) {
+                        this.startLevel(index);
+                    }
+                    node.render.lastClickTime = this.time.now;
                 }
             });
+            
+            // Also make text interactive
+            node.text.setInteractive({ useHandCursor: true })
+                .on('pointerover', () => {
+                    if (!node.completed && this.currentNodeIndex !== index) {
+                        node.render.setFillStyle(0x4444ff, 0.7);
+                        node.text.setColor('#ffff00');
+                    }
+                })
+                .on('pointerout', () => {
+                    if (!node.completed && this.currentNodeIndex !== index) {
+                        node.render.setFillStyle(0x000000, 0.7);
+                        node.text.setColor('#ffffff');
+                    }
+                })
+                .on('pointerdown', () => {
+                    if (!node.completed) {
+                        this.selectNode(index);
+                        
+                        // Double-click detection to start level
+                        if (node.text.lastClickTime && (this.time.now - node.text.lastClickTime < 300)) {
+                            this.startLevel(index);
+                        }
+                        node.text.lastClickTime = this.time.now;
+                    }
+                });
         });
 
         // "M" byter mellan kartan och BattleScene
@@ -70,6 +120,32 @@ class MapScene extends Phaser.Scene {
             this.scene.switch('TalentScene', { player: this.player });
         });
 
+        // Add start level button for mouse users
+        this.startButton = this.add.text(960, 900, 'ENTER LEVEL', {
+            fontSize: '40px',
+            fill: '#fff',
+            backgroundColor: '#4a1',
+            padding: { x: 30, y: 10 }
+        }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+        
+        // Add hover and click effects for start button
+        this.startButton
+            .on('pointerover', () => {
+                this.startButton.setStyle({ fill: '#ff0' });
+            })
+            .on('pointerout', () => {
+                this.startButton.setStyle({ fill: '#fff' });
+            })
+            .on('pointerdown', () => {
+                this.startButton.setStyle({ fill: '#f80' });
+            })
+            .on('pointerup', () => {
+                this.startButton.setStyle({ fill: '#ff0' });
+                const selectedNode = this.levelNodes[this.currentNodeIndex];
+                if (!selectedNode.completed) {
+                    this.startLevel(this.currentNodeIndex);
+                }
+            });
     }
 
     update() {
@@ -108,6 +184,7 @@ class MapScene extends Phaser.Scene {
         const node = this.levelNodes[index];
         if (!node.completed) {
             node.render.setFillStyle(0x008000, 0.7); // highlightar vald node
+            node.text.setColor('#ffff00'); // Yellow text for selected node
         }
     }
 
@@ -115,6 +192,7 @@ class MapScene extends Phaser.Scene {
         const node = this.levelNodes[index];
         if (!node.completed) {
             node.render.setFillStyle(0x000000, 0.7); // reset färg
+            node.text.setColor('#ffffff'); // Reset text color
         }
     }
 
