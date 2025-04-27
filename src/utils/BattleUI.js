@@ -73,9 +73,9 @@ class BattleUI {
         this.playerUnitFrame.add(this.scene.add.rectangle(-162, -116, playerHealthBarSize.width, playerHealthBarSize.height, COLOR_CODES.GREEN).setOrigin(0));
         this.playerUnitFrame.add(this.scene.add.rectangle(-162, -32, playerEnergyBarSize.width, playerEnergyBarSize.height, COLOR_CODES.YELLOW).setOrigin(0));
         this.playerUnitFrame.add(this.scene.add.text(0, -74, `${Math.max(0, player.getHealth())}/${playerStartHP}`, { fontSize: '52px', fill: '#000' }).setOrigin(0.5));
-        this.playerUnitFrame.add(this.scene.add.text(200, -120, `${player.name}`, { fontSize: '40px' }));
+        this.playerUnitFrame.add(this.scene.add.text(200, -120, `${player.getName()}`, { fontSize: '40px' }));
         this.playerUnitFrame.add(this.scene.add.text(200, -60, `Class: ${player.class}`, { fontSize: '40px' }));
-        this.playerUnitFrame.add(this.scene.add.text(200, 0, `Level: ${player.level}`, { fontSize: '40px' }));
+        this.playerUnitFrame.add(this.scene.add.text(200, 0, `Level: ${player.getLevel()}`, { fontSize: '40px' }));
         this.playerUnitFrame.add(this.scene.add.image(0, 0, 'warrior-unitframe-front'));
 
         // enemy unit frame
@@ -84,7 +84,7 @@ class BattleUI {
         this.enemyUnitFrame.add(this.scene.add.rectangle(-162, -116, enemyHealthBarSize.width, enemyHealthBarSize.height, COLOR_CODES.RED).setOrigin(0));
         this.enemyUnitFrame.add(this.scene.add.rectangle(-162, -32, enemyEnergyBarSize.width, enemyEnergyBarSize.height, COLOR_CODES.YELLOW).setOrigin(0));
         this.enemyUnitFrame.add(this.scene.add.text(0, -74, `${Math.max(0, enemy.getHealth())}/${enemyStartHP}`, { fontSize: '52px', fill: '#000' }).setOrigin(0.5));
-        this.enemyUnitFrame.add(this.scene.add.text(-200, -120, `${enemy.name}`, { fontSize: '40px' }).setOrigin(1, 0));
+        this.enemyUnitFrame.add(this.scene.add.text(-200, -120, `${enemy.getName()}`, { fontSize: '40px' }).setOrigin(1, 0));
         this.enemyUnitFrame.add(this.scene.add.image(0, 0, 'enemy-unitframe-front'));
 
         // action bar
@@ -168,10 +168,10 @@ class BattleUI {
         this.currentSelection = { x: 0, y: 0 };
 
         // adding player stats to the menu
-        this.currentMenu.push({ x: 0, y: 0, text: `Name: ${player.name}` });
+        this.currentMenu.push({ x: 0, y: 0, text: `Name: ${player.getName()}` });
         this.currentMenu.push({ x: 0, y: 1, text: `Class: ${player.class}` });
-        this.currentMenu.push({ x: 0, y: 2, text: `Level: ${player.level}` });
-        this.currentMenu.push({ x: 0, y: 3, text: `Health: ${player.getHealth()}/${player.maxHealth}` });
+        this.currentMenu.push({ x: 0, y: 2, text: `Level: ${player.getLevel()}` });
+        this.currentMenu.push({ x: 0, y: 3, text: `Health: ${player.getHealth()}/${player.getMaxHealth()}` });
         this.currentMenu.push({ x: 0, y: 4, text: `Energy: ${player.getEnergy()}/${player.getMaxEnergy()}` });
         this.currentMenu.push({ x: 0, y: 5, text: `Strength: ${player.stats.strength}` });
         this.currentMenu.push({ x: 0, y: 6, text: `Agility: ${player.stats.agility}` });
@@ -183,7 +183,7 @@ class BattleUI {
         this.currentMenu.push({ x: 0, y: 12, text: `Omnivamp: ${(player.stats.omnivamp * 100).toFixed(1)}%` });
 
         // adding weapon information
-        const weapon = player.weapon.at(-1);
+        const weapon = player.getCurrentWeapon();
         if (weapon) {
             this.currentMenu.push({ x: 0, y: 13, text: `Weapon: ${weapon.name}` });
             this.currentMenu.push({ x: 0, y: 14, text: `Damage: ${weapon.damage}` });
