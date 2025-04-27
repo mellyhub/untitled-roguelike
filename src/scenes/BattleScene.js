@@ -1,56 +1,28 @@
 import seedrandom from 'seedrandom';
 import BattleUI from '../utils/BattleUI.js';
-import assets from '../assets/assets.json'; // Import the assets.json file
 import { setCookie, getCookie } from '../utils/cookieUtils.js';
 import { get_random_enemy } from '../data/enemies.js';
 
 class BattleScene extends Phaser.Scene {
   constructor() {
     super('BattleScene');
+    
+    // Bind methods to ensure correct 'this' context
+    this.displayDamageText = this.displayDamageText.bind(this);
+    this.executeTurn = this.executeTurn.bind(this);
+    this.checkRoundOutcome = this.checkRoundOutcome.bind(this);
+    this.switchScene = this.switchScene.bind(this);
+    this.updatePerfStats = this.updatePerfStats.bind(this);
   }
 
   preload() {
-    // iterate through assets
-    assets.forEach(assetGroup => {
-      assetGroup.assets.forEach(asset => {
-        const assetPath = `${assetGroup.path}/${asset.url}`;
-
-        if (asset.type === 'image') {
-          const assetPath = `${assetGroup.path}/${asset.url}`;
-          // dynamically loads image asset
-          this.load.image(asset.key, assetPath);
-        }
-
-        if (asset.type === 'sheet') {
-          this.load.spritesheet(asset.key, assetPath, {
-            frameWidth: asset.frameWidth,
-            frameHeight: asset.frameHeight,
-          });
-        }
-      });
-
-      this.load.json("sfxConfig", "src/assets/audio/sfx/sfx.json");
-      this.load.on('filecomplete-json-sfxConfig', () => {
-        const sfxConfig = this.cache.json.get('sfxConfig');
-        for (const [key, path] of Object.entries(sfxConfig)) {
-          this.load.audio(key, path);
-        }
-      });
-    });
+    // Assets already loaded in BootScene
   }
 
   create(data) {
     this.player = data.player;
     this.levelData = data.level;
     this.seed = data.seed;
-
-    /*
-    // reset rebirth effect at start of combat
-    const rebirthEffect = this.player.permanentEffects.find(effect => effect.name === "Rebirth");
-    if (rebirthEffect && rebirthEffect.removeEffect) {
-      rebirthEffect.removeEffect();
-    }
-    */
 
     this.playerAnimation;
     this.playerStartHP = this.player.getMaxHealth();
@@ -62,18 +34,18 @@ class BattleScene extends Phaser.Scene {
     this.turnCounter = 0;
     this.currentTurn = this.turnCounter % 2;
 
-    this.cursors = this.input.keyboard.createCursorKeys(); // lägger till arrow keys
-    this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER); // lägger till enter key
+    // Setup input
+    this.cursors = this.input.keyboard.createCursorKeys();
+    this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
 
-    console.log(this.player);
-    console.log(this.enemy);
-
-    const sfxConfig = this.cache.json.get('sfxConfig'); // Get the loaded SFX configuration
+    // Setup sound effects
     this.sfx = {};
+    const sfxConfig = this.cache.json.get('sfxConfig');
     for (const [key, path] of Object.entries(sfxConfig)) {
       this.sfx[key] = this.sound.add(key, { volume: 0.2 });
     }
 
+    // Add background
     this.add.image(960, 540, 'ice-cave-background');
 
     // Add player animations
@@ -84,13 +56,16 @@ class BattleScene extends Phaser.Scene {
     this.enemy.animations.createAnimations(this);
     this.enemy.animations.playIdleAnimation();
 
-    // play the enemy's battle cry
+    // Play the enemy's battle cry
     if (this.sfx[this.enemy.battleCry]) {
       this.sfx[this.enemy.battleCry].play();
     }
 
-    // initialize battle ui
+    // Initialize battle UI
     this.battleUI = new BattleUI(this, this.sfx);
+    
+    // Store a reference to avoid any context issues
+    const battleUI = this.battleUI;
 
     this.mainMenu = [
       { x: 0, y: 0, text: 'Attack' },
@@ -101,64 +76,78 @@ class BattleScene extends Phaser.Scene {
 
     this.hitAnimation;
 
-    // render initial stats and menu
+    // Render initial stats and menu
     this.currentMenu = this.mainMenu;
     this.currentSelection = { x: 0, y: 0 };
-    this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP, this.turnCounter);
-    this.battleUI.renderMenu(this.currentMenu, this.currentSelection);
+    
+    // Use the stable reference for displayStats
+    battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP, this.turnCounter);
+    battleUI.renderMenu(this.currentMenu, this.currentSelection);
+    
+    // Setup performance monitoring
+    this.perfText = this.add.text(10, 10, '', { fontSize: '16px', fill: '#ffffff' })
+      .setScrollFactor(0)
+      .setDepth(1000);
+      
+    // Monitor FPS only in development mode
+    if (process.env.NODE_ENV !== 'production') {
+      this.perfTimer = this.time.addEvent({
+        delay: 500,
+        callback: this.updatePerfStats,
+        callbackScope: this,
+        loop: true
+      });
+    }
   }
 
   update() {
     if (this.inputLocked) {
-      return; // ignorerar inputs (funkar lowkey inte lol)
+      return; // ignore inputs
     }
 
+    // Create a stable reference to battleUI 
+    const battleUI = this.battleUI;
+    
     if (Phaser.Input.Keyboard.JustDown(this.cursors.up)) {
-      this.battleUI.changeSelection(0, -1); // Move up
+      battleUI.changeSelection(0, -1); // Move up
     }
     else if (Phaser.Input.Keyboard.JustDown(this.cursors.down)) {
-      this.battleUI.changeSelection(0, 1); // Move down
+      battleUI.changeSelection(0, 1); // Move down
     }
     else if (Phaser.Input.Keyboard.JustDown(this.cursors.left)) {
-      this.battleUI.changeSelection(-1, 0); // Move left
+      battleUI.changeSelection(-1, 0); // Move left
     }
     else if (Phaser.Input.Keyboard.JustDown(this.cursors.right)) {
-      this.battleUI.changeSelection(1, 0); // Move right
+      battleUI.changeSelection(1, 0); // Move right
     }
 
     if (Phaser.Input.Keyboard.JustDown(this.enterKey)) {
-      const selectedItem = this.battleUI.getSelectedItem();
+      const selectedItem = battleUI.getSelectedItem();
 
-      if (this.battleUI.currentMenuType === 'main' && selectedItem.text === 'Cast') {
+      if (battleUI.currentMenuType === 'main' && selectedItem.text === 'Cast') {
         // opens spell menu
-        this.battleUI.renderSpellMenu(
-          this.player,
-          this.battleUI.switchMenu.bind(this.battleUI),
-          this.mainMenu
+        battleUI.renderSpellMenu(
+          this.player
         );
       }
-      else if (this.battleUI.currentMenuType === 'main' && selectedItem.text === 'Bag') {
+      else if (battleUI.currentMenuType === 'main' && selectedItem.text === 'Bag') {
         // opens bag menu
-        this.battleUI.renderBagMenu(
-          this.player,
-          this.battleUI.switchMenu.bind(this.battleUI),
-          this.mainMenu
+        battleUI.renderBagMenu(
+          this.player
         );
       }
-      else if (this.battleUI.currentMenuType === 'main' && selectedItem.text === 'Stats') {
-        // opens bag menu
-        this.battleUI.renderStatsMenu(
-          this.player,
-          this.battleUI.switchMenu.bind(this.battleUI),
-          this.mainMenu
+      else if (battleUI.currentMenuType === 'main' && selectedItem.text === 'Stats') {
+        // opens stats menu
+        battleUI.renderStatsMenu(
+          this.player
         );
       }
       else {
         // handle other menu actions
-        this.battleUI.selectMenuItem(
+        battleUI.selectMenuItem(
           this.player,
           this.executeTurn.bind(this),
-          this.battleUI.switchMenu.bind(this.battleUI),
+          battleUI.switchMenu.bind(battleUI),
           this.bagMenu,
           this.mainMenu
         );
@@ -183,110 +172,162 @@ class BattleScene extends Phaser.Scene {
     }
   }
 
+  // Simple damage text display
+  displayDamageText(target, damage, isCritical = false) {
+    const x = target.animations.properties.idleAnimPos.x;
+    const y = target.animations.properties.idleAnimPos.y;
+    
+    // Create text with style based on whether it's a critical hit
+    const style = isCritical 
+      ? { fontSize: '72px', fill: '#ff0000', fontStyle: 'bold' } 
+      : { fontSize: '60px', fill: '#ffffff' };
+      
+    const damageText = this.add.text(x, y, `${damage}`, style).setOrigin(0.5);
+    
+    // Simple animation: float up and fade out
+    this.tweens.add({
+      targets: damageText,
+      y: y - 100,
+      alpha: 0,
+      ease: 'Power1',
+      duration: 2000,
+      onComplete: () => {
+        damageText.destroy();
+      }
+    });
+  }
+
   async executeTurn(action, selectedSpell) {
     this.inputLocked = true;
 
     const animationText = this.displayAnimationText(this.player.getName(), action, selectedSpell);
 
-    if (action === 'attack') {
-      this.player.animations.playAttackAnimation();
+    try {
+      // Store a reference to battleUI to prevent it from being lost in async operations
+      const battleUI = this.battleUI;
+      
+      if (action === 'attack') {
+        this.player.animations.playAttackAnimation();
+        await this.resolveAfterTime(1000);
+        this.player.attemptAction("attack", this.enemy, null, this);
+      }
+      else if (action === 'cast') {
+        this.player.animations.playCastAnimation(selectedSpell);
+        await this.resolveAfterTime(1000);
+        this.player.attemptAction("cast", this.enemy, selectedSpell, this);
+      }
+
+      if (animationText) {
+        animationText.destroy();
+      }
+
+      battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP, this.turnCounter);
+
+      // Check for win/loss condition before enemy turn
+      if (await this.checkRoundOutcome()) {
+        return;
+      }
+
+      // Enemy turn
+      this.turnCounter++;
+      this.currentTurn = this.turnCounter % 2;
+
+      // Give the player a moment to see the enemy's turn begin
       await this.resolveAfterTime(1000);
-      this.player.attemptAction("attack", this.enemy, null, this.battleUI);
-    }
-    else if (action === 'cast') {
-      this.player.animations.playCastAnimation(selectedSpell);
+
+      const enemyAction = "attack";
+      const enemyAnimationText = this.displayAnimationText(this.enemy.getName(), enemyAction);
+
+      this.enemy.animations.playAttackAnimation();
       await this.resolveAfterTime(1000);
-      this.player.attemptAction("cast", this.enemy, selectedSpell, this.battleUI);
+      this.enemy.attemptAction("attack", this.player, null, this);
+
+      if (enemyAnimationText) {
+        enemyAnimationText.destroy();
+      }
+
+      battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP, this.turnCounter);
+
+      // Check for win/loss condition after enemy turn
+      if (await this.checkRoundOutcome()) {
+        return;
+      }
+
+      this.turnCounter++;
+      this.currentTurn = this.turnCounter % 2;
+      this.inputLocked = false;
+    } catch (error) {
+      console.error("Error in executeTurn:", error);
+      // Make sure input isn't permanently locked if there's an error
+      this.inputLocked = false;
     }
-
-    animationText.destroy();
-
-    this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP, this.turnCounter);
-    this.battleUI.renderMenu(this.currentMenu, this.currentSelection);
-    await this.resolveAfterTime(1000);
-
-    if (this.enemy.getHealth() > 0) {
-      const animationText = this.displayAnimationText(this.enemy.getName(), "attack", selectedSpell);
-      await this.resolveAfterTime(1000);
-      this.enemy.attemptAction("attack", this.player, null, this.battleUI);
-      animationText.destroy();
-    }
-
-    this.turnCounter++;
-    this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP, this.turnCounter);
-    this.battleUI.renderMenu(this.currentMenu, this.currentSelection);
-    this.checkRoundOutcome();
-    console.log(this.player)
-    console.log(this.enemy)
   }
 
   async switchScene() {
-    await new Promise(resolve => this.time.delayedCall(3000, resolve));
-
-    // check for merchant encounter
-    console.log(this.player.completedEncounters);
-    if (this.player.completedEncounters % 5 === 0) {  // triggers for every 5 encounters
-      this.scene.start('MerchantScene', { player: this.player, seed: this.seed });
-    }
-    else {
+    if (this.enemy.getHealth() <= 0) {
+      this.player.score += 10;
+      
+      // Update high score in cookies
+      const highestScore = getCookie('highestScore') || 0;
+      if (this.player.score > highestScore) {
+        setCookie('highestScore', this.player.score);
+      }
+      
+      // Transition to reward scene
       this.scene.start('RewardScene', { player: this.player, seed: this.seed });
     }
-    this.inputLocked = false;
+    else {
+      // Game over, return to main menu
+      this.scene.start('MainMenuScene');
+    }
   }
 
   async checkRoundOutcome() {
-    if (this.enemy.getHealth() <= 0) {
-      this.add.text(960, 640, 'You win!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
-
-      /*
-      const vitalSurge = this.player.permanentEffects.find(effect => effect.name === "Vital Surge");
-      if (vitalSurge) {
-        vitalSurge.applyEffect(this.player);
+    // Store reference to battleUI
+    const battleUI = this.battleUI;
+    
+    if (this.enemy.getHealth() <= 0 || this.player.getHealth() <= 0) {
+      // Update stats one more time before transition
+      try {
+        battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP, this.turnCounter);
+      } catch (error) {
+        console.error("Error updating final stats:", error);
       }
-      */
       
-      /*
-      this.player.increaseLevel(1);
-      this.player.increaseTalentPoints(1);
-      this.player.removeAllActiveEffects();
-      console.log("All active effects have been removed");
-      */
-
-      this.turnCounter = 0;
-      //this.player.completedEncounters ++;
-      //this.player.score = this.player.completedEncounters * 100; // example: add 100 points for defeating an enemy
-      this.player.score += 100;
-
-      const highestScore = parseInt(getCookie('highestScore')) || 0;
-      if (this.player.score > highestScore) {
-        setCookie('highestScore', this.player.score, 365); // Save the new high score for 1 year
-        (`New highest score: ${this.player.score}`);
-      }
-
-      await this.switchScene();
-
-      return;
+      await this.resolveAfterTime(2000);
+      this.switchScene();
+      return true;
     }
-
-    if (this.player.getHealth() <= 0) {
-
-      /*
-      // check for rebirth talent
-      const rebirthEffect = this.player.permanentEffects.find(effect => effect.name === "Rebirth");
-      if (rebirthEffect && !rebirthEffect.hasRevived) {
-        rebirthEffect.applyEffect(this.player); // trigger revive
-        this.battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP, this.turnCounter);
-
-        // this causes a bug that makes the menu not render after revived
-        return this.checkRoundOutcome();
-      }
-      */
-
-      this.add.text(960, 540, 'You lose!', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
-      this.scene.pause();
-    }
-    this.inputLocked = false;
+    return false;
   }
-
+  
+  updatePerfStats() {
+    // Get current FPS
+    const fps = Math.round(this.game.loop.actualFps);
+    this.perfText.setText(`FPS: ${fps}`);
+  }
+  
+  // Cleanup when scene is shutdown
+  shutdown() {
+    if (this.perfTimer) {
+      this.perfTimer.remove();
+    }
+    
+    // Explicitly clean up BattleUI before scene shutdown
+    if (this.battleUI) {
+      try {
+        this.battleUI.destroy();
+        this.battleUI = null;  // Remove reference to prevent further use
+      } catch (error) {
+        console.error("Error cleaning up BattleUI:", error);
+      }
+    }
+    
+    // Cleanup any other resources
+    if (this.input && this.input.keyboard) {
+      this.input.keyboard.shutdown();
+    }
+  }
 }
+
 export default BattleScene;

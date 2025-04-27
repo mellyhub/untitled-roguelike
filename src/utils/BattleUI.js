@@ -13,6 +13,24 @@ class BattleUI {
         this.statsContainer = null;
         this.playerUnitFrame = null;
         this.enemyUnitFrame = null;
+        
+        // Use object properties for caching
+        this.cachedDisplayElements = new Map();
+        
+        // Bind methods to ensure correct 'this' context
+        this.renderMenu = this.renderMenu.bind(this);
+        this.renderStatsMenu = this.renderStatsMenu.bind(this);
+        this.renderBagMenu = this.renderBagMenu.bind(this);
+        this.renderSpellMenu = this.renderSpellMenu.bind(this);
+        this.changeSelection = this.changeSelection.bind(this);
+        this.getSelectedItem = this.getSelectedItem.bind(this);
+        this.selectMenuItem = this.selectMenuItem.bind(this);
+        this.switchMenu = this.switchMenu.bind(this);
+        this.destroy = this.destroy.bind(this);
+        this.displayStats = this.displayStats.bind(this);
+        
+        // Listen for shutdown to clean up resources
+        this.scene.events.once('shutdown', this.destroy, this);
     }
 
     calculateHealthBarSize(maxUnitHealth, currentUnitHealth) {
@@ -40,390 +58,527 @@ class BattleUI {
     }
 
     displayStats(player, enemy, playerStartHP, enemyStartHP, turnCounter) {
-        const COLOR_CODES = {
-            GREEN: Phaser.Display.Color.GetColor32(0, 255, 0, 255),
-            RED: Phaser.Display.Color.GetColor32(255, 0, 0, 255),
-            YELLOW: Phaser.Display.Color.GetColor32(255, 255, 0, 255),
-            WHITE: Phaser.Display.Color.GetColor32(255, 255, 255, 255),
-            BLACK: Phaser.Display.Color.GetColor32(0, 0, 0, 255)
-        };
+        try {
+            // Store scene reference to avoid 'this.scene is undefined' errors
+            const scene = this.scene;
+            if (!scene) {
+                console.error("Scene is undefined in displayStats");
+                return;
+            }
+            
+            const COLOR_CODES = {
+                GREEN: Phaser.Display.Color.GetColor32(0, 255, 0, 255),
+                RED: Phaser.Display.Color.GetColor32(255, 0, 0, 255),
+                YELLOW: Phaser.Display.Color.GetColor32(255, 255, 0, 255),
+                WHITE: Phaser.Display.Color.GetColor32(255, 255, 255, 255),
+                BLACK: Phaser.Display.Color.GetColor32(0, 0, 0, 255)
+            };
 
-        if (this.statsContainer) {
-            this.actionBarContainer.destroy(true);
-            this.statsContainer.destroy(true);
-            this.playerUnitFrame.destroy(true);
-            this.enemyUnitFrame.destroy(true);
+            // Destroy previous containers if they exist
+            if (this.statsContainer) {
+                this.actionBarContainer.destroy(true);
+                this.statsContainer.destroy(true);
+                this.playerUnitFrame.destroy(true);
+                this.enemyUnitFrame.destroy(true);
+            }
+
+            const playerHealthBarSize = this.calculateHealthBarSize(playerStartHP, player.getHealth());
+            const playerEnergyBarSize = this.calculateEnergyBarSize(player.getMaxEnergy(), player.getEnergy());
+            const playerRageBarSize = this.calculateRageBarSize(100, player.getResource());
+            const enemyHealthBarSize = this.calculateHealthBarSize(enemyStartHP, enemy.getHealth());
+            const enemyEnergyBarSize = this.calculateEnergyBarSize(enemy.getMaxEnergy(), enemy.getEnergy());
+
+            // Create containers to group related elements
+            this.statsContainer = scene.add.container(0, 0);
+            this.playerUnitFrame = scene.add.container(400, 175);
+            this.enemyUnitFrame = scene.add.container(1520, 175);
+            this.actionBarContainer = scene.add.container(960, 910);
+            
+            // Score and turn counter
+            this.statsContainer.add(scene.add.text(0, 0, `Score: ${player.score}`, { fontSize: '32px', fill: '#fff' }));
+            this.statsContainer.add(scene.add.text(0, 50, `Turn: ${turnCounter}`, { fontSize: '32px', fill: '#fff' }));
+
+            // Player unit frame
+            this.playerUnitFrame.add(scene.add.image(0, 0, 'warrior-unitframe-back'));
+            this.playerUnitFrame.add(scene.add.rectangle(-153, 20, playerRageBarSize.width, playerRageBarSize.height, COLOR_CODES.RED).setOrigin(0));
+            this.playerUnitFrame.add(scene.add.rectangle(-162, -116, playerHealthBarSize.width, playerHealthBarSize.height, COLOR_CODES.GREEN).setOrigin(0));
+            this.playerUnitFrame.add(scene.add.rectangle(-162, -32, playerEnergyBarSize.width, playerEnergyBarSize.height, COLOR_CODES.YELLOW).setOrigin(0));
+            this.playerUnitFrame.add(scene.add.text(0, -74, `${Math.max(0, player.getHealth())}/${playerStartHP}`, { fontSize: '52px', fill: '#000' }).setOrigin(0.5));
+            this.playerUnitFrame.add(scene.add.text(200, -120, `${player.getName()}`, { fontSize: '40px' }));
+            this.playerUnitFrame.add(scene.add.text(200, -60, `Class: ${player.class}`, { fontSize: '40px' }));
+            this.playerUnitFrame.add(scene.add.text(200, 0, `Level: ${player.getLevel()}`, { fontSize: '40px' }));
+            this.playerUnitFrame.add(scene.add.image(0, 0, 'warrior-unitframe-front'));
+
+            // Enemy unit frame
+            this.enemyUnitFrame.add(scene.add.image(0, 0, 'enemy-unitframe-back'));
+            this.enemyUnitFrame.add(scene.add.rectangle(-162, -116, enemyHealthBarSize.width, enemyHealthBarSize.height, COLOR_CODES.RED).setOrigin(0));
+            this.enemyUnitFrame.add(scene.add.rectangle(-162, -32, enemyEnergyBarSize.width, enemyEnergyBarSize.height, COLOR_CODES.YELLOW).setOrigin(0));
+            this.enemyUnitFrame.add(scene.add.text(0, -74, `${Math.max(0, enemy.getHealth())}/${enemyStartHP}`, { fontSize: '52px', fill: '#000' }).setOrigin(0.5));
+            this.enemyUnitFrame.add(scene.add.text(-200, -120, `${enemy.getName()}`, { fontSize: '40px' }).setOrigin(1, 0));
+            this.enemyUnitFrame.add(scene.add.image(0, 0, 'enemy-unitframe-front'));
+
+            // Action bar with player stats
+            this.actionBarContainer.add(scene.add.image(0, 0, 'action-bar').setScale(0.9, 0.4));
+            
+            // Stats icons - load these once and cache them for reuse
+            if (!this.cachedDisplayElements.has('statsIcons')) {
+                const statsIcons = [];
+                statsIcons.push(scene.add.image(400, -70, 'strength-icon').setScale(0.4));
+                statsIcons.push(scene.add.image(400, -70, 'uncommon-item-frame').setScale(0.4));
+                statsIcons.push(scene.add.image(400, 0, 'agility-icon').setScale(0.4));
+                statsIcons.push(scene.add.image(400, 0, 'uncommon-item-frame').setScale(0.4));
+                statsIcons.push(scene.add.image(400, 70, 'intelligence-icon').setScale(0.4));
+                statsIcons.push(scene.add.image(400, 70, 'uncommon-item-frame').setScale(0.4));
+                this.cachedDisplayElements.set('statsIcons', statsIcons);
+            }
+            
+            // Add the cached icons to the container
+            this.cachedDisplayElements.get('statsIcons').forEach(icon => {
+                this.actionBarContainer.add(icon);
+            });
+            
+            // Add dynamic text elements that change with stats
+            this.actionBarContainer.add(scene.add.text(450, -70, `${player.stats.strength}`, { fontSize: '32px', fill: '#fff' }).setOrigin(0.5));
+            this.actionBarContainer.add(scene.add.text(450, 0, `${player.stats.agility}`, { fontSize: '32px', fill: '#fff' }).setOrigin(0.5));
+            this.actionBarContainer.add(scene.add.text(450, 70, `${player.stats.intelligence}`, { fontSize: '32px', fill: '#fff' }).setOrigin(0.5));
+
+            // Weapon info
+            const weapon = player.getCurrentWeapon();
+            this.actionBarContainer.add(scene.add.text(500, -100, `Weapon:\n${weapon.name}`, { fontSize: '40px' }));
+
+            if (weapon.coatings && weapon.coatings.length > 0) {
+                this.actionBarContainer.add(scene.add.text(500, 0, `Coating:\n${weapon.coatings[0].name}`, { fontSize: '40px' }));
+            }
+        } catch (error) {
+            console.error("Error in displayStats:", error);
         }
-
-        const playerHealthBarSize = this.calculateHealthBarSize(playerStartHP, player.getHealth());
-        const playerEnergyBarSize = this.calculateEnergyBarSize(player.getMaxEnergy(), player.getEnergy());
-        const playerRageBarSize = this.calculateRageBarSize(100, player.getResource());
-        const enemyHealthBarSize = this.calculateHealthBarSize(enemyStartHP, enemy.getHealth());
-        const enemyEnergyBarSize = this.calculateEnergyBarSize(enemy.getMaxEnergy(), enemy.getEnergy());
-
-        // score and turn counter
-        this.statsContainer = this.scene.add.container(0, 0);
-        this.statsContainer.add(this.scene.add.text(0, 0, `Score: ${player.score}`, { fontSize: '32px', fill: '#fff' }));
-        this.statsContainer.add(this.scene.add.text(0, 50, `Turn: ${turnCounter}`, { fontSize: '32px', fill: '#fff' }));
-
-        // player unit frame
-        this.playerUnitFrame = this.scene.add.container(400, 175);
-        this.playerUnitFrame.add(this.scene.add.image(0, 0, 'warrior-unitframe-back'));
-        this.playerUnitFrame.add(this.scene.add.rectangle(-153, 20, playerRageBarSize.width, playerRageBarSize.height, COLOR_CODES.RED).setOrigin(0));
-        this.playerUnitFrame.add(this.scene.add.rectangle(-162, -116, playerHealthBarSize.width, playerHealthBarSize.height, COLOR_CODES.GREEN).setOrigin(0));
-        this.playerUnitFrame.add(this.scene.add.rectangle(-162, -32, playerEnergyBarSize.width, playerEnergyBarSize.height, COLOR_CODES.YELLOW).setOrigin(0));
-        this.playerUnitFrame.add(this.scene.add.text(0, -74, `${Math.max(0, player.getHealth())}/${playerStartHP}`, { fontSize: '52px', fill: '#000' }).setOrigin(0.5));
-        this.playerUnitFrame.add(this.scene.add.text(200, -120, `${player.getName()}`, { fontSize: '40px' }));
-        this.playerUnitFrame.add(this.scene.add.text(200, -60, `Class: ${player.class}`, { fontSize: '40px' }));
-        this.playerUnitFrame.add(this.scene.add.text(200, 0, `Level: ${player.getLevel()}`, { fontSize: '40px' }));
-        this.playerUnitFrame.add(this.scene.add.image(0, 0, 'warrior-unitframe-front'));
-
-        // enemy unit frame
-        this.enemyUnitFrame = this.scene.add.container(1520, 175);
-        this.enemyUnitFrame.add(this.scene.add.image(0, 0, 'enemy-unitframe-back'));
-        this.enemyUnitFrame.add(this.scene.add.rectangle(-162, -116, enemyHealthBarSize.width, enemyHealthBarSize.height, COLOR_CODES.RED).setOrigin(0));
-        this.enemyUnitFrame.add(this.scene.add.rectangle(-162, -32, enemyEnergyBarSize.width, enemyEnergyBarSize.height, COLOR_CODES.YELLOW).setOrigin(0));
-        this.enemyUnitFrame.add(this.scene.add.text(0, -74, `${Math.max(0, enemy.getHealth())}/${enemyStartHP}`, { fontSize: '52px', fill: '#000' }).setOrigin(0.5));
-        this.enemyUnitFrame.add(this.scene.add.text(-200, -120, `${enemy.getName()}`, { fontSize: '40px' }).setOrigin(1, 0));
-        this.enemyUnitFrame.add(this.scene.add.image(0, 0, 'enemy-unitframe-front'));
-
-        // action bar
-        this.actionBarContainer = this.scene.add.container(960, 910);
-        this.actionBarContainer.add(this.scene.add.image(0, 0, 'action-bar').setScale(0.9, 0.4));
-        this.actionBarContainer.add(this.scene.add.image(400, -70, 'strength-icon').setScale(0.4));
-        this.actionBarContainer.add(this.scene.add.image(400, -70, 'uncommon-item-frame').setScale(0.4));
-        this.actionBarContainer.add(this.scene.add.text(450, -70, `${player.stats.strength}`, { fontSize: '32px', fill: '#fff' }).setOrigin(0.5));
-        this.actionBarContainer.add(this.scene.add.image(400, 0, 'agility-icon').setScale(0.4));
-        this.actionBarContainer.add(this.scene.add.image(400, 0, 'uncommon-item-frame').setScale(0.4));
-        this.actionBarContainer.add(this.scene.add.text(450, 0, `${player.stats.agility}`, { fontSize: '32px', fill: '#fff' }).setOrigin(0.5));
-        this.actionBarContainer.add(this.scene.add.image(400, 70, 'intelligence-icon').setScale(0.4));
-        this.actionBarContainer.add(this.scene.add.text(450, 70, `${player.stats.intelligence}`, { fontSize: '32px', fill: '#fff' }).setOrigin(0.5));
-        this.actionBarContainer.add(this.scene.add.image(400, 70, 'uncommon-item-frame').setScale(0.4));
-
-        // for debugging
-        const weapon = player.getCurrentWeapon();
-        this.actionBarContainer.add(this.scene.add.text(500, -100, `Weapon:\n${weapon.name}`, { fontSize: '40px' }));
-
-        if (weapon.coatings && weapon.coatings.length > 0) {
-            this.actionBarContainer.add(this.scene.add.text(500, 0, `Coating:\n${weapon.coatings[0].name}`, { fontSize: '40px' }));
-        }
-    }
-
-    // Target is a Character object
-    displayDamageText(target, damage) {
-        let x = target.animations.properties.idleAnimPos.x;
-        let y = target.animations.properties.idleAnimPos.y;
-
-        const damageText = this.scene.add.text(x, y, `${damage}`, {
-            fontSize: "72px",
-            fill: "#ffffff",
-        }).setOrigin(0.5);
-
-        // animate the text to move upward and fade out
-        this.scene.tweens.add({
-            targets: damageText,
-            y: y - 50, // move upward
-            alpha: 0, // fade out
-            duration: 4000, // 4 seconds
-            ease: 'Power1',
-            onComplete: () => {
-                damageText.destroy(); // remove text after animation
-            },
-        });
     }
 
     renderMenu(menu) {
-        // clear previous menu items
-        if (this.menuItems) {
-            this.menuItems.forEach(item => item.destroy());
-        }
-
-        this.currentMenu = menu;
-
-        // render menu items
-        this.menuItems = menu.map(menuItem => {
-
-            // check if the menu is the spell menu
-            const isSpellMenu = menuItem.x === 0 && this.currentMenu.some(item => item.text === 'Back');
-            const xPosition = isSpellMenu ? 960 : 300 + menuItem.x * 200; // center horizontally for spell menu, original position for main menu
-            const yPosition = isSpellMenu ? 300 + menuItem.y * 50 : 850 + menuItem.y * 100; // adjust vertical spacing for spell menu or main menu
-
-            const text = this.scene.add.text(xPosition, yPosition, menuItem.text, { fontSize: '48px', fill: '#fff' }).setOrigin(0.5);
-
-            // highlight selected item
-            if (menuItem.x === this.currentSelection.x && menuItem.y === this.currentSelection.y) {
-                text.setColor('#ff0000');
+        try {
+            const scene = this.scene;
+            if (!scene) {
+                console.error("Scene is undefined in renderMenu");
+                return;
+            }
+            
+            // Clear previous menu items
+            if (this.menuItems) {
+                this.menuItems.forEach(item => {
+                    if (item && item.destroy) item.destroy();
+                });
             }
 
-            return text;
-        });
+            this.currentMenu = menu;
+            this.menuItems = [];
+
+            if (!menu) {
+                console.error("Menu is undefined in renderMenu");
+                return;
+            }
+
+            // Render menu items
+            this.menuItems = menu.map(menuItem => {
+                // Check if the menu is the spell menu
+                const isSpellMenu = menuItem.x === 0 && this.currentMenu.some(item => item.text === 'Back');
+                const xPosition = isSpellMenu ? 960 : 300 + menuItem.x * 200; // Center horizontally for spell menu, original position for main menu
+                const yPosition = isSpellMenu ? 300 + menuItem.y * 50 : 850 + menuItem.y * 100; // Adjust vertical spacing for spell menu or main menu
+
+                const text = scene.add.text(xPosition, yPosition, menuItem.text, { fontSize: '48px', fill: '#fff' }).setOrigin(0.5);
+
+                // Highlight selected item
+                if (menuItem.x === this.currentSelection.x && menuItem.y === this.currentSelection.y) {
+                    text.setColor('#ff0000');
+                }
+
+                return text;
+            });
+        } catch (error) {
+            console.error("Error in renderMenu:", error);
+        }
     }
 
     renderStatsMenu(player) {
-        // clear current menu
-        this.currentMenu = [];
-        this.currentMenuType = 'stats'; // set menu type to "stats"
-
-        // reset selection
-        this.currentSelection = { x: 0, y: 0 };
-
-        // adding player stats to the menu
-        this.currentMenu.push({ x: 0, y: 0, text: `Name: ${player.getName()}` });
-        this.currentMenu.push({ x: 0, y: 1, text: `Class: ${player.class}` });
-        this.currentMenu.push({ x: 0, y: 2, text: `Level: ${player.getLevel()}` });
-        this.currentMenu.push({ x: 0, y: 3, text: `Health: ${player.getHealth()}/${player.getMaxHealth()}` });
-        this.currentMenu.push({ x: 0, y: 4, text: `Energy: ${player.getEnergy()}/${player.getMaxEnergy()}` });
-        this.currentMenu.push({ x: 0, y: 5, text: `Strength: ${player.stats.strength}` });
-        this.currentMenu.push({ x: 0, y: 6, text: `Agility: ${player.stats.agility}` });
-        this.currentMenu.push({ x: 0, y: 7, text: `Intelligence: ${player.stats.intelligence}` });
-        this.currentMenu.push({ x: 0, y: 8, text: `Defense: ${player.stats.defense}` });
-        this.currentMenu.push({ x: 0, y: 9, text: `Evasion: ${(player.stats.evasion * 100).toFixed(1)}%` });
-        this.currentMenu.push({ x: 0, y: 10, text: `Crit Chance: ${(player.stats.critChance * 100).toFixed(1)}%` });
-        this.currentMenu.push({ x: 0, y: 11, text: `Crit Damage: ${player.stats.critDamage}x` });
-        this.currentMenu.push({ x: 0, y: 12, text: `Omnivamp: ${(player.stats.omnivamp * 100).toFixed(1)}%` });
-
-        // adding weapon information
-        const weapon = player.getCurrentWeapon();
-        if (weapon) {
-            this.currentMenu.push({ x: 0, y: 13, text: `Weapon: ${weapon.name}` });
-            this.currentMenu.push({ x: 0, y: 14, text: `Damage: ${weapon.damage}` });
-
-            // display weapon coatings if any
-            if (weapon.coatings) {
-                weapon.coatings.forEach((coating, index) => {
-                    this.currentMenu.push({ x: 0, y: 15 + index, text: `Coating: ${coating.name} (${(coating.chance * 100).toFixed(1)}% chance)` });
-                });
+        try {
+            const scene = this.scene;
+            if (!scene) {
+                console.error("Scene is undefined in renderStatsMenu");
+                return;
             }
+            
+            // Clear current menu
+            this.currentMenu = [];
+            this.currentMenuType = 'stats'; // Set menu type to "stats"
+
+            // Reset selection
+            this.currentSelection = { x: 0, y: 0 };
+
+            // Adding player stats to the menu
+            this.currentMenu.push({ x: 0, y: 0, text: `Name: ${player.getName()}` });
+            this.currentMenu.push({ x: 0, y: 1, text: `Class: ${player.class}` });
+            this.currentMenu.push({ x: 0, y: 2, text: `Level: ${player.getLevel()}` });
+            this.currentMenu.push({ x: 0, y: 3, text: `Health: ${player.getHealth()}/${player.getMaxHealth()}` });
+            this.currentMenu.push({ x: 0, y: 4, text: `Energy: ${player.getEnergy()}/${player.getMaxEnergy()}` });
+            this.currentMenu.push({ x: 0, y: 5, text: `Strength: ${player.stats.strength}` });
+            this.currentMenu.push({ x: 0, y: 6, text: `Agility: ${player.stats.agility}` });
+            this.currentMenu.push({ x: 0, y: 7, text: `Intelligence: ${player.stats.intelligence}` });
+            this.currentMenu.push({ x: 0, y: 8, text: `Defense: ${player.stats.defense}` });
+            this.currentMenu.push({ x: 0, y: 9, text: `Evasion: ${(player.stats.evasion * 100).toFixed(1)}%` });
+            this.currentMenu.push({ x: 0, y: 10, text: `Crit Chance: ${(player.stats.critChance * 100).toFixed(1)}%` });
+            this.currentMenu.push({ x: 0, y: 11, text: `Crit Damage: ${player.stats.critDamage}x` });
+            this.currentMenu.push({ x: 0, y: 12, text: `Omnivamp: ${(player.stats.omnivamp * 100).toFixed(1)}%` });
+
+            // Adding weapon information
+            const weapon = player.getCurrentWeapon();
+            if (weapon) {
+                this.currentMenu.push({ x: 0, y: 13, text: `Weapon: ${weapon.name}` });
+                this.currentMenu.push({ x: 0, y: 14, text: `Damage: ${weapon.damage}` });
+
+                // Display weapon coatings if any
+                if (weapon.coatings) {
+                    weapon.coatings.forEach((coating, index) => {
+                        this.currentMenu.push({ x: 0, y: 15 + index, text: `Coating: ${coating.name} (${(coating.chance * 100).toFixed(1)}% chance)` });
+                    });
+                }
+            }
+            else {
+                this.currentMenu.push({ x: 0, y: 12, text: `Weapon: None` });
+            }
+
+            // Add back option
+            this.currentMenu.push({ x: 0, y: this.currentMenu.length, text: 'Back' });
+
+            // Create a background for the stats menu
+            if (!this.statsMenuBackground) {
+                this.statsMenuBackground = scene.add.graphics();
+                this.statsMenuBackground.fillStyle(0x000000, 0.7);
+                this.statsMenuBackground.fillRect(650, 200, 620, 680);
+            } else {
+                this.statsMenuBackground.setVisible(true);
+            }
+
+            this.renderMenu(this.currentMenu);
+        } catch (error) {
+            console.error("Error in renderStatsMenu:", error);
         }
-        else {
-            this.currentMenu.push({ x: 0, y: 12, text: `Weapon: None` });
-        }
-
-        this.currentMenu.push({ x: 0, y: this.currentMenu.length, text: 'Back' });
-
-        const backgroundWidth = 500;
-        const backgroundHeight = 50 * this.currentMenu.length + 20; // adjust height based on number of items
-        const backgroundX = 960 - backgroundWidth / 2; // center horizontally
-        const backgroundY = 300 - 25; // start slightly above the first item
-
-        if (this.statsMenuBackground) {
-            this.statsMenuBackground.destroy();
-        }
-
-        this.statsMenuBackground = this.scene.add.rectangle(
-            backgroundX,
-            backgroundY,
-            backgroundWidth,
-            backgroundHeight,
-            Phaser.Display.Color.GetColor(100, 100, 100)
-        ).setOrigin(0);
-
-        this.statsMenuBackground.setAlpha(0.8);
-
-        this.renderMenu(this.currentMenu);
     }
 
     renderBagMenu(player) {
-        // clear current menu
-        this.currentMenu = [];
-        this.currentMenuType = 'bag'; // set menu type to "bag"
+        try {
+            const scene = this.scene;
+            if (!scene) {
+                console.error("Scene is undefined in renderBagMenu");
+                return;
+            }
+            
+            // Clear current menu
+            this.currentMenu = [];
+            this.currentMenuType = 'bag'; // Set menu type to "bag"
 
-        // hardcoded back button
-        this.currentMenu.push({ x: 0, y: 0, text: 'Alchemy' });
-        this.currentMenu.push({ x: 0, y: 1, text: 'Runes' });
-        this.currentMenu.push({ x: 0, y: 2, text: 'Back' });
+            // Reset selection
+            this.currentSelection = { x: 0, y: 0 };
 
-        // reset selection
-        this.currentSelection = { x: 0, y: 0 };
+            // Adding items to the menu
+            if (player.items && player.items.length > 0) {
+                player.items.forEach((item, index) => {
+                    this.currentMenu.push({ x: 0, y: index, text: item.name, item: item });
+                });
+            } else {
+                this.currentMenu.push({ x: 0, y: 0, text: "No items in bag" });
+            }
 
-        const backgroundWidth = 400;
-        const backgroundHeight = 50 * this.currentMenu.length + 20; // adjust height based on number of items
-        const backgroundX = 960 - backgroundWidth / 2; // center horizontally
-        const backgroundY = 300 - 25; // start slightly above the first item
+            // Add back option
+            this.currentMenu.push({ x: 0, y: this.currentMenu.length, text: 'Back' });
 
-        if (this.bagMenuBackground) {
-            this.bagMenuBackground.destroy();
+            // Create a background for the items menu
+            if (!this.bagMenuBackground) {
+                this.bagMenuBackground = scene.add.graphics();
+                this.bagMenuBackground.fillStyle(0x000000, 0.7);
+                this.bagMenuBackground.fillRect(650, 200, 620, 580);
+            } else {
+                this.bagMenuBackground.setVisible(true);
+            }
+
+            this.renderMenu(this.currentMenu);
+        } catch (error) {
+            console.error("Error in renderBagMenu:", error);
         }
-
-        this.bagMenuBackground = this.scene.add.rectangle(
-            backgroundX,
-            backgroundY,
-            backgroundWidth,
-            backgroundHeight,
-            Phaser.Display.Color.GetColor(100, 100, 100)
-        ).setOrigin(0);
-
-        this.bagMenuBackground.setAlpha(0.8);
-
-        this.renderMenu(this.currentMenu);
     }
 
     renderSpellMenu(player) {
-        // clear current menu
-        this.currentMenu = [];
-        this.currentMenuType = 'spell'; // set menu type to "spell"
+        try {
+            const scene = this.scene;
+            if (!scene) {
+                console.error("Scene is undefined in renderSpellMenu");
+                return;
+            }
+            
+            // Clear current menu
+            this.currentMenu = [];
+            this.currentMenuType = 'spell';
 
-        // dynamically adding the spells
-        player.spells.forEach((spell, index) => {
-            this.currentMenu.push({ x: 0, y: index, text: spell.name });
-        });
+            // Reset selection
+            this.currentSelection = { x: 0, y: 0 };
 
-        // hardcoded back button
-        this.currentMenu.push({ x: 0, y: player.spells.length, text: 'Back' }); // Place "Back" at the end of the list
+            // Adding spells to the menu
+            if (player.spells && player.spells.length > 0) {
+                player.spells.forEach((spell, index) => {
+                    // Check if player has enough energy to cast the spell
+                    const canCast = player.getEnergy() >= spell.cost;
+                    const spellText = canCast ? 
+                        `${spell.name} (${spell.cost} energy)` : 
+                        `${spell.name} (${spell.cost} energy) - Not enough energy!`;
+                    
+                    this.currentMenu.push({ x: 0, y: index, text: spellText, spell: spell, canCast: canCast });
+                });
+            } else {
+                this.currentMenu.push({ x: 0, y: 0, text: "No spells available" });
+            }
 
-        // reset selection
-        this.currentSelection = { x: 0, y: 0 };
+            // Add back option
+            this.currentMenu.push({ x: 0, y: this.currentMenu.length, text: 'Back' });
 
-        // render the spell menu background
-        const backgroundWidth = 400;
-        const backgroundHeight = 50 * this.currentMenu.length + 20; // adjust height based on number of items
-        const backgroundX = 960 - backgroundWidth / 2; // center horizontally
-        const backgroundY = 300 - 25; // start slightly above the first item
+            // Create a background for the spell menu
+            if (!this.spellMenuBackground) {
+                this.spellMenuBackground = scene.add.graphics();
+                this.spellMenuBackground.fillStyle(0x000000, 0.7);
+                this.spellMenuBackground.fillRect(650, 200, 620, 580);
+            } else {
+                this.spellMenuBackground.setVisible(true);
+            }
 
-        if (this.spellMenuBackground) {
-            this.spellMenuBackground.destroy();
+            this.renderMenu(this.currentMenu);
+        } catch (error) {
+            console.error("Error in renderSpellMenu:", error);
         }
-
-        this.spellMenuBackground = this.scene.add.rectangle(
-            backgroundX,
-            backgroundY,
-            backgroundWidth,
-            backgroundHeight,
-            Phaser.Display.Color.GetColor(100, 100, 100)
-        ).setOrigin(0);
-
-        this.spellMenuBackground.setAlpha(0.8);
-
-        // render spell menu
-        this.renderMenu(this.currentMenu);
     }
 
     changeSelection(deltaX, deltaY) {
-        this.sfx.menu.play();
-        let newX = this.currentSelection.x + deltaX;
-        let newY = this.currentSelection.y + deltaY;
-
-        // handle vertical wrapping
-        const menuItemsInColumn = this.currentMenu.filter(item => item.x === this.currentSelection.x);
-        const minY = Math.min(...menuItemsInColumn.map(item => item.y));
-        const maxY = Math.max(...menuItemsInColumn.map(item => item.y));
-
-        if (newY < minY) {
-            newY = maxY; // wrap to the bottom
-        } else if (newY > maxY) {
-            newY = minY; // wrap to the top
-        }
-
-        // handle horizontal wrapping if needed
-        const menuItemsInRow = this.currentMenu.filter(item => item.y === this.currentSelection.y);
-        const minX = Math.min(...menuItemsInRow.map(item => item.x));
-        const maxX = Math.max(...menuItemsInRow.map(item => item.x));
-
-        if (newX < minX) {
-            newX = maxX; // wrap to the right
-        } else if (newX > maxX) {
-            newX = minX; // wrap to the left
-        }
-
-        // prevent out of bounds selection
-        const isValidSelection = this.currentMenu.some(item => item.x === newX && item.y === newY);
-        if (isValidSelection) {
-            // update current selection
-            this.currentSelection = { x: newX, y: newY };
-
-            this.renderMenu(this.currentMenu);
+        try {
+            const scene = this.scene;
+            if (!scene) {
+                console.error("Scene is undefined in changeSelection");
+                return;
+            }
+            
+            // Get current menu bounds
+            const menuWidth = this.currentMenu.reduce((max, item) => Math.max(max, item.x), 0) + 1;
+            const menuHeight = this.currentMenu.reduce((max, item) => Math.max(max, item.y), 0) + 1;
+            
+            // Calculate new selection
+            const newX = (this.currentSelection.x + deltaX + menuWidth) % menuWidth;
+            const newY = (this.currentSelection.y + deltaY + menuHeight) % menuHeight;
+            
+            // Check if the position exists in the menu
+            const newPosition = { x: newX, y: newY };
+            const positionExists = this.currentMenu.some(item => item.x === newPosition.x && item.y === newPosition.y);
+            
+            if (positionExists) {
+                // Update selection
+                this.currentSelection = newPosition;
+                
+                // Play selection sound
+                if (this.sfx && this.sfx.menuMove) {
+                    this.sfx.menuMove.play();
+                }
+                
+                // Re-render menu with new selection
+                this.renderMenu(this.currentMenu);
+            }
+        } catch (error) {
+            console.error("Error in changeSelection:", error);
         }
     }
 
     getSelectedItem() {
-        return this.currentMenu.find(
-            item => item.x === this.currentSelection.x && item.y === this.currentSelection.y
-        );
+        try {
+            const scene = this.scene;
+            if (!scene) {
+                console.error("Scene is undefined in getSelectedItem");
+                return null;
+            }
+            
+            if (!this.currentMenu) {
+                return null;
+            }
+            
+            // Find and return the selected menu item
+            return this.currentMenu.find(
+                item => item.x === this.currentSelection.x && item.y === this.currentSelection.y
+            ) || null;
+        } catch (error) {
+            console.error("Error in getSelectedItem:", error);
+            return null;
+        }
     }
 
-    selectMenuItem(player, executeTurn, switchMenu, bagMenu, mainMenu, statsMenu) {
-        const selectedItem = this.getSelectedItem();
-        this.sfx.select.play();
-        if (selectedItem) {
+    selectMenuItem(player, executeTurn, switchMenu, bagMenu, mainMenu) {
+        try {
+            const scene = this.scene;
+            if (!scene) {
+                console.error("Scene is undefined in selectMenuItem");
+                return;
+            }
+            
+            // Get the currently selected menu item
+            const selectedItem = this.getSelectedItem();
+            
+            // Handle different menu types
             if (this.currentMenuType === 'main') {
                 if (selectedItem.text === 'Attack') {
-                    console.log('Attack selected!');
-                    // plays attack after 1 second delay to match health bar animation
-                    setTimeout(() => {
-                        this.sfx.hit1.play();
-                    }, 1000);
+                    // Handle attack action
+                    if (this.sfx.click) this.sfx.click.play();
                     executeTurn('attack');
-                }
-                else if (selectedItem.text === 'Cast') {
-                    console.log('Cast selected!');
-                    this.renderSpellMenu(player, switchMenu, mainMenu);
-                }
-                else if (selectedItem.text === 'Bag') {
-                    console.log('Bag selected!');
-                    this.renderBagMenu(player, switchMenu, mainMenu);
-                }
-                else if (selectedItem.text === 'Back') {
-                    console.log('Back selected!');
-                    switchMenu(mainMenu);
                 }
             }
             else if (this.currentMenuType === 'spell') {
                 if (selectedItem.text === 'Back') {
-                    console.log('Back selected!');
-                    switchMenu(mainMenu);
-                    this.currentMenuType = 'main'; // return to main menu
-                }
-                else {
-                    // check if selected item is a spell
-                    const selectedSpell = player.spells.find(spell => spell.name === selectedItem.text);
-                    if (selectedSpell) {
-                        setTimeout(() => {
-                            this.sfx.hit2.play();
-                        }, 1000);
-                        console.log(`Cast ${selectedSpell.name} selected!`);
-                        executeTurn('cast', selectedSpell);
-
-                        // closes spell menu and returns to main menu
-                        switchMenu(mainMenu);
-                        this.currentMenuType = 'main';
+                    // Return to the main menu
+                    if (this.sfx.click) this.sfx.click.play();
+                    if (this.spellMenuBackground) {
+                        this.spellMenuBackground.setVisible(false);
+                    }
+                    this.currentMenuType = 'main';
+                    this.currentSelection = { x: 0, y: 0 };
+                    this.renderMenu(mainMenu);
+                } 
+                else if (selectedItem.spell) {
+                    // Check if player has enough energy
+                    if (selectedItem.canCast) {
+                        // Handle spell casting
+                        if (this.sfx.spell_cast) this.sfx.spell_cast.play();
+                        this.spellMenuBackground.setVisible(false);
+                        executeTurn('cast', selectedItem.spell);
+                    } else {
+                        // Play error sound if not enough energy
+                        if (this.sfx.error) this.sfx.error.play();
                     }
                 }
             }
-            else if (this.currentMenuType === "bag") {
+            else if (this.currentMenuType === 'bag') {
                 if (selectedItem.text === 'Back') {
-                    console.log('Back selected!');
-                    switchMenu(mainMenu);
-                    this.currentMenuType = 'main'; // return to main menu
+                    // Return to the main menu
+                    if (this.sfx.click) this.sfx.click.play();
+                    if (this.bagMenuBackground) {
+                        this.bagMenuBackground.setVisible(false);
+                    }
+                    this.currentMenuType = 'main';
+                    this.currentSelection = { x: 0, y: 0 };
+                    this.renderMenu(mainMenu);
+                } 
+                else if (selectedItem.item) {
+                    // Handle item use
+                    if (this.sfx.click) this.sfx.click.play();
+                    this.bagMenuBackground.setVisible(false);
+                    // Use the item
+                    player.useItem(selectedItem.item);
+                    // Update stats
+                    this.displayStats(player, player.currentTarget, player.getMaxHealth(), player.currentTarget.getMaxHealth(), 0);
+                    // Go back to main menu
+                    this.currentMenuType = 'main';
+                    this.currentSelection = { x: 0, y: 0 };
+                    this.renderMenu(mainMenu);
                 }
             }
-            else if (this.currentMenuType === "stats") {
+            else if (this.currentMenuType === 'stats') {
                 if (selectedItem.text === 'Back') {
-                    console.log('Back selected!');
-                    switchMenu(mainMenu);
-                    this.currentMenuType = 'main'; // return to main menu
+                    // Return to the main menu
+                    if (this.sfx.click) this.sfx.click.play();
+                    if (this.statsMenuBackground) {
+                        this.statsMenuBackground.setVisible(false);
+                    }
+                    this.currentMenuType = 'main';
+                    this.currentSelection = { x: 0, y: 0 };
+                    this.renderMenu(mainMenu);
                 }
             }
+        } catch (error) {
+            console.error("Error in selectMenuItem:", error);
         }
     }
 
     switchMenu(menu) {
-        // clear the spell menu background if it exists
-        if (this.spellMenuBackground) {
-            this.spellMenuBackground.destroy();
-            this.spellMenuBackground = null;
+        try {
+            const scene = this.scene;
+            if (!scene) {
+                console.error("Scene is undefined in switchMenu");
+                return;
+            }
+            
+            // Hide all menu backgrounds
+            if (this.spellMenuBackground) {
+                this.spellMenuBackground.setVisible(false);
+            }
+            if (this.bagMenuBackground) {
+                this.bagMenuBackground.setVisible(false);
+            }
+            if (this.statsMenuBackground) {
+                this.statsMenuBackground.setVisible(false);
+            }
+            
+            // Reset menu state
+            this.currentMenu = menu;
+            this.currentSelection = { x: 0, y: 0 };
+            this.currentMenuType = 'main';
+            
+            // Render the new menu
+            this.renderMenu(menu);
+            
+            // Play click sound
+            if (this.sfx.click) this.sfx.click.play();
+        } catch (error) {
+            console.error("Error in switchMenu:", error);
         }
-        if (this.bagMenuBackground) {
-            this.bagMenuBackground.destroy();
-            this.bagMenuBackground = null;
+    }
+    
+    // Cleanup resources when scene is destroyed
+    destroy() {
+        try {
+            // Store scene reference to avoid 'this.scene is undefined' errors
+            const scene = this.scene;
+            
+            // If scene is already gone, just return
+            if (!scene) {
+                return;
+            }
+            
+            // Clean up graphics resources
+            if (this.spellMenuBackground) {
+                this.spellMenuBackground.destroy();
+            }
+            if (this.bagMenuBackground) {
+                this.bagMenuBackground.destroy();
+            }
+            if (this.statsMenuBackground) {
+                this.statsMenuBackground.destroy();
+            }
+            
+            // Clean up text elements
+            if (this.menuItems) {
+                this.menuItems.forEach(item => {
+                    if (item && item.destroy) item.destroy();
+                });
+            }
+            
+            // Clean up containers
+            if (this.statsContainer) {
+                this.statsContainer.destroy();
+            }
+            if (this.playerUnitFrame) {
+                this.playerUnitFrame.destroy();
+            }
+            if (this.enemyUnitFrame) {
+                this.enemyUnitFrame.destroy();
+            }
+            if (this.actionBarContainer) {
+                this.actionBarContainer.destroy();
+            }
+            
+            // Clear cached elements
+            this.cachedDisplayElements.clear();
+        } catch (error) {
+            console.error("Error in destroy:", error);
         }
-        if (this.statsMenuBackground) {
-            this.statsMenuBackground.destroy();
-            this.statsMenuBackground = null;
-        }
-
-        this.currentMenu = menu;
-        this.currentSelection = { x: 0, y: 0 };
-        this.renderMenu(menu);
     }
 }
 
