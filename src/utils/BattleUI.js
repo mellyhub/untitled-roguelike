@@ -442,8 +442,21 @@ class BattleUI {
                     if (selectedItem.canCast) {
                         // Handle spell casting
                         if (this.sfx.spell_cast) this.sfx.spell_cast.play();
-                        this.spellMenuBackground.setVisible(false);
+                        
+                        // Hide the menu background
+                        if (this.spellMenuBackground) {
+                            this.spellMenuBackground.setVisible(false);
+                        }
+                        
+                        // Reset menu state to main before executing turn
+                        this.currentMenuType = 'main';
+                        this.currentSelection = { x: 0, y: 0 };
+                        
+                        // Execute the spell cast
                         executeTurn('cast', selectedItem.spell);
+                        
+                        // Render the main menu after casting
+                        this.renderMenu(mainMenu);
                     } else {
                         // Play error sound if not enough energy
                         if (this.sfx.error) this.sfx.error.play();

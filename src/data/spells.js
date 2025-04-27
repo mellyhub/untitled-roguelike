@@ -2,6 +2,7 @@ const spells = {
     stab: {
         type: "Placeholder",
         name: "Stab",
+        cost: 20,
         damage(attackerStats) {
             return 25 + attackerStats.agility * 2 + attackerStats.strength * 2;
         }
@@ -9,6 +10,7 @@ const spells = {
     frostbolt: {
         type: "Frost",
         name: "Frostbolt",
+        cost: 20,
         damage(attackerStats) {
             return 10 + attackerStats.intelligence * 3;
         }
@@ -16,6 +18,7 @@ const spells = {
     fireball: {
         type: "Fire",
         name: "Fireball",
+        cost: 30,
         damage(attacker) {
             return 25 + attacker.stats.intelligence * 3;
         }
@@ -23,6 +26,7 @@ const spells = {
     fire_breath: {
         type: "Fire",
         name: "Fire Breath",
+        cost: 25,
         damage(attackerStats) {
             return 25 + attackerStats.intelligence * 2;
         }
@@ -30,6 +34,7 @@ const spells = {
     tail_whip: {
         type: "Placeholder",
         name: "Tail Whip",
+        cost: 15,
         damage(attackerStats) {
             return 25 + attackerStats.strength * 2;
         }
@@ -37,6 +42,7 @@ const spells = {
     bite: {
         type: "Placeholder",
         name: "Bite",
+        cost: 15,
         damage(attackerStats) {
             return 25 + attackerStats.strength * 2;
         }
@@ -44,6 +50,7 @@ const spells = {
     heavy_swing: {
         type: "Placeholder",
         name: "Heavy Swing",
+        cost: 25,
         damage(attackerStats) {
             return 25 + attackerStats.strength * 2;
         }
@@ -122,7 +129,7 @@ const spells = {
     conjure_weapon: {
         type: "Conjuration",
         name: "Conjure Weapon",
-        energyCost: 25,
+        cost: 25,
         duration: Infinity,
         effect(attacker, target) {
             attacker.addWeapon({
@@ -157,7 +164,7 @@ const spells = {
     thunderclap: {
         type: "Placeholder",
         name: "Thunderclap",
-        energyCost: 25,
+        cost: 25,
         duration: 1, // stuns for 1 turn
         effect(attacker, target) {
             console.log(`${attacker.getName()} casts Thunderclap on ${target.getName()}, stunning them for ${this.duration} turns.`);
@@ -179,7 +186,7 @@ const spells = {
     arcane_surge: {
         type: "Placeholder",
         name: "Arcane Surge",
-        energyCost: 25,
+        cost: 25,
         duration: 3,
         effect(attacker, target) {
             console.log(`${attacker.name} casts Arcane Surge, increasing intellect for ${this.duration} turns.`);
@@ -202,7 +209,7 @@ const spells = {
     phantom_strike: {
         type: "Placeholder",
         name: "Phantom Strike",
-        energyCost: 50,
+        cost: 50,
         damage(attackerStats) {
             return 50 + attackerStats.strength * 2;
         },
@@ -212,7 +219,7 @@ const spells = {
     soul_shatter: {
         type: "Placeholder",
         name: "Soul Shatter",
-        energyCost: 50,
+        cost: 50,
         damage(attackerStats) {
             return 20 + attackerStats.strength * 2;
         },
@@ -249,7 +256,7 @@ const spells = {
     heal: {
         type: "Placeholder",
         name: "Heal",
-        energyCost: 25,
+        cost: 25,
         effect(attacker, target) {
             const healAmount = Math.round(10 * attacker.stats.intelligence);
             
@@ -264,7 +271,7 @@ const spells = {
     geomancy: {
         type: "Geomancy",
         name: "Geomancy",
-        energyCost: 100,
+        cost: 100,
         damage(attackerStats) {
             return 200 + attackerStats.intelligence * 2;
         },
