@@ -151,6 +151,23 @@ export class Character {
     popWeapon() {
         this.weapons.pop();
     }
+
+    // New getter/setter methods
+    getClass() {
+        return this.class;
+    }
+
+    setClass(newClass) {
+        this.class = newClass;
+    }
+
+    getScore() {
+        return this.score;
+    }
+
+    setScore(newScore) {
+        this.score = newScore;
+    }
 }
 
     /*
