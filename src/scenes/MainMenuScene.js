@@ -34,6 +34,35 @@ class MainMenuScene extends Phaser.Scene {
       if (index == 0) {
         text.setColor('#ff0000'); // highlightar första valet som default
       }
+      
+      // Add mouse interactivity
+      text.setInteractive({ useHandCursor: true })
+        .on('pointerover', () => {
+          if (this.currentSelection !== index) {
+            text.setColor('#ffff00'); // Yellow hover color
+          }
+        })
+        .on('pointerout', () => {
+          if (this.currentSelection === index) {
+            text.setColor('#ff0000'); // Selected color
+          } else {
+            text.setColor('#ffffff'); // Default color
+          }
+        })
+        .on('pointerdown', () => {
+          // Update selection
+          this.menuItems[this.currentSelection].setColor('#fff');
+          this.currentSelection = index;
+          text.setColor('#ff0000');
+          this.updateDescription();
+          
+          // Double-click detection (select on double click)
+          if (text.lastClickTime && (this.time.now - text.lastClickTime < 300)) {
+            this.selectClass();
+          }
+          text.lastClickTime = this.time.now;
+        });
+      
       return text;
     });
 
@@ -41,6 +70,30 @@ class MainMenuScene extends Phaser.Scene {
 
     this.descriptionText = this.add.text(960, 800, '', { fontSize: '32px', fill: '#fff', wordWrap: { width: 800 } }).setOrigin(0.5);
     this.updateDescription();
+    
+    // Add Play button for mouse users
+    const playButton = this.add.text(960, 900, 'PLAY', { 
+      fontSize: '56px', 
+      fill: '#fff',
+      backgroundColor: '#4a1',
+      padding: { x: 20, y: 10 }
+    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+    
+    // Add hover and click effects
+    playButton
+      .on('pointerover', () => {
+        playButton.setStyle({ fill: '#ff0' });
+      })
+      .on('pointerout', () => {
+        playButton.setStyle({ fill: '#fff' });
+      })
+      .on('pointerdown', () => {
+        playButton.setStyle({ fill: '#f80' });
+      })
+      .on('pointerup', () => {
+        playButton.setStyle({ fill: '#ff0' });
+        this.selectClass();
+      });
   }
 
   update() {

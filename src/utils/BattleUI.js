@@ -13,10 +13,10 @@ class BattleUI {
         this.statsContainer = null;
         this.playerUnitFrame = null;
         this.enemyUnitFrame = null;
-        
+
         // Use object properties for caching
         this.cachedDisplayElements = new Map();
-        
+
         // Bind methods to ensure correct 'this' context
         this.renderMenu = this.renderMenu.bind(this);
         this.renderStatsMenu = this.renderStatsMenu.bind(this);
@@ -28,7 +28,7 @@ class BattleUI {
         this.switchMenu = this.switchMenu.bind(this);
         this.destroy = this.destroy.bind(this);
         this.displayStats = this.displayStats.bind(this);
-        
+
         // Listen for shutdown to clean up resources
         this.scene.events.once('shutdown', this.destroy, this);
     }
@@ -65,7 +65,7 @@ class BattleUI {
                 console.error("Scene is undefined in displayStats");
                 return;
             }
-            
+
             const COLOR_CODES = {
                 GREEN: Phaser.Display.Color.GetColor32(0, 255, 0, 255),
                 RED: Phaser.Display.Color.GetColor32(255, 0, 0, 255),
@@ -93,7 +93,7 @@ class BattleUI {
             this.playerUnitFrame = scene.add.container(400, 175);
             this.enemyUnitFrame = scene.add.container(1520, 175);
             this.actionBarContainer = scene.add.container(960, 910);
-            
+
             // Score and turn counter
             this.statsContainer.add(scene.add.text(0, 0, `Score: ${player.score}`, { fontSize: '32px', fill: '#fff' }));
             this.statsContainer.add(scene.add.text(0, 50, `Turn: ${turnCounter}`, { fontSize: '32px', fill: '#fff' }));
@@ -119,7 +119,7 @@ class BattleUI {
 
             // Action bar with player stats
             this.actionBarContainer.add(scene.add.image(0, 0, 'action-bar').setScale(0.9, 0.4));
-            
+
             const statsIcons = [];
             statsIcons.push(scene.add.image(400, -70, 'strength-icon').setScale(0.4));
             statsIcons.push(scene.add.image(400, -70, 'uncommon-item-frame').setScale(0.4));
@@ -127,11 +127,11 @@ class BattleUI {
             statsIcons.push(scene.add.image(400, 0, 'uncommon-item-frame').setScale(0.4));
             statsIcons.push(scene.add.image(400, 70, 'intelligence-icon').setScale(0.4));
             statsIcons.push(scene.add.image(400, 70, 'uncommon-item-frame').setScale(0.4));
-            
+
             statsIcons.forEach(icon => {
                 this.actionBarContainer.add(icon);
             });
-            
+
             // Add dynamic text elements that change with stats
             this.actionBarContainer.add(scene.add.text(450, -70, `${player.stats.strength}`, { fontSize: '32px', fill: '#fff' }).setOrigin(0.5));
             this.actionBarContainer.add(scene.add.text(450, 0, `${player.stats.agility}`, { fontSize: '32px', fill: '#fff' }).setOrigin(0.5));
@@ -173,7 +173,7 @@ class BattleUI {
             }
 
             // Render menu items
-            this.menuItems = menu.map(menuItem => {
+            this.menuItems = menu.map((menuItem) => {
                 // Check if the menu is the spell menu
                 const isSpellMenu = menuItem.x === 0 && this.currentMenu.some(item => item.text === 'Back');
                 const xPosition = isSpellMenu ? 960 : 300 + menuItem.x * 200; // Center horizontally for spell menu, original position for main menu
@@ -185,6 +185,55 @@ class BattleUI {
                 if (menuItem.x === this.currentSelection.x && menuItem.y === this.currentSelection.y) {
                     text.setColor('#ff0000');
                 }
+
+                // Make text interactive for mouse controls
+                text.setInteractive({ useHandCursor: true })
+                    .on('pointerover', () => {
+                        // Only highlight if not already selected
+                        if (menuItem.x !== this.currentSelection.x || menuItem.y !== this.currentSelection.y) {
+                            text.setColor('#ffff00'); // Yellow hover color
+                        }
+                    })
+                    .on('pointerout', () => {
+                        // Restore original color or selected color
+                        if (menuItem.x === this.currentSelection.x && menuItem.y === this.currentSelection.y) {
+                            text.setColor('#ff0000'); // Selected color
+                        } else {
+                            text.setColor('#ffffff'); // Default color
+                        }
+                    })
+                    .on('pointerdown', () => {
+                        // Check for input lock
+                        if (this.scene.inputLocked) {
+                            return;
+                        }
+                        
+                        // Update selection and highlight
+                        this.currentSelection = { x: menuItem.x, y: menuItem.y };
+                        
+                        // Play sound effect
+                        if (this.sfx && this.sfx.click) {
+                            this.sfx.click.play();
+                        }
+                        
+                        this.renderMenu(this.currentMenu);
+                        
+                        const selectedItem = this.getSelectedItem();
+                        if (selectedItem) {
+                            const executeTurn = this.scene.executeTurn ? this.scene.executeTurn.bind(this.scene) : null;
+                            const player = this.scene.player;
+                            const mainMenu = this.scene.mainMenu;
+                            
+                            // Simulate selection with equivalent to keyboard selection
+                            this.selectMenuItem(
+                                player,
+                                executeTurn,
+                                this.switchMenu.bind(this),
+                                null,
+                                mainMenu
+                            );
+                        }
+                    });
 
                 return text;
             });
@@ -200,7 +249,7 @@ class BattleUI {
                 console.error("Scene is undefined in renderStatsMenu");
                 return;
             }
-            
+
             // Clear current menu
             this.currentMenu = [];
             this.currentMenuType = 'stats'; // Set menu type to "stats"
@@ -265,7 +314,7 @@ class BattleUI {
                 console.error("Scene is undefined in renderBagMenu");
                 return;
             }
-            
+
             // Clear current menu
             this.currentMenu = [];
             this.currentMenuType = 'bag'; // Set menu type to "bag"
@@ -307,7 +356,7 @@ class BattleUI {
                 console.error("Scene is undefined in renderSpellMenu");
                 return;
             }
-            
+
             // Clear current menu
             this.currentMenu = [];
             this.currentMenuType = 'spell';
@@ -320,10 +369,10 @@ class BattleUI {
                 player.spells.forEach((spell, index) => {
                     // Check if player has enough energy to cast the spell
                     const canCast = player.getEnergy() >= spell.cost;
-                    const spellText = canCast ? 
-                        `${spell.name} (${spell.cost} energy)` : 
+                    const spellText = canCast ?
+                        `${spell.name} (${spell.cost} energy)` :
                         `${spell.name} (${spell.cost} energy) - Not enough energy!`;
-                    
+
                     this.currentMenu.push({ x: 0, y: index, text: spellText, spell: spell, canCast: canCast });
                 });
             } else {
@@ -355,28 +404,28 @@ class BattleUI {
                 console.error("Scene is undefined in changeSelection");
                 return;
             }
-            
+
             // Get current menu bounds
             const menuWidth = this.currentMenu.reduce((max, item) => Math.max(max, item.x), 0) + 1;
             const menuHeight = this.currentMenu.reduce((max, item) => Math.max(max, item.y), 0) + 1;
-            
+
             // Calculate new selection
             const newX = (this.currentSelection.x + deltaX + menuWidth) % menuWidth;
             const newY = (this.currentSelection.y + deltaY + menuHeight) % menuHeight;
-            
+
             // Check if the position exists in the menu
             const newPosition = { x: newX, y: newY };
             const positionExists = this.currentMenu.some(item => item.x === newPosition.x && item.y === newPosition.y);
-            
+
             if (positionExists) {
                 // Update selection
                 this.currentSelection = newPosition;
-                
+
                 // Play selection sound
                 if (this.sfx && this.sfx.menuMove) {
                     this.sfx.menuMove.play();
                 }
-                
+
                 // Re-render menu with new selection
                 this.renderMenu(this.currentMenu);
             }
@@ -392,11 +441,11 @@ class BattleUI {
                 console.error("Scene is undefined in getSelectedItem");
                 return null;
             }
-            
+
             if (!this.currentMenu) {
                 return null;
             }
-            
+
             // Find and return the selected menu item
             return this.currentMenu.find(
                 item => item.x === this.currentSelection.x && item.y === this.currentSelection.y
@@ -415,9 +464,14 @@ class BattleUI {
                 return;
             }
             
+            // Check if input is locked
+            if (scene.inputLocked) {
+                return; // Don't process selection when inputs are locked
+            }
+
             // Get the currently selected menu item
             const selectedItem = this.getSelectedItem();
-            
+
             // Handle different menu types
             if (this.currentMenuType === 'main') {
                 if (selectedItem.text === 'Attack') {
@@ -436,25 +490,25 @@ class BattleUI {
                     this.currentMenuType = 'main';
                     this.currentSelection = { x: 0, y: 0 };
                     this.renderMenu(mainMenu);
-                } 
+                }
                 else if (selectedItem.spell) {
                     // Check if player has enough energy
                     if (selectedItem.canCast) {
                         // Handle spell casting
                         if (this.sfx.spell_cast) this.sfx.spell_cast.play();
-                        
+
                         // Hide the menu background
                         if (this.spellMenuBackground) {
                             this.spellMenuBackground.setVisible(false);
                         }
-                        
+
                         // Reset menu state to main before executing turn
                         this.currentMenuType = 'main';
                         this.currentSelection = { x: 0, y: 0 };
-                        
+
                         // Execute the spell cast
                         executeTurn('cast', selectedItem.spell);
-                        
+
                         // Render the main menu after casting
                         this.renderMenu(mainMenu);
                     } else {
@@ -473,7 +527,7 @@ class BattleUI {
                     this.currentMenuType = 'main';
                     this.currentSelection = { x: 0, y: 0 };
                     this.renderMenu(mainMenu);
-                } 
+                }
                 else if (selectedItem.item) {
                     // Handle item use
                     if (this.sfx.click) this.sfx.click.play();
@@ -512,7 +566,7 @@ class BattleUI {
                 console.error("Scene is undefined in switchMenu");
                 return;
             }
-            
+
             // Hide all menu backgrounds
             if (this.spellMenuBackground) {
                 this.spellMenuBackground.setVisible(false);
@@ -523,33 +577,33 @@ class BattleUI {
             if (this.statsMenuBackground) {
                 this.statsMenuBackground.setVisible(false);
             }
-            
+
             // Reset menu state
             this.currentMenu = menu;
             this.currentSelection = { x: 0, y: 0 };
             this.currentMenuType = 'main';
-            
+
             // Render the new menu
             this.renderMenu(menu);
-            
+
             // Play click sound
             if (this.sfx.click) this.sfx.click.play();
         } catch (error) {
             console.error("Error in switchMenu:", error);
         }
     }
-    
+
     // Cleanup resources when scene is destroyed
     destroy() {
         try {
             // Store scene reference to avoid 'this.scene is undefined' errors
             const scene = this.scene;
-            
+
             // If scene is already gone, just return
             if (!scene) {
                 return;
             }
-            
+
             // Clean up graphics resources
             if (this.spellMenuBackground) {
                 this.spellMenuBackground.destroy();
@@ -560,14 +614,14 @@ class BattleUI {
             if (this.statsMenuBackground) {
                 this.statsMenuBackground.destroy();
             }
-            
+
             // Clean up text elements
             if (this.menuItems) {
                 this.menuItems.forEach(item => {
                     if (item && item.destroy) item.destroy();
                 });
             }
-            
+
             // Clean up containers
             if (this.statsContainer) {
                 this.statsContainer.destroy();
@@ -581,7 +635,7 @@ class BattleUI {
             if (this.actionBarContainer) {
                 this.actionBarContainer.destroy();
             }
-            
+
             // Clear cached elements
             this.cachedDisplayElements.clear();
         } catch (error) {
