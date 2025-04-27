@@ -80,13 +80,6 @@ export const classes = {
         resource: {
             comboPoints: 3
         }
-    },
-    enemy: {
-        name: "Enemy",
-        description: "Placeholder class for enemies",
-        stats: {
-            talents: [],
-        }
     }
 };
 
