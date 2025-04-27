@@ -12,7 +12,7 @@ const talentConfig = {
                         type: "Buff",
                         applyEffect: (player) => {
                             player.setEnergy(Math.min(player.getEnergy() + 5, 100)); // cap energy at 100
-                            console.log(`${player.name} gains 5 energy from "Energy on Attack". Current energy: ${player.energy}`);
+                            console.log(`${player.getName()} gains 5 energy from "Energy on Attack". Current energy: ${player.getEnergy()}`);
                         }
                     });
                 }
@@ -23,12 +23,12 @@ const talentConfig = {
             description: "Increases damage dealt by swords by 5% per point.",
             maxPoints: 5,
             effect: (player) => {
-                if (!player.weapon || player.weapon.length === 0) {
+                if (!player.weapons || player.weapons.length === 0) {
                     console.error("Player has no weapon equipped!");
                     return;
                 }
-                if (!player.permanentEffects.some(effect => effect.name === "Blademaster")) {
-                    player.permanentEffects.push({
+                if (!player.effectsHandler.permanentEffects.some(effect => effect.name === "Blademaster")) {
+                    player.effectsHandler.permanentEffects.push({
                         name: "Blademaster",
                         type: "Buff",
                         applyEffect: (player) => {
@@ -52,12 +52,12 @@ const talentConfig = {
             description: "Attacks ignore 25% of enemy defense.",
             maxPoints: 1,
             effect: (player) => {
-                if (!player.permanentEffects.some(effect => effect.name === "Shattering Blows")) {
-                    player.permanentEffects.push({
+                if (!player.effectsHandler.permanentEffects.some(effect => effect.name === "Shattering Blows")) {
+                    player.effectsHandler.permanentEffects.push({
                         name: "Shattering Blows",
                         type: "Buff",
                         applyEffect: (player) => {
-                            console.log(`${player.name}'s attack ignores 25% of enemy defense`);
+                            console.log(`${player.getName()}'s attack ignores 25% of enemy defense`);
                         },
                     });
                 }
@@ -68,12 +68,12 @@ const talentConfig = {
             description: "Deal +50% damage to enemies below 25% HP.",
             maxPoints: 1,
             effect: (player) => {
-                if (!player.permanentEffects.some(effect => effect.name === "Executioner's precision")) {
-                    player.permanentEffects.push({
+                if (!player.effectsHandler.permanentEffects.some(effect => effect.name === "Executioner's precision")) {
+                    player.effectsHandler.permanentEffects.push({
                         name: "Executioner's precision",
                         type: "Buff",
                         applyEffect: (player) => {
-                            console.log(`${player.name} triggers Executioner's precision, amplifying damage`);
+                            console.log(`${player.getName()} triggers Executioner's precision, amplifying damage`);
                         },
                     });
                 }
@@ -84,19 +84,19 @@ const talentConfig = {
             description: "Repeats your attack, dealing 50% of the damage.",
             maxPoints: 1,
             effect: (player) => {
-                if (!player.permanentEffects.some(effect => effect.name === "Void Channeling")) {
-                    player.permanentEffects.push({
+                if (!player.effectsHandler.permanentEffects.some(effect => effect.name === "Void Channeling")) {
+                    player.effectsHandler.permanentEffects.push({
                         name: "Void Channeling",
                         type: "Buff",
                         applyEffect: (player, target, originalDamage, battleUI) => {
                             if (Math.random() < 0.2) {  // 20% chance to trigger
                                 const repeatedDamage = Math.round(originalDamage * 0.5); // 50% of the original damage
-                                console.log(`${player.name} repeats the attack, dealing ${repeatedDamage} damage to ${target.name}.`);
-                                target.health -= repeatedDamage; // apply the repeated damage
+                                console.log(`${player.getName()} repeats the attack, dealing ${repeatedDamage} damage to ${target.getName()}.`);
+                                target.setHealth(target.getHealth() - repeatedDamage); // apply the repeated damage
 
                                 // display the repeated damage visually
                                 console.log(battleUI);
-                                battleUI.displayDamageText("enemy", repeatedDamage);
+                                battleUI.displayDamageText(target, repeatedDamage);
                             }
                         },
                     });
@@ -108,11 +108,11 @@ const talentConfig = {
             description: "Boosts your stats for the cost of max health.",
             maxPoints: 5,
             effect: (player) => {
-                player.maxHealth = Math.round(player.maxHealth * 0.9);
-                if (player.health > player.maxHealth) {  // making sure you dont have more health than max health
-                    player.health = player.maxHealth;
+                player.stats.maxHealth = Math.round(player.stats.maxHealth * 0.9);
+                if (player.getHealth() > player.getMaxHealth()) {  // making sure you dont have more health than max health
+                    player.setHealth(player.getMaxHealth());
                 }
-                player.damageMultiplier += 0.0025;
+                player.stats.damageMultiplier = (player.stats.damageMultiplier || 1) + 0.0025;
                 player.stats.strength++;
                 player.stats.agility++;
                 player.stats.intelligence++;
@@ -123,14 +123,15 @@ const talentConfig = {
             description: "Conjured weapons are 10% stronger.",
             maxPoints: 1,
             effect: (player) => {
-                if (!player.permanentEffects.some(effect => effect.name === "Conjure+")) {
-                    player.permanentEffects.push({
+                if (!player.effectsHandler.permanentEffects.some(effect => effect.name === "Conjure+")) {
+                    player.effectsHandler.permanentEffects.push({
                         name: "Conjure+",
                         type: "Buff",
                         applyEffect: (player) => {
-                            if (player.weapon.at(-1).name === "Conjured weapon") {
-                                player.weapon.at(-1).damage *= 1.1;
-                                console.log(`Conjured weapon damage increased to ${player.weapon.at(-1).damage}`);
+                            const weapon = player.getCurrentWeapon();
+                            if (weapon && weapon.name === "Conjured weapon") {
+                                weapon.damage *= 1.1;
+                                console.log(`Conjured weapon damage increased to ${weapon.damage}`);
                             }
                         },
                     });
@@ -143,13 +144,13 @@ const talentConfig = {
             description: "Guarantees your attack to be a critical hit if the enemy is under a status effect.",
             maxPoints: 1,
             effect: (player) => {
-                if (!player.permanentEffects.some(effect => effect.name === "Exploit Weakness")) {
-                    player.permanentEffects.push({
+                if (!player.effectsHandler.permanentEffects.some(effect => effect.name === "Exploit Weakness")) {
+                    player.effectsHandler.permanentEffects.push({
                         name: "Exploit Weakness",
                         type: "Buff",
                         applyEffect: (player, target) => {
-                            if(target.permanentEffects.some(effect => effect.type === "Status")) {
-                                console.log(`${player.name} triggers Exploit Weakness, amplifying damage`);
+                            if(target.effectsHandler.activeEffects.some(effect => effect.type === "Status")) {
+                                console.log(`${player.getName()} triggers Exploit Weakness, amplifying damage`);
                             }
                         },
                     });
@@ -165,8 +166,8 @@ const talentConfig = {
             description: "Increases player's max HP by 10 per point.",
             maxPoints: 5,
             effect: (player) => {
-                player.maxHealth += 10;
-                console.log(`Player's max HP increased to ${player.maxHealth}`);
+                player.stats.maxHealth += 10;
+                console.log(`Player's max HP increased to ${player.stats.maxHealth}`);
             }
         },
         {
@@ -191,7 +192,7 @@ const talentConfig = {
             maxPoints: 5,
             effect: (player) => {
                 player.stats.defense += 3;
-                player.healMultiplier *= 0.8;
+                player.stats.healMultiplier = (player.stats.healMultiplier || 1) * 0.8;
             }
         },
         {
@@ -199,14 +200,14 @@ const talentConfig = {
             description: "Reflects a portion of incoming damage back at attackers.",
             maxPoints: 1,
             effect: (player) => {
-                if (!player.permanentEffects.some(effect => effect.name === "Mirror Shield")) {
-                    player.permanentEffects.push({
+                if (!player.effectsHandler.permanentEffects.some(effect => effect.name === "Mirror Shield")) {
+                    player.effectsHandler.permanentEffects.push({
                         name: "Mirror Shield",
                         type: "Buff",
                         applyEffect: (player, attacker, damage) => {
                             const reflectedDamage = Math.round(damage * 0.1); // reflects 10% of incoming damage
-                            attacker.health -= reflectedDamage; // apply reflected damage to the attacker
-                            console.log(`${attacker.name} takes ${reflectedDamage} reflected damage from Mirror Shield.`);
+                            attacker.setHealth(attacker.getHealth() - reflectedDamage); // apply reflected damage to the attacker
+                            console.log(`${attacker.getName()} takes ${reflectedDamage} reflected damage from Mirror Shield.`);
                         },
                     });
                 }
@@ -217,15 +218,15 @@ const talentConfig = {
             description: "Grants 1 revive per combat.",
             maxPoints: 1,
             effect: (player) => {
-                if (!player.permanentEffects.some(effect => effect.name === "Rebirth")) {
-                    player.permanentEffects.push({
+                if (!player.effectsHandler.permanentEffects.some(effect => effect.name === "Rebirth")) {
+                    player.effectsHandler.permanentEffects.push({
                         name: "Rebirth",
                         type: "Buff",
                         applyEffect: (player) => {
-                            if (player.health <= 0 && !player.hasRevived) {
+                            if (player.getHealth() <= 0 && !player.hasRevived) {
                                 player.hasRevived = true; // mark the revive as used
-                                player.health = Math.round(player.maxHealth * 0.3); // restore 30% of max health
-                                console.log(`${player.name} has been revived by Rebirth! Health restored to ${player.health}.`);
+                                player.setHealth(Math.round(player.getMaxHealth() * 0.3)); // restore 30% of max health
+                                console.log(`${player.getName()} has been revived by Rebirth! Health restored to ${player.getHealth()}.`);
                             }
                         },
                         removeEffect: () => {
@@ -240,14 +241,14 @@ const talentConfig = {
             description: "Grants immunity from all status effects.",
             maxPoints: 1,
             effect: (player) => {
-                if (!player.permanentEffects.some(effect => effect.name === "Warrior's Resolve")) {
-                    player.permanentEffects.push({
+                if (!player.effectsHandler.permanentEffects.some(effect => effect.name === "Warrior's Resolve")) {
+                    player.effectsHandler.permanentEffects.push({
                         name: "Warrior's Resolve",
                         type: "Buff",
                         applyEffect: (player) => {
-                            if (player.activeEffects.some(effect => effect.type === "Status")) {
-                                console.log(`${player.name} has been cleansed from ${effect.name}.`)
-                                players.activeEffects.pop(effect);
+                            if (player.effectsHandler.activeEffects.some(effect => effect.type === "Status")) {
+                                console.log(`${player.getName()} has been cleansed from ${effect.name}.`)
+                                player.effectsHandler.activeEffects = player.effectsHandler.activeEffects.filter(e => e.type !== "Status");
                             }
                         },
                     });
@@ -262,17 +263,18 @@ const talentConfig = {
             description: "Heal 25 HP after defeating an enemy.",
             maxPoints: 1,
             effect: (player) => {
-                if (!player.permanentEffects.some(effect => effect.name === "Vital Surge")) {
-                    player.permanentEffects.push({
+                if (!player.effectsHandler.permanentEffects.some(effect => effect.name === "Vital Surge")) {
+                    player.effectsHandler.permanentEffects.push({
                         name: "Vital Surge",
                         type: "Buff",
                         applyEffect: (player) => {
-                            const restoreAmount = Math.round(25 * player.healMultiplier);
-                            player.health += restoreAmount;
-                            if (player.health > player.maxHealth) {
-                                player.health = player.maxHealth;
+                            const healMultiplier = player.stats.healMultiplier || 1;
+                            const restoreAmount = Math.round(25 * healMultiplier);
+                            player.setHealth(player.getHealth() + restoreAmount);
+                            if (player.getHealth() > player.getMaxHealth()) {
+                                player.setHealth(player.getMaxHealth());
                             }
-                            console.log(`${player.name} restores ${restoreAmount} health from Vital Surge`);
+                            console.log(`${player.getName()} restores ${restoreAmount} health from Vital Surge`);
                         },
                     });
                 }
@@ -286,7 +288,7 @@ const talentConfig = {
                 player.stats.omnivamp += 0.05;
             },
             maxEffect: (player) => {
-                console.log(`${player.name}: ITS MORBIN TIME!`);
+                console.log(`${player.getName()}: ITS MORBIN TIME!`);
                 player.stats.omnivamp = 0.7; // morbious buff (see meeting notes 25/04/21)
             }
         },
@@ -295,7 +297,7 @@ const talentConfig = {
             description: "Applies toxic coating to your weapon.",
             maxPoints: 1,
             effect: (player) => {
-                const weapon = player.weapon.at(-1);
+                const weapon = player.getCurrentWeapon();
                 if (!weapon) {
                     console.error("No weapon equipped to apply Toxic Coating!");
                     return;
@@ -314,17 +316,17 @@ const talentConfig = {
                     name: "Toxic Coating",
                     chance: 1, // 100% chance to trigger on attack
                     effect: (attacker, target) => {
-                        console.log(`${target.name} is poisoned by ${attacker.name}'s Toxic Coating!`);
-                        target.activeEffects.push({
+                        console.log(`${target.getName()} is poisoned by ${attacker.getName()}'s Toxic Coating!`);
+                        target.effectsHandler.activeEffects.push({
                             name: "Poisoned",
                             type: "Status",
                             remainingTurns: 5,
                             applyEffect: () => {
-                                target.health -= 20;
-                                console.log(`${target.name} takes 20 damage from poison`);
+                                target.setHealth(target.getHealth() - 20);
+                                console.log(`${target.getName()} takes 20 damage from poison`);
                             },
                             removeEffect: () => {
-                                console.log(`${target.name} is no longer poisoned`);
+                                console.log(`${target.getName()} is no longer poisoned`);
                             }
                         });
                     }
@@ -336,7 +338,7 @@ const talentConfig = {
             description: "Applies paralysis coating to your weapon.",
             maxPoints: 1,
             effect: (player) => {
-                const weapon = player.weapon.at(-1);
+                const weapon = player.getCurrentWeapon();
                 if (!weapon) {
                     console.error("No weapon equipped to apply Paralysis Coating!");
                     return;
@@ -354,22 +356,22 @@ const talentConfig = {
                 weapon.coatings.push({
                     name: "Paralysis Coating",
                     //chance: 0.2, // 20% chance to trigger on attack
-                    chance: 1,
+                    chance: 1,  // Currently hardcoded to 100% for testing purposes
                     effect: (attacker, target) => {
-                        console.log(`${target.name} is paralyzed by ${attacker.name}'s Paralysis Coating!`);
-                        target.activeEffects.push({
+                        console.log(`${target.getName()} is paralyzed by ${attacker.getName()}'s Paralysis Coating!`);
+                        target.effectsHandler.activeEffects.push({
                             name: "Paralyzed",
                             type: "Status",
                             remainingTurns: 3,
                             applyEffect: () => {
-                                console.log(`${target.name} is paralyzed`);
+                                console.log(`${target.getName()} is paralyzed`);
                             },
                             removeEffect: () => {
-                                console.log(`${target.name} is no longer paralyzed`);
+                                console.log(`${target.getName()} is no longer paralyzed`);
                             }
                         });
                         // immediately apply the effect
-                        const effect = target.activeEffects.find(effect => effect.name === "Paralyzed");
+                        const effect = target.effectsHandler.activeEffects.find(effect => effect.name === "Paralyzed");
                         if (effect) {
                             effect.applyEffect();
                         }
