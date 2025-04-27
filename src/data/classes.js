@@ -28,6 +28,7 @@ export const classes = {
         spells: [
             spells.thunderclap,
             spells.conjure_weapon,
+            spells.overcharge,
             spells.heal,
             spells.fireball
         ],

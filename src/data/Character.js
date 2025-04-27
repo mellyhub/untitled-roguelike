@@ -214,6 +214,10 @@ export class Character {
     }
 
     popWeapon() {
+        if (this.weapons.length === 1) {
+            console.log('Cannot remove unarmed.')
+            return
+        }
         const removedWeapon = this.weapons.pop();
         if (removedWeapon && removedWeapon.stats) {
             this.removeWeaponStats(removedWeapon);

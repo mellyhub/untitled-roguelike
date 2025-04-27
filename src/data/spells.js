@@ -169,6 +169,19 @@ const spells = {
         description: "Conjure a temporary weapon"
     },
 
+    overcharge: {
+        type: "Conjuration",
+        name: "Overcharge",
+        cost: 60,
+
+        damage(attacker) {
+            const weapon = attacker.getCurrentWeapon()
+            attacker.popWeapon()
+            console.log(attacker)
+            return attacker.stats.intelligence * (weapon.stats.strength + weapon.stats.agility + weapon.stats.intelligence)
+        }
+    },
+
     thunderclap: {
         type: "Placeholder",
         name: "Thunderclap",
