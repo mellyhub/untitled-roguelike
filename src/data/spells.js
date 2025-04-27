@@ -132,9 +132,17 @@ const spells = {
         cost: 25,
         duration: Infinity,
         effect(attacker, target) {
-            attacker.addWeapon({
+            attacker.equipWeapon({
                 name: "Conjured weapon",
                 damage: 100,
+                stats: {
+                    strength: 1000,
+                    agility: 1000,
+                    intelligence: 1000,
+                    defense: 1000,
+                    critChance: 1000,
+                    critDamage: 1000
+                },
                 coatings: []
             });
 

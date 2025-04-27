@@ -2,7 +2,9 @@ export class EffectsHandler {
     
     constructor(character) {
         this.character = character;
-        this.permanentEffects = [];
+
+        this.permanentEffects = []; // permanent effects are effects that are always active, currently not used
+        
         this.activeEffects = [];
     }
 

@@ -212,11 +212,6 @@ export class Character {
         if (weapon.stats.critDamage) this.stats.critDamage -= weapon.stats.critDamage;
     }
 
-    addWeapon(weapon) {
-        this.weapons.push(weapon);
-        this.addWeaponStats(weapon);
-    }
-
     popWeapon() {
         const removedWeapon = this.weapons.pop();
         if (removedWeapon && removedWeapon.stats) {

@@ -85,7 +85,7 @@ class BattleScene extends Phaser.Scene {
     battleUI.renderMenu(this.currentMenu, this.currentSelection);
     
     // Setup performance monitoring
-    this.perfText = this.add.text(10, 10, '', { fontSize: '16px', fill: '#ffffff' })
+    this.perfText = this.add.text(10, 200, '', { fontSize: '26px', fill: '#ffffff' })
       .setScrollFactor(0)
       .setDepth(1000);
       
@@ -264,13 +264,18 @@ class BattleScene extends Phaser.Scene {
   }
 
   async switchScene() {
+    // Clear all active effects on the player when combat ends
+    if (this.player.effectsHandler) {
+      this.player.effectsHandler.removeAllActiveEffects();
+    }
+    
     if (this.enemy.getHealth() <= 0) {
-      this.player.score += 10;
+      this.player.setScore(this.player.getScore() + 10);
       
       // Update high score in cookies
       const highestScore = getCookie('highestScore') || 0;
-      if (this.player.score > highestScore) {
-        setCookie('highestScore', this.player.score);
+      if (this.player.getScore() > highestScore) {
+        setCookie('highestScore', this.player.getScore());
       }
       
       // Transition to reward scene
