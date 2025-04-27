@@ -512,6 +512,7 @@ class BattleUI {
                         // Render the main menu after casting
                         this.renderMenu(mainMenu);
                     } else {
+                        console.log('Unable to cast')
                         // Play error sound if not enough energy
                         if (this.sfx.error) this.sfx.error.play();
                     }
