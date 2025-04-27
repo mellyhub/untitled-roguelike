@@ -479,6 +479,21 @@ class BattleUI {
                     if (this.sfx.click) this.sfx.click.play();
                     executeTurn('attack');
                 }
+                else if (selectedItem.text === 'Cast') {
+                    // Open the spell menu
+                    if (this.sfx.click) this.sfx.click.play();
+                    this.renderSpellMenu(player);
+                }
+                else if (selectedItem.text === 'Bag') {
+                    // Open the bag menu
+                    if (this.sfx.click) this.sfx.click.play();
+                    this.renderBagMenu(player);
+                }
+                else if (selectedItem.text === 'Stats') {
+                    // Open the stats menu
+                    if (this.sfx.click) this.sfx.click.play();
+                    this.renderStatsMenu(player);
+                }
             }
             else if (this.currentMenuType === 'spell') {
                 if (selectedItem.text === 'Back') {
