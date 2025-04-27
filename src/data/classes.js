@@ -24,7 +24,7 @@ export const classes = {
             critDamage: 1.5,
             omnivamp: 0,
         },
-        weapons: [weapons.big_axe],
+        weapons: [weapons.unarmed, weapons.big_axe],
         spells: [
             spells.thunderclap,
             spells.conjure_weapon,
@@ -50,7 +50,9 @@ export const classes = {
                 }
             ),
         createClass() {
-            return new Warrior("Taffe", this.weapons, this.spells, this.stats, this.animations);
+            const player = new Warrior("Taffe", this.weapons, this.spells, this.stats, this.animations);
+            player.addWeaponStats(this.weapons.at(-1));
+            return player;
         }
     },
     mage: {

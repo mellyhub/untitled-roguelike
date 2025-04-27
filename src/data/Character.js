@@ -5,7 +5,6 @@ export class Character {
     name;
     class;
     weapons;
-    currentWeapon;
     spells;
     stats; // Includes Health, Energy/Mana, ...
     level;
@@ -174,24 +173,56 @@ export class Character {
     }
 
     equipWeapon(weapon) {
-        this.currentWeapon = weapon;
+        // Remove stats from current weapon
+        const currentWeapon = this.getCurrentWeapon();
+        if (currentWeapon && currentWeapon.stats) {
+            this.removeWeaponStats(currentWeapon);
+        }
+        
+        // Add the new weapon and its stats
         this.weapons.push(weapon);
         if (weapon.stats) {
-            this.stats.strength += weapon.stats.strength;
-            this.stats.agility += weapon.stats.agility;
-            this.stats.intelligence += weapon.stats.intelligence;
-        }
-        else {
+            this.addWeaponStats(weapon);
+        } else {
             console.log("Weapon has no stats.");
         }
     }
 
+    addWeaponStats(weapon) {
+        if (!weapon.stats) return;
+        
+        // Add weapon stats to character stats
+        if (weapon.stats.strength) this.stats.strength += weapon.stats.strength;
+        if (weapon.stats.agility) this.stats.agility += weapon.stats.agility;
+        if (weapon.stats.intelligence) this.stats.intelligence += weapon.stats.intelligence;
+        if (weapon.stats.defense) this.stats.defense += weapon.stats.defense;
+        if (weapon.stats.critChance) this.stats.critChance += weapon.stats.critChance;
+        if (weapon.stats.critDamage) this.stats.critDamage += weapon.stats.critDamage;
+    }
+
+    removeWeaponStats(weapon) {
+        if (!weapon.stats) return;
+        
+        // Remove weapon stats from character stats
+        if (weapon.stats.strength) this.stats.strength -= weapon.stats.strength;
+        if (weapon.stats.agility) this.stats.agility -= weapon.stats.agility;
+        if (weapon.stats.intelligence) this.stats.intelligence -= weapon.stats.intelligence;
+        if (weapon.stats.defense) this.stats.defense -= weapon.stats.defense;
+        if (weapon.stats.critChance) this.stats.critChance -= weapon.stats.critChance;
+        if (weapon.stats.critDamage) this.stats.critDamage -= weapon.stats.critDamage;
+    }
+
     addWeapon(weapon) {
         this.weapons.push(weapon);
+        this.addWeaponStats(weapon);
     }
 
     popWeapon() {
-        this.weapons.pop();
+        const removedWeapon = this.weapons.pop();
+        if (removedWeapon && removedWeapon.stats) {
+            this.removeWeaponStats(removedWeapon);
+        }
+        return removedWeapon;
     }
 
     // New getter/setter methods
