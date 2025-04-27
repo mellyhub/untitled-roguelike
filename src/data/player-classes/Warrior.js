@@ -25,7 +25,7 @@ export class Warrior extends Character {
             console.log(`${target.name} evaded the attack`);
             return;
         }
-        const damage = Math.round(this.handleRage(this.weapons.at(-1).damage));
+        const damage = this.handleRage(this.weapons.at(-1).damage);
         this.doDamage(damage, target, battleUI);
     }
 

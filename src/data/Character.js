@@ -81,7 +81,7 @@ export class Character {
             damage *= this.stats.critDamage;
         }
 
-        const newHealth = target.getHealth() - damage;
+        const newHealth = target.getHealth() - Math.round(damage);
         battleUI.displayDamageText(target, target.getHealth() - newHealth);
         target.setHealth(newHealth);
     }

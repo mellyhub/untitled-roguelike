@@ -38,13 +38,27 @@ class TalentScene extends Phaser.Scene {
     this.currentSelection = 0;
 
     // Create a tooltip for displaying talent information
-    this.tooltip = this.add.text(0, 0, '', {
-      fontSize: '20px',
-      fill: '#fff',
-      backgroundColor: '#000',
+    this.tooltipBox = this.add.container()
+    .setDepth(10)
+    .setVisible(false)
+    const toolTipBackground = this.add.rectangle(0, 0, 300, 300, 0x808080)
+    .setOrigin(0.5)
+    this.tooltipTitle = this.add.text(0, -100, '', {
+      fontSize: '25px',
+      fill: '#ff0000',
       padding: { x: 10, y: 5 },
       align: 'center',
-    }).setOrigin(0.5).setDepth(10).setVisible(false);
+    }).setOrigin(0.5)
+    this.tooltipDescription = this.add.text(0, 0, '', {
+      fontSize: '20px',
+      fill: '#fff',
+      padding: { x: 10, y: 5 },
+      align: 'center',
+    }).setOrigin(0.5)
+    this.tooltipBox.add(toolTipBackground)
+    this.tooltipBox.add(this.tooltipTitle)
+    this.tooltipBox.add(this.tooltipDescription)
+    
 
     this.renderUI();
   }
@@ -151,8 +165,27 @@ class TalentScene extends Phaser.Scene {
 
         // mouse hover
         talentText.on('pointerover', (pointer) => {
+          this.tooltipTitle.setText(`${talent.name}`).setWordWrapWidth(300)
+          this.tooltipDescription.setText(`${talent.description}`).setWordWrapWidth(300)
+          this.tooltipBox
+          .setPosition(pointer.worldX, pointer.worldY)
+          .setVisible(true);
+          
+          talentText.setStyle({ fill: '#ffff00' }); // highlight in yellow on hover
+        });
+        talentText.on('pointerout', () => {
+          this.tooltipBox.setVisible(false); // hide tooltip when not hovered
+          talentText.setStyle({ fill: '#fff' }); // reset to white when not hovered
+          if (treeName === this.currentTree && index === this.currentSelection) {
+            talentText.setColor('#ff0000'); // keep red if selected
+          }
+        });
+
+        /*
+        talentText.on('pointerover', (pointer) => {
           this.tooltip.setText(`${talent.name}\n${talent.description}`)
             .setPosition(pointer.worldX, pointer.worldY - 20)
+            .setWordWrapWidth(300)
             .setVisible(true);
           talentText.setStyle({ fill: '#ffff00' }); // highlight in yellow on hover
         });
@@ -163,6 +196,7 @@ class TalentScene extends Phaser.Scene {
             talentText.setColor('#ff0000'); // keep red if selected
           }
         });
+        */
 
         // handle click to select and allocate points
         talentText.on('pointerdown', () => {
