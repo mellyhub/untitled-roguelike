@@ -40,50 +40,83 @@ export class Character {
         this.animations = animations;
         this.level = 0;
         this.score = 0;
+        
+        // Bind methods to ensure 'this' context is maintained
+        this.attemptAction = this.attemptAction.bind(this);
+        this.attack = this.attack.bind(this);
+        this.cast = this.cast.bind(this);
+        this.doDamage = this.doDamage.bind(this);
     }
 
-    attemptAction(action, target, spell, battleUI) {
-        this.effectsHandler.processActiveEffects();
+    attemptAction(action, target, spell, battleScene) {
+        try {
+            this.effectsHandler.processActiveEffects();
 
-        if (this.effectsHandler.isImpaired()) {
-            console.log(`${this.name} is impaired, cannot perform action!`);
-        } 
-        else if (action === "attack") {
-            this.attack(target, battleUI);
-        } 
-        else if (action === "cast") {
-            this.cast(target, spell, battleUI);
-        }
-    }
-
-    attack(target, battleUI) {
-        if (target.stats.evasion > Math.random()) {
-            console.log(`${target.name} evaded the attack`);
-            return;
-        }
-        const damage = this.weapons.at(-1).damage;
-        this.doDamage(damage, target, battleUI);
-    }
-
-    cast(target, spell, battleUI) {
-        if (spell.effect) {
-            spell.effect(this, target);
-        }
-        if (spell.damage) {
-            let damage = spell.damage(this);
-            this.doDamage(damage, target, battleUI);
+            if (this.effectsHandler.isImpaired()) {
+                console.log(`${this.name} is impaired, cannot perform action!`);
+            } 
+            else if (action === "attack") {
+                this.attack(target, battleScene);
+            } 
+            else if (action === "cast") {
+                this.cast(target, spell, battleScene);
+            }
+        } catch (error) {
+            console.error("Error in attemptAction:", error);
         }
     }
 
-    doDamage(damage, target, battleUI) {
-        if (this.stats.critChance > Math.random()) {
-            console.log("Critical hit");
-            damage *= this.stats.critDamage;
+    attack(target, battleScene) {
+        try {
+            if (target.stats.evasion > Math.random()) {
+                console.log(`${target.name} evaded the attack`);
+                return;
+            }
+            const damage = this.weapons.at(-1).damage;
+            this.doDamage(damage, target, battleScene);
+        } catch (error) {
+            console.error("Error in attack:", error);
         }
+    }
 
-        const newHealth = target.getHealth() - damage;
-        battleUI.displayDamageText(target, target.getHealth() - newHealth);
-        target.setHealth(newHealth);
+    cast(target, spell, battleScene) {
+        try {
+            if (spell.effect) {
+                spell.effect(this, target);
+            }
+            if (spell.damage) {
+                let damage = spell.damage(this);
+                this.doDamage(damage, target, battleScene);
+            }
+        } catch (error) {
+            console.error("Error in cast:", error);
+        }
+    }
+
+    doDamage(damage, target, battleScene) {
+        try {
+            let isCritical = false;
+            
+            if (this.stats.critChance > Math.random()) {
+                console.log("Critical hit");
+                damage *= this.stats.critDamage;
+                isCritical = true;
+            }
+
+            const newHealth = target.getHealth() - damage;
+            
+            // Make sure battleScene exists and has displayDamageText method
+            if (battleScene && typeof battleScene.displayDamageText === 'function') {
+                // Use battle scene's displayDamageText method
+                battleScene.displayDamageText(target, Math.round(damage), isCritical);
+            } else {
+                console.error("battleScene or displayDamageText method is undefined");
+            }
+            
+            target.setHealth(newHealth);
+        } catch (error) {
+            console.error("Error in doDamage:", error);
+        }
     }
 
     getName() {
