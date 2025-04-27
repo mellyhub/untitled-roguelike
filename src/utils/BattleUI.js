@@ -120,20 +120,15 @@ class BattleUI {
             // Action bar with player stats
             this.actionBarContainer.add(scene.add.image(0, 0, 'action-bar').setScale(0.9, 0.4));
             
-            // Stats icons - load these once and cache them for reuse
-            if (!this.cachedDisplayElements.has('statsIcons')) {
-                const statsIcons = [];
-                statsIcons.push(scene.add.image(400, -70, 'strength-icon').setScale(0.4));
-                statsIcons.push(scene.add.image(400, -70, 'uncommon-item-frame').setScale(0.4));
-                statsIcons.push(scene.add.image(400, 0, 'agility-icon').setScale(0.4));
-                statsIcons.push(scene.add.image(400, 0, 'uncommon-item-frame').setScale(0.4));
-                statsIcons.push(scene.add.image(400, 70, 'intelligence-icon').setScale(0.4));
-                statsIcons.push(scene.add.image(400, 70, 'uncommon-item-frame').setScale(0.4));
-                this.cachedDisplayElements.set('statsIcons', statsIcons);
-            }
+            const statsIcons = [];
+            statsIcons.push(scene.add.image(400, -70, 'strength-icon').setScale(0.4));
+            statsIcons.push(scene.add.image(400, -70, 'uncommon-item-frame').setScale(0.4));
+            statsIcons.push(scene.add.image(400, 0, 'agility-icon').setScale(0.4));
+            statsIcons.push(scene.add.image(400, 0, 'uncommon-item-frame').setScale(0.4));
+            statsIcons.push(scene.add.image(400, 70, 'intelligence-icon').setScale(0.4));
+            statsIcons.push(scene.add.image(400, 70, 'uncommon-item-frame').setScale(0.4));
             
-            // Add the cached icons to the container
-            this.cachedDisplayElements.get('statsIcons').forEach(icon => {
+            statsIcons.forEach(icon => {
                 this.actionBarContainer.add(icon);
             });
             
@@ -184,7 +179,7 @@ class BattleUI {
                 const xPosition = isSpellMenu ? 960 : 300 + menuItem.x * 200; // Center horizontally for spell menu, original position for main menu
                 const yPosition = isSpellMenu ? 300 + menuItem.y * 50 : 850 + menuItem.y * 100; // Adjust vertical spacing for spell menu or main menu
 
-                const text = scene.add.text(xPosition, yPosition, menuItem.text, { fontSize: '48px', fill: '#fff' }).setOrigin(0.5);
+                const text = scene.add.text(xPosition, yPosition, menuItem.text, { fontSize: '48px', fill: '#fff' }).setOrigin(0.5).setDepth(10);
 
                 // Highlight selected item
                 if (menuItem.x === this.currentSelection.x && menuItem.y === this.currentSelection.y) {

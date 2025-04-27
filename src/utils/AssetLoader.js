@@ -28,15 +28,9 @@ class AssetLoader {
       this.loadAudio(scene, sfxConfig);
     });
     
-    // Track loading progress
-    scene.load.on('progress', (value) => {
-      console.log(`Loading: ${Math.round(value * 100)}%`);
-    });
-    
     // Set flag when loading is complete
     scene.load.on('complete', () => {
       this.assetsLoaded = true;
-      console.log('All assets loaded');
     });
   }
   
