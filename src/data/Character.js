@@ -81,6 +81,15 @@ export class Character {
 
     cast(target, spell, battleScene) {
         try {
+            // Deduct spell energy cost
+            if (spell.cost && this.getEnergy() >= spell.cost) {
+                this.setEnergy(this.getEnergy() - spell.cost);
+                console.log(`${this.name} used ${spell.cost} energy to cast ${spell.name}.`);
+            } else if (spell.cost) {
+                console.log(`${this.name} doesn't have enough energy to cast ${spell.name}.`);
+                return; // Don't cast if not enough energy
+            }
+            
             if (spell.effect) {
                 spell.effect(this, target);
             }
