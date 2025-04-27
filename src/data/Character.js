@@ -69,6 +69,7 @@ export class Character {
         try {
             if (target.stats.evasion > Math.random()) {
                 console.log(`${target.name} evaded the attack`);
+                battleScene.displayDamageText(target, "Evaded!");
                 return;
             }
             const damage = this.weapons.at(-1).damage;
