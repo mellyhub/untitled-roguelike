@@ -293,8 +293,9 @@ class BattleScene extends Phaser.Scene {
       } catch (error) {
         console.error("Error updating final stats:", error);
       }
-      
+
       await this.resolveAfterTime(2000);
+      this.inputLocked = false;
       this.switchScene();
       return true;
     }
