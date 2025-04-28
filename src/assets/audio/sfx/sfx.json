@@ -1,14 +1,14 @@
 {
-    "hit1": "src/assets/audio/sfx/hit1.ogg",
-    "hit2": "src/assets/audio/sfx/hit2.ogg",
-    "hit3": "src/assets/audio/sfx/hit3.ogg",
-    "hit4": "src/assets/audio/sfx/hit4.ogg",
-    "hit5": "src/assets/audio/sfx/hit5.ogg",
-    "menu": "src/assets/audio/sfx/menu.ogg",
-    "plingeling": "src/assets/audio/sfx/plingeling.ogg",
-    "rare": "src/assets/audio/sfx/rare.ogg",
-    "select": "src/assets/audio/sfx/select.ogg",
-    "slime": "src/assets/audio/sfx/slime.ogg",
-    "snow": "src/assets/audio/sfx/snow.ogg",
-    "thump": "src/assets/audio/sfx/thump.ogg"
+    "hit1": "src/assets/audio/sfx/hit1.mp3",
+    "hit2": "src/assets/audio/sfx/hit2.mp3",
+    "hit3": "src/assets/audio/sfx/hit3.mp3",
+    "hit4": "src/assets/audio/sfx/hit4.mp3",
+    "hit5": "src/assets/audio/sfx/hit5.mp3",
+    "menu": "src/assets/audio/sfx/menu.mp3",
+    "plingeling": "src/assets/audio/sfx/plingeling.mp3",
+    "rare": "src/assets/audio/sfx/rare.mp3",
+    "select": "src/assets/audio/sfx/select.mp3",
+    "slime": "src/assets/audio/sfx/slime.mp3",
+    "snow": "src/assets/audio/sfx/snow.mp3",
+    "thump": "src/assets/audio/sfx/thump.mp3"
 }
