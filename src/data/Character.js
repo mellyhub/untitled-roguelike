@@ -1,5 +1,6 @@
 import { CombatHandler } from "./CombatHandler";
 import { EffectsHandler } from "./EffectsHandler";
+import { Coatings } from './coatings.js';
 
 export class Character {
     name;
@@ -28,7 +29,7 @@ export class Character {
     // Inventory handler
     inventoryHandler;
 
-    constructor(name, weapons, spells, stats, animations, characterClass = "Enemy") {
+    constructor(name, weapons, spells, stats, animations, characterClass) {
         this.name = name;
         this.class = characterClass;
         this.weapons = weapons;
@@ -39,7 +40,7 @@ export class Character {
         this.animations = animations;
         this.level = 0;
         this.score = 0;
-        
+
         // Bind methods to ensure 'this' context is maintained
         this.attemptAction = this.attemptAction.bind(this);
         this.attack = this.attack.bind(this);
@@ -54,15 +55,16 @@ export class Character {
             if (this.effectsHandler.isImpaired()) {
                 console.log(`${this.name} is impaired, cannot perform action!`);
                 return 0; // Return 0 damage when impaired
-            } 
+            }
             else if (action === "attack") {
                 return this.attack(target, battleScene);
-            } 
+            }
             else if (action === "cast") {
                 return this.cast(target, spell, battleScene);
             }
             return 0; // Default return 0 damage
-        } catch (error) {
+        }
+        catch (error) {
             console.error("Error in attemptAction:", error);
             return 0;
         }
@@ -70,27 +72,42 @@ export class Character {
 
     attack(target, battleScene) {
         try {
+            if (!target) {
+                console.error("No target specified for attack!");
+                return 0;
+            }
+
+            // Check for evasion
             if (target.stats.evasion > Math.random()) {
-                console.log(`${target.name} evaded the attack`);
+                console.log(`${target.getName()} evaded the attack`);
                 battleScene.displayDamageText(target, "Evaded!");
-                return 0; // Return 0 damage on evade
+                return 0;
             }
-            const weapon = this.weapons.at(-1);
+
+            const weapon = this.getCurrentWeapon();
+            if (!weapon) {
+                console.error("No weapon equipped!");
+                return 0;
+            }
+
             let damage = weapon.damage;
-            
-            // Check for weapon coatings and apply them
-            if (weapon.coatings) {
-                weapon.coatings.forEach(coating => {
-                    if (Math.random() < coating.chance) {
-                        console.log(`${this.name}'s ${coating.name} triggered!`);
-                        coating.effect(this, target);
-                    }
-                });
+
+            // Apply damage
+            target.setHealth(target.getHealth() - damage);
+            console.log(`${this.getName()} attacks ${target.getName()} for ${damage} damage!`);
+
+            // Process weapon coatings
+            Coatings.processCoatings(weapon, this, target);
+
+            // Check if target is defeated
+            if (target.getHealth() <= 0) {
+                console.log(`${target.getName()} has been defeated!`);
+                target.setHealth(0);
             }
-            
-            // Apply the damage
-            return this.doDamage(damage, target, battleScene);
-        } catch (error) {
+
+            return damage;
+        }
+        catch (error) {
             console.error("Error in attack:", error);
             return 0;
         }
@@ -107,9 +124,9 @@ export class Character {
                 console.log(`${this.name} doesn't have enough energy to cast ${spell.name}.`);
                 return 0; // Don't cast if not enough energy
             }
-            
+
             let totalDamage = 0;
-            
+
             if (spell.effect) {
                 spell.effect(this, target);
             }
@@ -117,9 +134,10 @@ export class Character {
                 let damage = spell.damage(this);
                 totalDamage = this.doDamage(damage, target, battleScene);
             }
-            
+
             return totalDamage;
-        } catch (error) {
+        }
+        catch (error) {
             console.error("Error in cast:", error);
             return 0;
         }
@@ -131,10 +149,10 @@ export class Character {
                 console.error("doDamage: target is undefined");
                 return 0;
             }
-            
+
             let isCritical = false;
             let finalDamage = damage;
-            
+
             // Check for Exploit Weakness talent
             if (this.effectsHandler && target.effectsHandler) {
                 try {
@@ -150,23 +168,23 @@ export class Character {
                     console.error("Error applying Exploit Weakness:", error);
                 }
             }
-            
+
             // Normal critical hit chance if not already critical from talents
             if (!isCritical && this.stats.critChance > Math.random()) {
                 console.log("Critical hit");
                 isCritical = true;
             }
-            
+
             // Apply critical multiplier if needed
             if (isCritical) {
                 finalDamage *= this.stats.critDamage;
             }
-            
+
             // Check for Shattering Blows talent (ignore 25% of defense)
             try {
                 const shatteringBlows = this.effectsHandler.permanentEffects.find(effect => effect.name === "Shattering Blows");
                 const defenseReduction = shatteringBlows ? 0.25 : 0;
-                
+
                 // Apply target's defense
                 const effectiveDefense = target.stats.defense * (1 - defenseReduction);
                 finalDamage = Math.max(1, finalDamage - effectiveDefense);
@@ -174,7 +192,7 @@ export class Character {
             catch (error) {
                 console.error("Error applying Shattering Blows:", error);
             }
-            
+
             // Check for Executioner's precision (50% more damage to low health targets)
             try {
                 if (target.getHealth() < target.getMaxHealth() * 0.25) {
@@ -188,9 +206,9 @@ export class Character {
             catch (error) {
                 console.error("Error applying Executioner's precision:", error);
             }
-            
+
             finalDamage = Math.round(finalDamage);
-            
+
             // Make sure battleScene exists and has displayDamageText method
             if (battleScene && typeof battleScene.displayDamageText === 'function') {
                 // Use battle scene's displayDamageText method
@@ -199,9 +217,9 @@ export class Character {
             else {
                 console.error("battleScene or displayDamageText method is undefined");
             }
-            
+
             target.setHealth(target.getHealth() - finalDamage);
-            
+
             // Apply omnivamp (healing from damage)
             if (this.stats.omnivamp && this.stats.omnivamp > 0) {
                 const healing = Math.round(finalDamage * this.stats.omnivamp);
@@ -210,9 +228,10 @@ export class Character {
                     console.log(`${this.name} heals for ${healing} from omnivamp.`);
                 }
             }
-            
+
             return finalDamage;
-        } catch (error) {
+        }
+        catch (error) {
             console.error("Error in doDamage:", error);
             return 0;
         }
@@ -258,7 +277,7 @@ export class Character {
         const key = Object.keys(this.resource)[0];
         return this.resource[key];
     }
-    
+
     getCurrentWeapon() {
         return this.weapons.at(-1);
     }
@@ -269,19 +288,20 @@ export class Character {
         if (currentWeapon && currentWeapon.stats) {
             this.removeWeaponStats(currentWeapon);
         }
-        
+
         // Add the new weapon and its stats
         this.weapons.push(weapon);
         if (weapon.stats) {
             this.addWeaponStats(weapon);
-        } else {
+        }
+        else {
             console.log("Weapon has no stats.");
         }
     }
 
     addWeaponStats(weapon) {
         if (!weapon.stats) return;
-        
+
         // Add weapon stats to character stats
         if (weapon.stats.strength) this.stats.strength += weapon.stats.strength;
         if (weapon.stats.agility) this.stats.agility += weapon.stats.agility;
@@ -293,7 +313,7 @@ export class Character {
 
     removeWeaponStats(weapon) {
         if (!weapon.stats) return;
-        
+
         // Remove weapon stats from character stats
         if (weapon.stats.strength) this.stats.strength -= weapon.stats.strength;
         if (weapon.stats.agility) this.stats.agility -= weapon.stats.agility;
@@ -333,141 +353,141 @@ export class Character {
     }
 }
 
-    /*
-    handleRage(damage) {
-        const rageMultiplier = 1 + this.resource.rage * 0.002;
-        damage *= rageMultiplier;
+/*
+handleRage(damage) {
+    const rageMultiplier = 1 + this.resource.rage * 0.002;
+    damage *= rageMultiplier;
 
-        const rageAmount = 10; // amount of rage gained when hit
-        this.resource.rage = Math.min(this.resource.rage + rageAmount, 100); // cap rage at 100
-        return damage;
+    const rageAmount = 10; // amount of rage gained when hit
+    this.resource.rage = Math.min(this.resource.rage + rageAmount, 100); // cap rage at 100
+    return damage;
+}
+
+attack(target, battleUI) {
+
+    // check evasion
+    if (Math.random() < target.stats.evasion) {
+        console.log(`${target.name} evaded the attack!`);
+        return "Missed!";
     }
 
-    attack(target, battleUI) {
+    let damage = this.handleCrit(null);
 
-        // check evasion
-        if (Math.random() < target.stats.evasion) {
-            console.log(`${target.name} evaded the attack!`);
-            return "Missed!";
-        }
-
-        let damage = this.handleCrit(null);
-
-        // process weapon coatings
-        const weapon = this.weapon.at(-1);
-        if (weapon && weapon.coatings) {
-            weapon.coatings.forEach(coating => {
-                if (Math.random() < coating.chance) {
-                    console.log(`Coating triggered: ${coating.name}`);
-                    coating.effect(this, target); // process the coating's effect
-                }
-            });
-        }
-
-        // apply attacker specific multiplier
-        damage *= this.damageMultiplier;
-
-        // apply rage muiltiplier
-        damage += this.handleRage(damage);
-
-        // check for Executioner's precision talent
-        const executionersPrecision = this.permanentEffects.find(effect => effect.name === "Executioner's precision");
-        if (executionersPrecision && target.health <= target.maxHealth * 0.25) {
-            damage *= 1.5;
-            executionersPrecision.applyEffect(this);
-        }
-
-        // apply defense and Shattering Blows talent if applicable
-        let defenseReduction;
-        const shatteringBlows = this.permanentEffects.find(effect => effect.name === "Shattering Blows");
-        if (shatteringBlows) {
-            defenseReduction = (target.stats.defense * 0.75) / (target.stats.defense + 100);
-        }
-        else {
-            defenseReduction = target.stats.defense / (target.stats.defense + 100);
-        }
-        damage *= 1 - defenseReduction;
-        console.log(`${target.name} reduced damage by ${Math.round(defenseReduction * 100)}%`);
-
-        // rounding damage
-        damage = Math.round(damage);
-
-        // apply omnivamp
-        this.health += Math.round(this.stats.omnivamp * this.healMultiplier * damage);
-        if (this.health > this.maxHealth) {
-            this.health = this.maxHealth;
-        }
-
-        // apply damage to enemy
-        target.health -= damage;
-
-        const restoreEnergy = this.permanentEffects.find(effect => effect.name === "Energy on Attack");
-        if (restoreEnergy) {
-            restoreEnergy.applyEffect(this);
-        }
-
-        // trigger Void Channeling effect
-        const voidChanneling = this.permanentEffects.find(effect => effect.name === "Void Channeling");
-        if (voidChanneling) {
-            voidChanneling.applyEffect(this, target, damage, battleUI);
-        }
-        // reset Void Channeling flag
-        if (voidChanneling && voidChanneling.removeEffect) {
-            voidChanneling.removeEffect();
-        }
-
-        battleUI.displayDamageText("enemy", damage);
+    // process weapon coatings
+    const weapon = this.weapon.at(-1);
+    if (weapon && weapon.coatings) {
+        weapon.coatings.forEach(coating => {
+            if (Math.random() < coating.chance) {
+                console.log(`Coating triggered: ${coating.name}`);
+                coating.effect(this, target); // process the coating's effect
+            }
+        });
     }
 
-    cast(target, spell, battleUI) {
-        if (this.energy >= spell.energyCost) {
-            this.energy -= spell.energyCost;
+    // apply attacker specific multiplier
+    damage *= this.damageMultiplier;
 
-            if (spell.effect) {
-                spell.effect(this, target);
-                console.log(`${this.name} casts ${spell.name}.`);
+    // apply rage muiltiplier
+    damage += this.handleRage(damage);
+
+    // check for Executioner's precision talent
+    const executionersPrecision = this.permanentEffects.find(effect => effect.name === "Executioner's precision");
+    if (executionersPrecision && target.health <= target.maxHealth * 0.25) {
+        damage *= 1.5;
+        executionersPrecision.applyEffect(this);
+    }
+
+    // apply defense and Shattering Blows talent if applicable
+    let defenseReduction;
+    const shatteringBlows = this.permanentEffects.find(effect => effect.name === "Shattering Blows");
+    if (shatteringBlows) {
+        defenseReduction = (target.stats.defense * 0.75) / (target.stats.defense + 100);
+    }
+    else {
+        defenseReduction = target.stats.defense / (target.stats.defense + 100);
+    }
+    damage *= 1 - defenseReduction;
+    console.log(`${target.name} reduced damage by ${Math.round(defenseReduction * 100)}%`);
+
+    // rounding damage
+    damage = Math.round(damage);
+
+    // apply omnivamp
+    this.health += Math.round(this.stats.omnivamp * this.healMultiplier * damage);
+    if (this.health > this.maxHealth) {
+        this.health = this.maxHealth;
+    }
+
+    // apply damage to enemy
+    target.health -= damage;
+
+    const restoreEnergy = this.permanentEffects.find(effect => effect.name === "Energy on Attack");
+    if (restoreEnergy) {
+        restoreEnergy.applyEffect(this);
+    }
+
+    // trigger Void Channeling effect
+    const voidChanneling = this.permanentEffects.find(effect => effect.name === "Void Channeling");
+    if (voidChanneling) {
+        voidChanneling.applyEffect(this, target, damage, battleUI);
+    }
+    // reset Void Channeling flag
+    if (voidChanneling && voidChanneling.removeEffect) {
+        voidChanneling.removeEffect();
+    }
+
+    battleUI.displayDamageText("enemy", damage);
+}
+
+cast(target, spell, battleUI) {
+    if (this.energy >= spell.energyCost) {
+        this.energy -= spell.energyCost;
+
+        if (spell.effect) {
+            spell.effect(this, target);
+            console.log(`${this.name} casts ${spell.name}.`);
+        }
+
+        if (spell.damage) {
+
+            // check evasion
+            if (Math.random() < target.stats.evasion) {
+                console.log(`${target.name} evaded the attack!`);
+                return "Missed!";
             }
 
-            if (spell.damage) {
+            let damage = this.handleCrit(null);
 
-                // check evasion
-                if (Math.random() < target.stats.evasion) {
-                    console.log(`${target.name} evaded the attack!`);
-                    return "Missed!";
-                }
+            console.log(damage);
 
-                let damage = this.handleCrit(null);
+            // apply rage muiltiplier
+            damage += this.handleRage(damage);
 
-                console.log(damage);
+            console.log(damage);
 
-                // apply rage muiltiplier
-                damage += this.handleRage(damage);
-
-                console.log(damage);
-
-                if (spell.name === "Phantom Strike") {
-                    console.log(`${target.name}'s defense is ignored`);
-                }
-                else {
-                    // apply defense
-                    const defenseReduction = target.stats.defense / (target.stats.defense + 100);
-                    damage *= 1 - defenseReduction;
-                    console.log(`${target.name} reduced damage by ${Math.round(defenseReduction * 100)}%`);
-                }
-
-                // round and apply damage
-                damage = Math.round(damage);
-                target.health -= damage;
-
-                console.log(`${this.name} casts ${spell.name} on ${target.name} for ${damage} damage.`);
-
-                battleUI.displayDamageText("enemy", damage);
+            if (spell.name === "Phantom Strike") {
+                console.log(`${target.name}'s defense is ignored`);
             }
-        }
-        else {
-            console.log("Not enough energy to cast!");
-            // currently, your turn is "skipped" if you try to cast without having enough energy
-            // this behavior should probably be changed
+            else {
+                // apply defense
+                const defenseReduction = target.stats.defense / (target.stats.defense + 100);
+                damage *= 1 - defenseReduction;
+                console.log(`${target.name} reduced damage by ${Math.round(defenseReduction * 100)}%`);
+            }
+
+            // round and apply damage
+            damage = Math.round(damage);
+            target.health -= damage;
+
+            console.log(`${this.name} casts ${spell.name} on ${target.name} for ${damage} damage.`);
+
+            battleUI.displayDamageText("enemy", damage);
         }
     }
-    */
+    else {
+        console.log("Not enough energy to cast!");
+        // currently, your turn is "skipped" if you try to cast without having enough energy
+        // this behavior should probably be changed
+    }
+}
+*/

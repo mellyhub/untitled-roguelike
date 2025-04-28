@@ -11,27 +11,22 @@ export class EffectsHandler {
     }
 
     addPermanentEffect(effect) {
-        // Check if the effect already exists to avoid duplicates
-        if (!this.permanentEffects.some(e => e.name === effect.name)) {
-            this.permanentEffects.push(effect);
-        }
+        this.permanentEffects.push(effect);
     }
 
     processActiveEffects() {
         this.activeEffects = this.activeEffects.filter(effect => {
-            effect.applyEffect();
-            console.log(this.activeEffects);
-            // remove effect if expired
-            if (effect.remainingTurns <= 0) {
-                if (effect.removeEffect) {
-                    effect.removeEffect(); // call the removeEffect function if it exists
-                }
-                console.log(`${effect.name} effect on ${this.character.getName()} has expired.`);
-                return false; // remove effect
+            if (effect.remainingTurns > 0) {
+                effect.applyEffect();
+                effect.remainingTurns--;
+                return true;
             }
-
-            effect.remainingTurns--;
-            return true; // keep effect
+            else {
+                if (effect.removeEffect) {
+                    effect.removeEffect();
+                }
+                return false;
+            }
         });
     }
 
@@ -45,7 +40,8 @@ export class EffectsHandler {
                 // Different effects might need different parameters
                 if (target && damage) {
                     effect.applyEffect(this.character, target, damage, battleUI);
-                } else {
+                }
+                else {
                     effect.applyEffect(this.character);
                 }
             }
@@ -60,7 +56,8 @@ export class EffectsHandler {
         this.permanentEffects.forEach(effect => {
             if (effect.onKill) {
                 effect.onKill(this.character);
-            } else if (effect.name === "Vital Surge") {
+            }
+            else if (effect.name === "Vital Surge") {
                 effect.applyEffect(this.character);
             }
         });
@@ -85,27 +82,39 @@ export class EffectsHandler {
             if (effect.removeEffect) {
                 effect.removeEffect();
             }
-            console.log(`Removed effect: ${effect.name} from ${this.character.getName()}`);
         });
         this.activeEffects = [];
     }
 
     // Check if character has status immunity from talents like Warrior's Resolve
     hasStatusImmunity() {
-        return this.permanentEffects.some(effect => effect.name === "Warrior's Resolve");
+        return this.permanentEffects.some(effect => 
+            effect.name === "Warrior's Resolve" || 
+            effect.name === "Status Immunity"
+        );
     }
 
     isImpaired() {
-        return this.activeEffects.some(effect => effect.name === "Stunned" || effect.name === "Paralyzed");
+        return this.activeEffects.some(effect => 
+            effect.name === "Paralyzed" || 
+            effect.name === "Stunned"
+        );
     }
 
-    tryApplyStatusEffect(statusEffect) {
-        if (this.hasStatusImmunity() && statusEffect.type === "Status") {
-            console.log(`${this.character.getName()} is immune to ${statusEffect.name} due to Warrior's Resolve.`);
+    tryApplyStatusEffect(effect) {
+        // Check if character has status immunity
+        if (this.hasStatusImmunity()) {
+            console.log(`${this.character.getName()} is immune to status effects!`);
             return false;
         }
-        
-        this.addActiveEffect(statusEffect);
+
+        // Check if effect is already active
+        if (this.activeEffects.some(e => e.name === effect.name)) {
+            console.log(`${this.character.getName()} already has ${effect.name}!`);
+            return false;
+        }
+
+        this.addActiveEffect(effect);
         return true;
     }
 }

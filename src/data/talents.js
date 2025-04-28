@@ -1,3 +1,5 @@
+import { Coatings } from './coatings';
+
 const talentConfig = {
 
     offense: [
@@ -73,7 +75,8 @@ const talentConfig = {
                         name: "Executioner's precision",
                         type: "Buff",
                         applyEffect: () => {
-                            console.log(`${player.getName()} triggers Executioner's precision, amplifying damage`);
+                            // yet to be implemented
+                            //console.log(`${player.getName()} triggers Executioner's precision, amplifying damage`);
                         },
                     });
                 }
@@ -93,11 +96,11 @@ const talentConfig = {
                                 console.error("Void Channeling: target is undefined");
                                 return;
                             }
-                            
+
                             if (!originalDamage || originalDamage <= 0) {
                                 return; // No damage to repeat
                             }
-                            
+
                             try {
                                 if (Math.random() < 0.2) {  // 20% chance to trigger
                                     const repeatedDamage = Math.round(originalDamage * 0.5); // 50% of the original damage
@@ -166,7 +169,7 @@ const talentConfig = {
                             if (!target || !target.effectsHandler) {
                                 return false;
                             }
-                            
+
                             try {
                                 if (target.effectsHandler.activeEffects.some(effect => effect.type === "Status")) {
                                     console.log(`${player.getName()} triggers Exploit Weakness, guaranteeing a critical hit`);
@@ -230,10 +233,9 @@ const talentConfig = {
                         type: "Buff",
                         applyEffect: (player, attacker, damage) => {
                             if (!damage || damage <= 0) {
-                                console.log("Mirror Shield: No damage to reflect");
                                 return;
                             }
-                            
+
                             try {
                                 const reflectedDamage = Math.round(damage * 0.1); // reflects 10% of incoming damage
                                 attacker.setHealth(attacker.getHealth() - reflectedDamage); // apply reflected damage to the attacker
@@ -305,7 +307,7 @@ const talentConfig = {
                     player.effectsHandler.addPermanentEffect({
                         name: "Vital Surge",
                         type: "Buff",
-                        applyEffect: () => {
+                        onKill: (player) => {
                             const healMultiplier = player.stats.healMultiplier || 1;
                             const restoreAmount = Math.round(25 * healMultiplier);
                             player.setHealth(player.getHealth() + restoreAmount);
@@ -332,9 +334,15 @@ const talentConfig = {
         },
         {
             name: "Toxic Coating",
-            description: "Applies toxic coating to your weapon.",
+            description: "Permanently applies toxic coating to your weapon.",
             maxPoints: 1,
             effect: (player) => {
+                // Only allow player to use this talent
+                if (player.class === "Enemy") {
+                    console.log("Enemies cannot use coating talents!");
+                    return;
+                }
+
                 const weapon = player.getCurrentWeapon();
                 if (!weapon) {
                     console.error("No weapon equipped to apply Toxic Coating!");
@@ -346,36 +354,22 @@ const talentConfig = {
                     console.log("Toxic Coating is already applied to the weapon.");
                     return;
                 }
-                else if (!weapon.coatings) {
-                    weapon.coatings = [];
-                }
 
-                weapon.coatings.push({
-                    name: "Toxic Coating",
-                    chance: 1, // 100% chance to trigger on attack
-                    effect: (attacker, target) => {
-                        console.log(`${target.getName()} is poisoned by ${attacker.getName()}'s Toxic Coating!`);
-                        target.effectsHandler.activeEffects.push({
-                            name: "Poisoned",
-                            type: "Status",
-                            remainingTurns: 5,
-                            applyEffect: () => {
-                                target.setHealth(target.getHealth() - 20);
-                                console.log(`${target.getName()} takes 20 damage from poison`);
-                            },
-                            removeEffect: () => {
-                                console.log(`${target.getName()} is no longer poisoned`);
-                            }
-                        });
-                    }
-                });
+                Coatings.applyCoating(weapon, 'toxic');
+                console.log(`${player.getName()} has applied Toxic Coating to their weapon`);
             }
         },
         {
             name: "Paralysis Coating",
-            description: "Applies paralysis coating to your weapon.",
+            description: "Permanently applies paralysis coating to your weapon.",
             maxPoints: 1,
             effect: (player) => {
+                // Only allow player to use this talent
+                if (player.class === "Enemy") {
+                    console.log("Enemies cannot use coating talents!");
+                    return;
+                }
+
                 const weapon = player.getCurrentWeapon();
                 if (!weapon) {
                     console.error("No weapon equipped to apply Paralysis Coating!");
@@ -387,34 +381,9 @@ const talentConfig = {
                     console.log("Paralysis Coating is already applied to the weapon.");
                     return;
                 }
-                else if (!weapon.coatings) {
-                    weapon.coatings = [];
-                }
 
-                weapon.coatings.push({
-                    name: "Paralysis Coating",
-                    //chance: 0.2, // 20% chance to trigger on attack
-                    chance: 1,  // Currently hardcoded to 100% for testing purposes
-                    effect: (attacker, target) => {
-                        console.log(`${target.getName()} is paralyzed by ${attacker.getName()}'s Paralysis Coating!`);
-                        target.effectsHandler.activeEffects.push({
-                            name: "Paralyzed",
-                            type: "Status",
-                            remainingTurns: 3,
-                            applyEffect: () => {
-                                console.log(`${target.getName()} is paralyzed`);
-                            },
-                            removeEffect: () => {
-                                console.log(`${target.getName()} is no longer paralyzed`);
-                            }
-                        });
-                        // immediately apply the effect
-                        const effect = target.effectsHandler.activeEffects.find(effect => effect.name === "Paralyzed");
-                        if (effect) {
-                            effect.applyEffect();
-                        }
-                    }
-                });
+                Coatings.applyCoating(weapon, 'paralysis');
+                console.log(`${player.getName()} has applied Paralysis Coating to their weapon`);
             }
         },
     ],
