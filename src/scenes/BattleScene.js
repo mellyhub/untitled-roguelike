@@ -40,8 +40,25 @@ class BattleScene extends Phaser.Scene {
     // Setup sound effects
     this.sfx = {};
     const sfxConfig = this.cache.json.get('sfxConfig');
-    for (const [key, path] of Object.entries(sfxConfig)) {
-      this.sfx[key] = this.sound.add(key, { volume: 0.2 });
+    
+    if (!sfxConfig) {
+      console.error('SFX configuration not found in cache');
+    } else {
+      for (const [key, path] of Object.entries(sfxConfig)) {
+        try {
+          if (this.cache.audio.exists(key)) {
+            this.sfx[key] = this.sound.add(key, { 
+              volume: 0.2,
+              loop: false
+            });
+            console.log(`Initialized sound effect: ${key}`);
+          } else {
+            console.error(`Audio key "${key}" not found in cache`);
+          }
+        } catch (error) {
+          console.error(`Error initializing sound effect ${key}:`, error);
+        }
+      }
     }
 
     // Add background
@@ -219,6 +236,10 @@ class BattleScene extends Phaser.Scene {
       
       if (action === 'attack') {
         this.player.animations.playAttackAnimation();
+        // Play attack sound
+        if (this.sfx.hit1) {
+          this.sfx.hit1.play();
+        }
         await this.resolveAfterTime(1000);
         
         try {

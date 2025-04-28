@@ -12,6 +12,13 @@ class AssetLoader {
    * @param {Phaser.Scene} scene - The scene to use for loading assets
    */
   preloadAssets(scene) {
+    scene.load.json("sfxConfig", "src/assets/audio/sfx/sfx.json");
+    
+    scene.load.once('filecomplete-json-sfxConfig', () => {
+      const sfxConfig = scene.cache.json.get('sfxConfig');
+      this.loadAudio(scene, sfxConfig);
+    });
+    
     // Load assets.json
     scene.load.json('assetsConfig', 'src/assets/assets.json');
     
@@ -19,13 +26,6 @@ class AssetLoader {
     scene.load.once('filecomplete-json-assetsConfig', () => {
       const assets = scene.cache.json.get('assetsConfig');
       this.loadAllAssets(scene, assets);
-    });
-    
-    // Load audio configuration
-    scene.load.json("sfxConfig", "src/assets/audio/sfx/sfx.json");
-    scene.load.once('filecomplete-json-sfxConfig', () => {
-      const sfxConfig = scene.cache.json.get('sfxConfig');
-      this.loadAudio(scene, sfxConfig);
     });
     
     // Set flag when loading is complete
@@ -74,8 +74,39 @@ class AssetLoader {
    * @param {Object} sfxConfig - Sound effect configuration
    */
   loadAudio(scene, sfxConfig) {
+    // Verify the config is loaded
+    if (!sfxConfig) {
+      console.error('SFX configuration not found in cache');
+      return;
+    }
+    
+    // Load each audio file
     for (const [key, path] of Object.entries(sfxConfig)) {
-      scene.load.audio(key, path);
+      try {
+        // Remove the 'src/' prefix from the path
+        const audioPath = path.replace('src/', '');
+        console.log(`Loading audio: ${key} from ${audioPath}`);
+        
+        // Add error handling for the audio load
+        scene.load.once(`filecomplete-audio-${key}`, () => {
+          console.log(`Successfully loaded audio: ${key}`);
+        });
+        
+        scene.load.once(`loaderror-audio-${key}`, (file) => {
+          console.error(`Error loading audio ${key}:`, file);
+        });
+        
+        // Load MP3 files with specific settings
+        scene.load.audio(key, audioPath, {
+          instances: 1,
+          xhrSettings: {
+            responseType: 'arraybuffer'
+          },
+          audioType: 'audio/mpeg' // Specify MP3 type
+        });
+      } catch (error) {
+        console.error(`Error setting up audio load for ${key}:`, error);
+      }
     }
   }
   
