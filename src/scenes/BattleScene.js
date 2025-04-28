@@ -21,7 +21,6 @@ class BattleScene extends Phaser.Scene {
 
   create(data) {
     this.player = data.player;
-    this.levelData = data.level;
     this.seed = data.seed;
 
     this.playerAnimation;

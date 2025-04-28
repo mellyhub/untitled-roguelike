@@ -21,6 +21,11 @@
 				"type": "image",
 				"key": "map",
 				"url": "map.png"
+			},
+			{
+				"type": "image",
+				"key": "portal",
+				"url": "portal.png"
 			}
 		]
 	},
