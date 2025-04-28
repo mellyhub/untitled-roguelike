@@ -206,15 +206,75 @@ class BattleScene extends Phaser.Scene {
       // Store a reference to battleUI to prevent it from being lost in async operations
       const battleUI = this.battleUI;
       
+      if (!this.player || !this.player.effectsHandler) {
+        console.error("Player or player.effectsHandler is undefined");
+        return;
+      }
+      
+      try {
+        this.player.effectsHandler.processActiveEffects();
+      }
+      catch (error) {
+        console.error("Error processing player active effects:", error);
+      }
+      
       if (action === 'attack') {
         this.player.animations.playAttackAnimation();
         await this.resolveAfterTime(1000);
-        this.player.attemptAction("attack", this.enemy, null, this);
+        
+        try {
+          this.player.effectsHandler.applyPermanentEffects();
+        }
+        catch (error) {
+          console.error("Error applying player permanent effects before attack:", error);
+        }
+        
+        let damage = 0;
+        try {
+          damage = this.player.attemptAction("attack", this.enemy, null, this);
+        }
+        catch (error) {
+          console.error("Error in player attack action:", error);
+        }
+        
+        // Apply effects after attack only if there's a valid enemy and damage was dealt
+        if (damage > 0 && this.enemy && this.player.effectsHandler) {
+          try {
+            this.player.effectsHandler.applyPermanentEffects(this.enemy, damage, battleUI);
+          }
+          catch (error) {
+            console.error("Error applying player permanent effects after attack:", error);
+          }
+        }
       }
       else if (action === 'cast') {
         this.player.animations.playCastAnimation(selectedSpell);
         await this.resolveAfterTime(1000);
-        this.player.attemptAction("cast", this.enemy, selectedSpell, this);
+        
+        try {
+          this.player.effectsHandler.applyPermanentEffects();
+        }
+        catch (error) {
+          console.error("Error applying player permanent effects before cast:", error);
+        }
+        
+        let damage = 0;
+        try {
+          damage = this.player.attemptAction("cast", this.enemy, selectedSpell, this);
+        }
+        catch (error) {
+          console.error("Error in player cast action:", error);
+        }
+        
+        // Apply effects after cast only if there's a valid enemy and damage was dealt
+        if (damage > 0 && this.enemy && this.player.effectsHandler) {
+          try {
+            this.player.effectsHandler.applyPermanentEffects(this.enemy, damage, battleUI);
+          }
+          catch (error) {
+            console.error("Error applying player permanent effects after cast:", error);
+          }
+        }
       }
 
       if (animationText) {
@@ -234,16 +294,61 @@ class BattleScene extends Phaser.Scene {
 
       // Give the player a moment to see the enemy's turn begin
       await this.resolveAfterTime(1000);
+      
+      if (!this.enemy || !this.enemy.effectsHandler) {
+        console.error("Enemy or enemy.effectsHandler is undefined");
+        return;
+      }
+      
+      try {
+        this.enemy.effectsHandler.processActiveEffects();
+      }
+      catch (error) {
+        console.error("Error processing enemy active effects:", error);
+      }
+      
+      if (this.enemy.effectsHandler.isImpaired()) {
+        const impairedText = this.add.text(700, 500, `${this.enemy.getName()} is impaired and cannot act!`, { fontSize: '52px', fill: '#fff' });
+        await this.resolveAfterTime(2000);
+        impairedText.destroy();
+      }
+      else {
+        const enemyAction = "attack";
+        const enemyAnimationText = this.displayAnimationText(this.enemy.getName(), enemyAction);
 
-      const enemyAction = "attack";
-      const enemyAnimationText = this.displayAnimationText(this.enemy.getName(), enemyAction);
+        this.enemy.animations.playAttackAnimation();
+        await this.resolveAfterTime(1000);
+        
+        if (this.enemy.effectsHandler.applyPermanentEffects) {
+          try {
+            this.enemy.effectsHandler.applyPermanentEffects();
+          }
+          catch (error) {
+            console.error("Error applying enemy permanent effects:", error);
+          }
+        }
+        
+        let enemyDamage = 0;
+        try {
+          enemyDamage = this.enemy.attemptAction("attack", this.player, null, this);
+        }
+        catch (error) {
+          console.error("Error in enemy attack action:", error);
+        }
+        
+        // Make sure player and enemy still exist before applying damage effects
+        if (enemyDamage > 0 && this.enemy && this.player && this.player.effectsHandler) {
+          try {
+            this.player.effectsHandler.applyOnDamageEffects(this.enemy, enemyDamage);
+          }
+          catch (error) {
+            console.error("Error applying player on-damage effects:", error);
+          }
+        }
 
-      this.enemy.animations.playAttackAnimation();
-      await this.resolveAfterTime(1000);
-      this.enemy.attemptAction("attack", this.player, null, this);
-
-      if (enemyAnimationText) {
-        enemyAnimationText.destroy();
+        if (enemyAnimationText) {
+          enemyAnimationText.destroy();
+        }
       }
 
       battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP, this.turnCounter);
@@ -270,6 +375,10 @@ class BattleScene extends Phaser.Scene {
     }
     
     if (this.enemy.getHealth() <= 0) {
+      if (this.player.effectsHandler) {
+        this.player.effectsHandler.applyOnKillEffects();
+      }
+      
       this.player.setScore(this.player.getScore() + 10);
       
       // Update high score in cookies
@@ -292,6 +401,22 @@ class BattleScene extends Phaser.Scene {
     const battleUI = this.battleUI;
     
     if (this.enemy.getHealth() <= 0 || this.player.getHealth() <= 0) {
+      // Check if Rebirth should trigger
+      if (this.player.getHealth() <= 0) {
+
+        this.player.effectsHandler.applyPermanentEffects();
+        
+        if (this.player.getHealth() > 0) {
+          const rebirthText = this.add.text(700, 500, `${this.player.getName()} has been revived!`, { fontSize: '52px', fill: '#fff' });
+          await this.resolveAfterTime(2000);
+          rebirthText.destroy();
+          
+          battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP, this.turnCounter);
+          this.inputLocked = false;
+          return false;
+        }
+      }
+      
       // Update stats one more time before transition
       try {
         battleUI.displayStats(this.player, this.enemy, this.playerStartHP, this.enemyStartHP, this.turnCounter);

@@ -7,10 +7,10 @@ const talentConfig = {
             maxPoints: 1,
             effect: (player) => {
                 if (!player.effectsHandler.permanentEffects.some(effect => effect.name === "Energy on Attack")) {
-                    player.effectsHandler.permanentEffects.push({
+                    player.effectsHandler.addPermanentEffect({
                         name: "Energy on Attack",
                         type: "Buff",
-                        applyEffect: (player) => {
+                        applyEffect: () => {
                             player.setEnergy(Math.min(player.getEnergy() + 5, 100)); // cap energy at 100
                             console.log(`${player.getName()} gains 5 energy from "Energy on Attack". Current energy: ${player.getEnergy()}`);
                         }
@@ -28,10 +28,10 @@ const talentConfig = {
                     return;
                 }
                 if (!player.effectsHandler.permanentEffects.some(effect => effect.name === "Blademaster")) {
-                    player.effectsHandler.permanentEffects.push({
+                    player.effectsHandler.addPermanentEffect({
                         name: "Blademaster",
                         type: "Buff",
-                        applyEffect: (player) => {
+                        applyEffect: () => {
                             // to be implemented
                         },
                     });
@@ -53,10 +53,10 @@ const talentConfig = {
             maxPoints: 1,
             effect: (player) => {
                 if (!player.effectsHandler.permanentEffects.some(effect => effect.name === "Shattering Blows")) {
-                    player.effectsHandler.permanentEffects.push({
+                    player.effectsHandler.addPermanentEffect({
                         name: "Shattering Blows",
                         type: "Buff",
-                        applyEffect: (player) => {
+                        applyEffect: () => {
                             console.log(`${player.getName()}'s attack ignores 25% of enemy defense`);
                         },
                     });
@@ -69,10 +69,10 @@ const talentConfig = {
             maxPoints: 1,
             effect: (player) => {
                 if (!player.effectsHandler.permanentEffects.some(effect => effect.name === "Executioner's precision")) {
-                    player.effectsHandler.permanentEffects.push({
+                    player.effectsHandler.addPermanentEffect({
                         name: "Executioner's precision",
                         type: "Buff",
-                        applyEffect: (player) => {
+                        applyEffect: () => {
                             console.log(`${player.getName()} triggers Executioner's precision, amplifying damage`);
                         },
                     });
@@ -85,18 +85,33 @@ const talentConfig = {
             maxPoints: 1,
             effect: (player) => {
                 if (!player.effectsHandler.permanentEffects.some(effect => effect.name === "Void Channeling")) {
-                    player.effectsHandler.permanentEffects.push({
+                    player.effectsHandler.addPermanentEffect({
                         name: "Void Channeling",
                         type: "Buff",
                         applyEffect: (player, target, originalDamage, battleUI) => {
-                            if (Math.random() < 0.2) {  // 20% chance to trigger
-                                const repeatedDamage = Math.round(originalDamage * 0.5); // 50% of the original damage
-                                console.log(`${player.getName()} repeats the attack, dealing ${repeatedDamage} damage to ${target.getName()}.`);
-                                target.setHealth(target.getHealth() - repeatedDamage); // apply the repeated damage
+                            if (!target) {
+                                console.error("Void Channeling: target is undefined");
+                                return;
+                            }
+                            
+                            if (!originalDamage || originalDamage <= 0) {
+                                return; // No damage to repeat
+                            }
+                            
+                            try {
+                                if (Math.random() < 0.2) {  // 20% chance to trigger
+                                    const repeatedDamage = Math.round(originalDamage * 0.5); // 50% of the original damage
+                                    console.log(`${player.getName()} repeats the attack, dealing ${repeatedDamage} damage to ${target.getName()}.`);
+                                    target.setHealth(target.getHealth() - repeatedDamage); // apply the repeated damage
 
-                                // display the repeated damage visually
-                                console.log(battleUI);
-                                battleUI.displayDamageText(target, repeatedDamage);
+                                    // display the repeated damage visually
+                                    if (battleUI) {
+                                        battleUI.displayDamageText(target, repeatedDamage);
+                                    }
+                                }
+                            }
+                            catch (error) {
+                                console.error("Error in Void Channeling:", error);
                             }
                         },
                     });
@@ -124,10 +139,10 @@ const talentConfig = {
             maxPoints: 1,
             effect: (player) => {
                 if (!player.effectsHandler.permanentEffects.some(effect => effect.name === "Conjure+")) {
-                    player.effectsHandler.permanentEffects.push({
+                    player.effectsHandler.addPermanentEffect({
                         name: "Conjure+",
                         type: "Buff",
-                        applyEffect: (player) => {
+                        applyEffect: () => {
                             const weapon = player.getCurrentWeapon();
                             if (weapon && weapon.name === "Conjured weapon") {
                                 weapon.damage *= 1.1;
@@ -139,24 +154,33 @@ const talentConfig = {
             }
         },
         {
-            // to be implemented !
             name: "Exploit Weakness",
             description: "Guarantees your attack to be a critical hit if the enemy is under a status effect.",
             maxPoints: 1,
             effect: (player) => {
                 if (!player.effectsHandler.permanentEffects.some(effect => effect.name === "Exploit Weakness")) {
-                    player.effectsHandler.permanentEffects.push({
+                    player.effectsHandler.addPermanentEffect({
                         name: "Exploit Weakness",
                         type: "Buff",
                         applyEffect: (player, target) => {
-                            if(target.effectsHandler.activeEffects.some(effect => effect.type === "Status")) {
-                                console.log(`${player.getName()} triggers Exploit Weakness, amplifying damage`);
+                            if (!target || !target.effectsHandler) {
+                                return false;
                             }
+                            
+                            try {
+                                if (target.effectsHandler.activeEffects.some(effect => effect.type === "Status")) {
+                                    console.log(`${player.getName()} triggers Exploit Weakness, guaranteeing a critical hit`);
+                                    return true; // Signal that this should be a critical hit
+                                }
+                            }
+                            catch (error) {
+                                console.error("Error in Exploit Weakness:", error);
+                            }
+                            return false;
                         },
                     });
                 }
             }
-            // to be implemented !
         }
     ],
 
@@ -201,13 +225,23 @@ const talentConfig = {
             maxPoints: 1,
             effect: (player) => {
                 if (!player.effectsHandler.permanentEffects.some(effect => effect.name === "Mirror Shield")) {
-                    player.effectsHandler.permanentEffects.push({
+                    player.effectsHandler.addPermanentEffect({
                         name: "Mirror Shield",
                         type: "Buff",
                         applyEffect: (player, attacker, damage) => {
-                            const reflectedDamage = Math.round(damage * 0.1); // reflects 10% of incoming damage
-                            attacker.setHealth(attacker.getHealth() - reflectedDamage); // apply reflected damage to the attacker
-                            console.log(`${attacker.getName()} takes ${reflectedDamage} reflected damage from Mirror Shield.`);
+                            if (!damage || damage <= 0) {
+                                console.log("Mirror Shield: No damage to reflect");
+                                return;
+                            }
+                            
+                            try {
+                                const reflectedDamage = Math.round(damage * 0.1); // reflects 10% of incoming damage
+                                attacker.setHealth(attacker.getHealth() - reflectedDamage); // apply reflected damage to the attacker
+                                console.log(`${attacker.getName()} takes ${reflectedDamage} reflected damage from Mirror Shield.`);
+                            }
+                            catch (error) {
+                                console.error("Error in Mirror Shield reflection:", error);
+                            }
                         },
                     });
                 }
@@ -219,10 +253,10 @@ const talentConfig = {
             maxPoints: 1,
             effect: (player) => {
                 if (!player.effectsHandler.permanentEffects.some(effect => effect.name === "Rebirth")) {
-                    player.effectsHandler.permanentEffects.push({
+                    player.effectsHandler.addPermanentEffect({
                         name: "Rebirth",
                         type: "Buff",
-                        applyEffect: (player) => {
+                        applyEffect: () => {
                             if (player.getHealth() <= 0 && !player.hasRevived) {
                                 player.hasRevived = true; // mark the revive as used
                                 player.setHealth(Math.round(player.getMaxHealth() * 0.3)); // restore 30% of max health
@@ -242,12 +276,16 @@ const talentConfig = {
             maxPoints: 1,
             effect: (player) => {
                 if (!player.effectsHandler.permanentEffects.some(effect => effect.name === "Warrior's Resolve")) {
-                    player.effectsHandler.permanentEffects.push({
+                    player.effectsHandler.addPermanentEffect({
                         name: "Warrior's Resolve",
                         type: "Buff",
-                        applyEffect: (player) => {
+                        applyEffect: () => {
                             if (player.effectsHandler.activeEffects.some(effect => effect.type === "Status")) {
-                                console.log(`${player.getName()} has been cleansed from ${effect.name}.`)
+                                const statusEffects = player.effectsHandler.activeEffects.filter(e => e.type === "Status");
+                                statusEffects.forEach(effect => {
+                                    console.log(`${player.getName()} has been cleansed from ${effect.name}.`);
+                                    if (effect.removeEffect) effect.removeEffect();
+                                });
                                 player.effectsHandler.activeEffects = player.effectsHandler.activeEffects.filter(e => e.type !== "Status");
                             }
                         },
@@ -264,10 +302,10 @@ const talentConfig = {
             maxPoints: 1,
             effect: (player) => {
                 if (!player.effectsHandler.permanentEffects.some(effect => effect.name === "Vital Surge")) {
-                    player.effectsHandler.permanentEffects.push({
+                    player.effectsHandler.addPermanentEffect({
                         name: "Vital Surge",
                         type: "Buff",
-                        applyEffect: (player) => {
+                        applyEffect: () => {
                             const healMultiplier = player.stats.healMultiplier || 1;
                             const restoreAmount = Math.round(25 * healMultiplier);
                             player.setHealth(player.getHealth() + restoreAmount);

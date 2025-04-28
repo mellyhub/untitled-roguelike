@@ -53,15 +53,18 @@ export class Character {
 
             if (this.effectsHandler.isImpaired()) {
                 console.log(`${this.name} is impaired, cannot perform action!`);
+                return 0; // Return 0 damage when impaired
             } 
             else if (action === "attack") {
-                this.attack(target, battleScene);
+                return this.attack(target, battleScene);
             } 
             else if (action === "cast") {
-                this.cast(target, spell, battleScene);
+                return this.cast(target, spell, battleScene);
             }
+            return 0; // Default return 0 damage
         } catch (error) {
             console.error("Error in attemptAction:", error);
+            return 0;
         }
     }
 
@@ -70,12 +73,26 @@ export class Character {
             if (target.stats.evasion > Math.random()) {
                 console.log(`${target.name} evaded the attack`);
                 battleScene.displayDamageText(target, "Evaded!");
-                return;
+                return 0; // Return 0 damage on evade
             }
-            const damage = this.weapons.at(-1).damage;
-            this.doDamage(damage, target, battleScene);
+            const weapon = this.weapons.at(-1);
+            let damage = weapon.damage;
+            
+            // Check for weapon coatings and apply them
+            if (weapon.coatings) {
+                weapon.coatings.forEach(coating => {
+                    if (Math.random() < coating.chance) {
+                        console.log(`${this.name}'s ${coating.name} triggered!`);
+                        coating.effect(this, target);
+                    }
+                });
+            }
+            
+            // Apply the damage
+            return this.doDamage(damage, target, battleScene);
         } catch (error) {
             console.error("Error in attack:", error);
+            return 0;
         }
     }
 
@@ -85,46 +102,119 @@ export class Character {
             if (spell.cost && this.getEnergy() >= spell.cost) {
                 this.setEnergy(this.getEnergy() - spell.cost);
                 console.log(`${this.name} used ${spell.cost} energy to cast ${spell.name}.`);
-            } else if (spell.cost) {
-                console.log(`${this.name} doesn't have enough energy to cast ${spell.name}.`);
-                return; // Don't cast if not enough energy
             }
+            else if (spell.cost) {
+                console.log(`${this.name} doesn't have enough energy to cast ${spell.name}.`);
+                return 0; // Don't cast if not enough energy
+            }
+            
+            let totalDamage = 0;
             
             if (spell.effect) {
                 spell.effect(this, target);
             }
             if (spell.damage) {
                 let damage = spell.damage(this);
-                this.doDamage(damage, target, battleScene);
+                totalDamage = this.doDamage(damage, target, battleScene);
             }
+            
+            return totalDamage;
         } catch (error) {
             console.error("Error in cast:", error);
+            return 0;
         }
     }
 
     doDamage(damage, target, battleScene) {
         try {
-            let isCritical = false;
+            if (!target) {
+                console.error("doDamage: target is undefined");
+                return 0;
+            }
             
-            if (this.stats.critChance > Math.random()) {
+            let isCritical = false;
+            let finalDamage = damage;
+            
+            // Check for Exploit Weakness talent
+            if (this.effectsHandler && target.effectsHandler) {
+                try {
+                    const exploitWeakness = this.effectsHandler.permanentEffects.find(effect => effect.name === "Exploit Weakness");
+                    if (exploitWeakness && exploitWeakness.applyEffect) {
+                        const result = exploitWeakness.applyEffect(this, target);
+                        if (result === true) {
+                            isCritical = true;
+                        }
+                    }
+                }
+                catch (error) {
+                    console.error("Error applying Exploit Weakness:", error);
+                }
+            }
+            
+            // Normal critical hit chance if not already critical from talents
+            if (!isCritical && this.stats.critChance > Math.random()) {
                 console.log("Critical hit");
-                damage *= this.stats.critDamage;
                 isCritical = true;
             }
-
-            const newHealth = target.getHealth() - Math.round(damage);
+            
+            // Apply critical multiplier if needed
+            if (isCritical) {
+                finalDamage *= this.stats.critDamage;
+            }
+            
+            // Check for Shattering Blows talent (ignore 25% of defense)
+            try {
+                const shatteringBlows = this.effectsHandler.permanentEffects.find(effect => effect.name === "Shattering Blows");
+                const defenseReduction = shatteringBlows ? 0.25 : 0;
+                
+                // Apply target's defense
+                const effectiveDefense = target.stats.defense * (1 - defenseReduction);
+                finalDamage = Math.max(1, finalDamage - effectiveDefense);
+            }
+            catch (error) {
+                console.error("Error applying Shattering Blows:", error);
+            }
+            
+            // Check for Executioner's precision (50% more damage to low health targets)
+            try {
+                if (target.getHealth() < target.getMaxHealth() * 0.25) {
+                    const executionerPrecision = this.effectsHandler.permanentEffects.find(effect => effect.name === "Executioner's precision");
+                    if (executionerPrecision) {
+                        finalDamage *= 1.5;
+                        console.log(`${this.name} executes ${target.name} for 50% more damage!`);
+                    }
+                }
+            }
+            catch (error) {
+                console.error("Error applying Executioner's precision:", error);
+            }
+            
+            finalDamage = Math.round(finalDamage);
             
             // Make sure battleScene exists and has displayDamageText method
             if (battleScene && typeof battleScene.displayDamageText === 'function') {
                 // Use battle scene's displayDamageText method
-                battleScene.displayDamageText(target, Math.round(damage), isCritical);
-            } else {
+                battleScene.displayDamageText(target, finalDamage, isCritical);
+            }
+            else {
                 console.error("battleScene or displayDamageText method is undefined");
             }
             
-            target.setHealth(newHealth);
+            target.setHealth(target.getHealth() - finalDamage);
+            
+            // Apply omnivamp (healing from damage)
+            if (this.stats.omnivamp && this.stats.omnivamp > 0) {
+                const healing = Math.round(finalDamage * this.stats.omnivamp);
+                if (healing > 0) {
+                    this.setHealth(Math.min(this.getHealth() + healing, this.getMaxHealth()));
+                    console.log(`${this.name} heals for ${healing} from omnivamp.`);
+                }
+            }
+            
+            return finalDamage;
         } catch (error) {
             console.error("Error in doDamage:", error);
+            return 0;
         }
     }
 
