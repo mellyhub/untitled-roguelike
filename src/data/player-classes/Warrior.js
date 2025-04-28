@@ -20,15 +20,6 @@ export class Warrior extends Character {
         return damage;
     }
 
-    attack(target, battleUI) {
-        if (target.stats.evasion > Math.random()) {
-            console.log(`${target.name} evaded the attack`);
-            return;
-        }
-        const damage = this.handleRage(this.weapons.at(-1).damage);
-        this.doDamage(damage, target, battleUI);
-    }
-
     /*
     attack(target, battleUI) {
 

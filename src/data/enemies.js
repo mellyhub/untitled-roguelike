@@ -25,7 +25,7 @@ export const enemies = {
             critDamage: 1.5,
             omnivamp: 0,
         },
-        weapons: [weapons.big_axe],
+        weapons: [{ ...weapons.big_axe }],
         spells: [
             spells.heal,
         ],
@@ -50,8 +50,8 @@ export const enemies = {
         createEnemy() {
             return new Character(
                 "Pipe Slime", 
-                [...this.weapons], 
-                [...this.spells], 
+                this.weapons, 
+                this.spells, 
                 structuredClone(this.stats), 
                 this.animations,
                 this.class

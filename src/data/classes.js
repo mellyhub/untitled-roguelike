@@ -24,7 +24,7 @@ export const classes = {
             critDamage: 1.5,
             omnivamp: 0,
         },
-        weapons: [weapons.unarmed, weapons.big_axe],
+        weapons: [{...weapons.unarmed }, {...weapons.big_axe }],
         spells: [
             spells.thunderclap,
             spells.conjure_weapon,
