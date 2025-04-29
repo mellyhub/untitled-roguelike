@@ -9,6 +9,6 @@
     "rare": "src/assets/audio/sfx/rare.mp3",
     "select": "src/assets/audio/sfx/select.mp3",
     "slime": "src/assets/audio/sfx/slime.mp3",
-    "snow": "src/assets/audio/sfx/snow.mp3",
+    "snow": "src/assets/audio/sfx/snow.ogg",
     "thump": "src/assets/audio/sfx/thump.mp3"
 }

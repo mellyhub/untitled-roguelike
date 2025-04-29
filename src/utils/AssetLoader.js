@@ -79,13 +79,11 @@ class AssetLoader {
       console.error('SFX configuration not found in cache');
       return;
     }
-    
+
     // Load each audio file
     for (const [key, path] of Object.entries(sfxConfig)) {
       try {
-        // Remove the 'src/' prefix from the path
-        const audioPath = path.replace('src/', '');
-        console.log(`Loading audio: ${key} from ${audioPath}`);
+        console.log(`Loading audio: ${key} from ${path}`);
         
         // Add error handling for the audio load
         scene.load.once(`filecomplete-audio-${key}`, () => {
@@ -97,7 +95,7 @@ class AssetLoader {
         });
         
         // Load MP3 files with specific settings
-        scene.load.audio(key, audioPath, {
+        scene.load.audio(key, path, {
           instances: 1,
           xhrSettings: {
             responseType: 'arraybuffer'
