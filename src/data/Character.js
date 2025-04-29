@@ -13,6 +13,7 @@ export class Character {
     talents;
     talentPoints = 50;
     gold = 50;
+    completedEncounters = 0;
 
     // Unique resource, for example Rage or Combo Points
     resource;
@@ -29,7 +30,7 @@ export class Character {
     // Inventory handler
     inventoryHandler;
 
-    constructor(name, weapons, spells, stats, animations, characterClass) {
+    constructor(name, weapons, spells, stats, resource, animations, characterClass) {
         this.name = name;
         this.class = characterClass;
         this.weapons = weapons;
@@ -40,6 +41,7 @@ export class Character {
         this.animations = animations;
         this.level = 0;
         this.score = 0;
+        this.resource = resource;
 
         // Bind methods to ensure 'this' context is maintained
         this.attemptAction = this.attemptAction.bind(this);

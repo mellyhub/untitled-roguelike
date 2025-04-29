@@ -4,8 +4,6 @@ import spells from './spells.js';
 import { Character } from './Character.js';
 import { Animations } from './Animations.js';
 
-//const enemies = [Snowman, Goblin, NightGlider, PipeSlime, Cat, PipeSlime, PortalTreader];
-
 export const enemies = {
     pipeSlime: {
         name: "PipeSlime",
@@ -53,6 +51,7 @@ export const enemies = {
                 this.weapons, 
                 this.spells, 
                 structuredClone(this.stats), 
+                this.resource,
                 this.animations,
                 this.class
             );

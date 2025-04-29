@@ -1,9 +1,7 @@
-import { Warrior } from "../data/player-classes/Warrior.js";
-import { Mage } from "../data/player-classes/Mage.js";
-import { Rogue } from "../data/player-classes/Rogue.js";
 import weapons from "./weapons.js"; 
 import spells from "./spells.js";
 import { Animations } from "./Animations.js";
+import { Character } from "./Character.js";
 
 export const classes = {
     warrior: {
@@ -51,7 +49,7 @@ export const classes = {
                 }
             ),
         createClass() {
-            const player = new Warrior("Taffe", this.weapons, this.spells, this.stats, this.animations);
+            const player = new Character("Taffe", this.weapons, this.spells, this.stats, this.resource, this.animations, "Warrior");
             player.addWeaponStats(this.weapons.at(-1));
             return player;
         }
